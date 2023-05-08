@@ -8,6 +8,7 @@ type CheckboxProps = {};
 
 const Checkbox: React.FC<CheckboxProps> = () => {
   const [isClicked, setIsClicked] = useState(false);
+
   return (
     <form>
       <div className="flex items-center justify-start hover:bg-lightPurple text-black text-400 py-3 px-3">

@@ -25,3 +25,7 @@ body {
     )
     rgb(var(--background-start-rgb));
 }
+
+.FormLabel[data-invalid] {
+  border: solid red 1px;
+}
