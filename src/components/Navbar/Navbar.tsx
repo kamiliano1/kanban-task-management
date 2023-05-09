@@ -8,6 +8,7 @@ import ButtonPrimaryLarge from "../Layout/Input/Button/ButtonPrimaryLarge";
 import ButtonPrimarySmall from "../Layout/Input/Button/ButtonPrimarySmall";
 import ButtonSecondary from "../Layout/Input/Button/ButtonSecondary";
 import ButtonDestructive from "../Layout/Input/Button/ButtonDestructive";
+import ThemeSwitcher from "../Layout/Input/ThemeSwitcher";
 
 type NavbarProps = {};
 
@@ -35,6 +36,7 @@ const Navbar: React.FC<NavbarProps> = () => {
       <ButtonPrimarySmall />
       <ButtonSecondary darkMode={darkMode} />
       <ButtonDestructive />
+      <ThemeSwitcher darkMode={darkMode} />
     </div>
   );
 };

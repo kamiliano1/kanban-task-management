@@ -3,6 +3,8 @@ import React from "react";
 type ButtonSecondaryProps = { darkMode: boolean };
 
 const ButtonSecondary: React.FC<ButtonSecondaryProps> = ({ darkMode }) => {
+  console.log(darkMode, "button");
+
   return (
     <button
       className={`bg-white text-purple py-2 px-20 rounded-3xl text-500 ${
