@@ -12,7 +12,7 @@ const DropMenu: React.FC<DropMenuProps> = ({ darkMode }) => {
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>
         <div
-          className={`flex items-center cursor-pointer  px-4 py-2 w-[300px] 
+          className={`flex items-center cursor-pointer  px-4 py-2 
         rounded-[4px] border-[1px] border-[rgba(130,_143,_163,_0.25)] hover:border-purple 
         justify-between ${darkMode ? "text-white" : "text-black"}`}
         >
