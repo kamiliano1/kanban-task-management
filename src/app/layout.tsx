@@ -1,3 +1,5 @@
+"use client";
+import { RecoilRoot } from "recoil";
 import "./globals.css";
 import { Plus_Jakarta_Sans } from "next/font/google";
 
@@ -18,7 +20,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={plusJakartaSans.className}>{children}</body>
+      <RecoilRoot>
+        <body className={plusJakartaSans.className}>{children}</body>
+      </RecoilRoot>
     </html>
   );
 }

@@ -1,36 +1,35 @@
-import React from "react";
+import React, { useState } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import ButtonPrimaryBoards from "../Layout/Input/Button/ButtonPrimaryBoards";
+import ThemeSwitcher from "../Layout/Input/ThemeSwitcher";
+import { modalState } from "../../atoms/modalAtom";
+import { useRecoilState } from "recoil";
 type AllBoardsMobileModalProps = {};
-const wait = () => new Promise((resolve) => setTimeout(resolve, 1000));
 const AllBoardsMobileModal: React.FC<AllBoardsMobileModalProps> = () => {
-  const [open, setOpen] = React.useState(false);
+  const [boardState, setBoardState] = useRecoilState(modalState);
+  const [open, setOpen] = useState(false);
   return (
-    <Dialog.Root open={open} onOpenChange={setOpen}>
-      <Dialog.Trigger asChild>
-        <button
-          className="text-black shadow-blackA7 
-        hover:bg-mauve3 inline-flex h-[35px] items-center justify-center rounded-[4px]
-         bg-white px-[15px] font-medium leading-none shadow-[0_2px_10px] focus:shadow-[0_0_0_2px] focus:shadow-black focus:outline-none"
-        >
-          Edit profile
-        </button>
-      </Dialog.Trigger>
-      <Dialog.Portal>
-        <Dialog.Content
-          className="data-[state=open]:animate-contentShow absolute top-[30%] left-[50%] max-h-[85vh] 
-        w-[90vw] max-w-[450px] translate-x-[-50%] translate-y-[-50%] rounded-[6px]
-         bg-darkGrey 
-         shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px] 
-         focus:outline-none"
-        >
-          <Dialog.Title className="text-mediumGrey text-400">
+    <Dialog.Portal>
+      <Dialog.Overlay className="data-[state=open]:animate-overlayShow bg-black opacity-50 fixed inset-0" />
+
+      <Dialog.Content
+        className="data-[state=open]:animate-contentShow absolute top-[86px] left-[calc(50%-155px)]
+        max-w-[264px] 
+          rounded-[6px]
+        bg-darkGrey p-[25px] shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px] focus:outline-none"
+      >
+        <div className="flex flex-col pr-6">
+          <Dialog.Title className="text-mediumGrey text-400 tracking-[2.4px]  px-6 pb-4">
             ALL BOARDS (3)
           </Dialog.Title>
           <ButtonPrimaryBoards buttonLabel="Platform Launch" />
-        </Dialog.Content>
-      </Dialog.Portal>
-    </Dialog.Root>
+          <ButtonPrimaryBoards buttonLabel="Marketing Plan" />
+          <ButtonPrimaryBoards buttonLabel="RoadMap" />
+          <ButtonPrimaryBoards buttonLabel="RoadMap" />
+        </div>
+        <ThemeSwitcher darkMode={true} />
+      </Dialog.Content>
+    </Dialog.Portal>
   );
 };
 export default AllBoardsMobileModal;
