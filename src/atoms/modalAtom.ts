@@ -10,7 +10,9 @@ export interface ModalState {
     | "editBoard"
     | "allBoardsMobile"
     | "deleteBoard"
-    | "deleteTask";
+    | "deleteTask"
+    | "register"
+    | "login";
 }
 
 const defaultModalState: ModalState = {

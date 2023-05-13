@@ -5,7 +5,7 @@ type TextAreaProps = { darkMode: boolean };
 
 const TextArea: React.FC<TextAreaProps> = ({ darkMode }) => {
   return (
-    <Form.Root className="w-[295px] text-500">
+    <Form.Root className=" text-500">
       <Form.Field className="grid relative " name="name">
         <div className="flex items-baseline justify-between  relative">
           <Form.Label className={`pb-2 ${!darkMode && "text-mediumGrey"}`}>
@@ -28,9 +28,7 @@ const TextArea: React.FC<TextAreaProps> = ({ darkMode }) => {
                              : "text-black placeholder:text-black"
                          }`}
             required
-            placeholder="e.g. It`s always good to take a break. This 
-            15 minute break will  recharge the batteries 
-            a little."
+            placeholder="e.g. It`s always good to take a break. This 15 minute break will recharge the batteries a little."
           />
         </Form.Control>
       </Form.Field>
