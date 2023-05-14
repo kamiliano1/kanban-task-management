@@ -88,6 +88,9 @@ module.exports = {
       ],
     },
     extend: {
+      screens: {
+        sm: "768px",
+      },
       keyframes: {
         overlayShow: {
           from: { opacity: 0 },
@@ -119,6 +122,14 @@ module.exports = {
             top: "-320px",
           },
         },
+        sliderOpen: {
+          from: { transform: "translateX(-100%)" },
+          to: { transform: "translateX(0)" },
+        },
+        sliderClose: {
+          from: { transform: "translateX(0)" },
+          to: { transform: "translateX(-100%)" },
+        },
       },
       animation: {
         overlayShow: "overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1)",
@@ -126,6 +137,8 @@ module.exports = {
         boardMobileShow: "boardMobileShow 1000ms cubic-bezier(0.16, 1, 0.3, 1)",
         boardMobileHidden:
           "boardMobileHidden 1000ms cubic-bezier(0.16, 1, 0.3, 1)",
+        sliderOpen: "sliderOpen 1000ms cubic-bezier(0.16, 1, 0.3, 1)",
+        sliderClose: "sliderClose 1000ms cubic-bezier(0.16, 1, 0.3, 1)",
       },
     },
   },

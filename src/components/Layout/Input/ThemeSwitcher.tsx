@@ -11,7 +11,7 @@ const ThemeSwitcher: React.FC<ThemeSwitcherProps> = () => {
   const darkMode = settingState.darkMode;
   return (
     <div
-      className={`flex items-center gap-x-6 bg-veryDarkGrey 
+      className={`flex items-center gap-x-6 bg-veryDarkGrey sm:mt-auto
     rounded-md py-[.875rem]  justify-center my-4 mx-4 ${
       darkMode ? "bg-purple" : "bg-white"
     }`}

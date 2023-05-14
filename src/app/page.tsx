@@ -5,6 +5,8 @@ import Navbar from "../components/Navbar/Navbar";
 import Modal from "../components/Modal/Modal";
 import { settingsState } from "../atoms/settingsModal";
 import { useRecoilState } from "recoil";
+import ButtonPrimaryBoards from "../components/Layout/Input/Button/ButtonPrimaryBoards";
+import SidebarOpenButton from "../components/Sidebar/SidebarOpenButton";
 
 export default function Home() {
   const [settingState, setSettingState] = useRecoilState(settingsState);
@@ -12,7 +14,8 @@ export default function Home() {
     <main className="">
       {/* <RegisterModal /> */}
       <Navbar />
-      <Modal darkMode={settingState.darkMode} />
+      <Modal />
+      <SidebarOpenButton />
     </main>
   );
 }

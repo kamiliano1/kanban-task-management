@@ -10,11 +10,9 @@ import ViewTaskModal from "./ViewTaskModal";
 import AllBoardsMobileModal from "./AllBoardsMobileModal";
 import { settingsState } from "@/src/atoms/settingsModal";
 
-type ModalProps = {
-  darkModee: boolean;
-};
+type ModalProps = {};
 
-const Modal: React.FC<ModalProps> = ({ darkModee }) => {
+const Modal: React.FC<ModalProps> = () => {
   const [modalsState, setModalsState] = useRecoilState(modalState);
   const settingState = useRecoilValue(settingsState);
   const activeModal = modalsState.view;

@@ -21,6 +21,8 @@ import { modalState } from "../../atoms/modalAtom";
 import { settingsState } from "../../atoms/settingsModal";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { nanoid } from "nanoid";
+import { boardMobileModalState } from "../../atoms/boardsMobileModalAtom";
+import Sidebar from "../Sidebar/Sidebar";
 type NavbarProps = {};
 
 const Navbar: React.FC<NavbarProps> = () => {
@@ -36,21 +38,24 @@ const Navbar: React.FC<NavbarProps> = () => {
       window.removeEventListener("resize", handleWindowResize);
     };
   }, []);
-
+  const [boardMobileModalStates, setBoardMobileModalStates] = useRecoilState(
+    boardMobileModalState
+  );
   const [staraData, setStaraData] = useState([""]);
   const [ladowanieDanych, setLdowanieDanych] = useState([""]);
   const [darkMode, setDarMode] = useState<boolean>(true);
   const [modalsState, setModalsState] = useRecoilState(modalState);
-  const settingState = useRecoilValue(settingsState);
+  const [settingState, setSettingState] = useRecoilState(settingsState);
   useEffect(() => {
     if (windowWidth < 768) {
       setActiveLogo(logoMobile);
     } else {
+      setBoardMobileModalStates({ open: false });
       settingState.darkMode
         ? setActiveLogo(logoLight)
         : setActiveLogo(logoDark);
     }
-  }, [settingState.darkMode, windowWidth]);
+  }, [setBoardMobileModalStates, settingState.darkMode, windowWidth]);
 
   const fetchData = () => {
     fetch("data/data.json")
@@ -93,18 +98,39 @@ const Navbar: React.FC<NavbarProps> = () => {
   return (
     <div>
       <div
-        className={`flex items-center relative p-4 sm:px-6 sm:py-0  ${
+        className={`flex items-center relative p-4 sm:p-0 sm:py-0  ${
           settingState.darkMode ? "bg-darkGrey" : "bg-white"
         }`}
       >
-        <Image src={activeLogo} alt="KanbanLogo" className="mr-4"></Image>
+        <div className="w-[clamp(261px,_23vw,_300px)] ">
+          <Image
+            src={activeLogo}
+            alt="KanbanLogo"
+            className="mr-4 sm:ml-6 lg:ml-8"
+          ></Image>
+        </div>
+        <div
+          className={`hidden sm:block fixed h-[100vh] left-0 top-0 z-[-1] mt-[clamp(81px,_18vw,_97px)]
+         w-[clamp(261px,_23vw,_300px)] border-r-[1px] sm:pt-7 -translate-x-[100%]e 
+         ${
+           settingState.isSidebarOpen
+             ? "animate-sliderOpen"
+             : "-translate-x-[100%] animate-sliderClose"
+         } ${
+            settingState.darkMode
+              ? "bg-darkGrey border-linesDark"
+              : "bg-white border-linesLight"
+          }`}
+        >
+          <Sidebar />
+        </div>
         <span
-          className={`hidden sm:inline-block w-[1px] h-[80px] mr-4  ${
+          className={`hidden sm:inline-block w-[1px] h-[clamp(81px,_18vw,_97px)] mr-4  ${
             settingState.darkMode ? "bg-linesDark" : "bg-linesLight"
           }`}
         ></span>
         <h1
-          className={`mr-2 text-900-mobile ${
+          className={` mr-2 text-900-mobile sm:mr-auto ${
             !settingState.darkMode && "text-black"
           }`}
         >
@@ -120,32 +146,40 @@ const Navbar: React.FC<NavbarProps> = () => {
         >
           Open
         </button>
+        <button
+          className="p-5 bg-lightPurple"
+          onClick={() =>
+            setSettingState((prev) => ({
+              ...prev,
+              isSidebarOpen: !settingState.isSidebarOpen,
+            }))
+          }
+        >
+          SideBar
+        </button>
         {/* <button onClick={fetchData}>Data</button>
         <button onClick={aktualizaDanych}>Daner</button> */}
         <MdKeyboardArrowDown
-          className={`text-purple mr-auto ${
-            !modalsState.open &&
-            modalsState.view === "allBoardsMobile" &&
-            "rotate-180"
+          className={`text-purple mr-auto sm:hidden ${
+            !boardMobileModalStates.open && "rotate-180"
           }
           
-          duration-[200ms] 
+          duration-[200ms]
           rotate-0 will-change-transform`}
           onClick={() =>
-            setModalsState({
-              view: "allBoardsMobile",
-              open: !modalsState.open,
+            setBoardMobileModalStates({
+              open: !boardMobileModalStates.open,
             })
           }
         />
-        {/* <AllBoardsMobileModal /> */}
+        <AllBoardsMobileModal darkMode={darkMode} />
 
         <ButtonPrimarySmall
           buttonLabel={windowWidth > 768 ? "+ Add New Task" : "+"}
         />
-        <BiDotsVerticalRounded className="text-mediumGrey ml-4" />
+        <BiDotsVerticalRounded className="text-mediumGrey ml-4 sm:mr-6 lg:mr-8" />
       </div>
-      <div className="hidden sm:block fixed h-[100vh] bg-darkGrey w-[193px] border-r-[1px] border-[hsl(236_11%_27%)]"></div>
+      {/* <div className="hidden sm:block fixed h-[100vh] bg-darkGrey w-[193px] border-r-[1px] border-[hsl(236_11%_27%)]"></div> */}
     </div>
   );
 };
