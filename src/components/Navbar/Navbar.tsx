@@ -100,17 +100,15 @@ const Navbar: React.FC<NavbarProps> = () => {
       <div
         className={`flex items-center relative p-4 sm:p-0 sm:py-0  ${
           settingState.darkMode ? "bg-darkGrey" : "bg-white"
-        }`}
-      >
+        }`}>
         <div className="w-[clamp(261px,_23vw,_300px)] ">
           <Image
             src={activeLogo}
             alt="KanbanLogo"
-            className="mr-4 sm:ml-6 lg:ml-8"
-          ></Image>
+            className="mr-4 sm:ml-6 lg:ml-8"></Image>
         </div>
         <div
-          className={`hidden sm:block fixed h-[100vh] left-0 top-0 z-[-1] mt-[clamp(81px,_18vw,_97px)]
+          className={`hidden sm:block fixed z-[5] h-[100vh] left-0 top-0 mt-[clamp(81px,_18vw,_97px)]
          w-[clamp(261px,_23vw,_300px)] border-r-[1px] sm:pt-7 -translate-x-[100%]e 
          ${
            settingState.isSidebarOpen
@@ -120,20 +118,17 @@ const Navbar: React.FC<NavbarProps> = () => {
             settingState.darkMode
               ? "bg-darkGrey border-linesDark"
               : "bg-white border-linesLight"
-          }`}
-        >
+          }`}>
           <Sidebar />
         </div>
         <span
           className={`hidden sm:inline-block w-[1px] h-[clamp(81px,_18vw,_97px)] mr-4  ${
             settingState.darkMode ? "bg-linesDark" : "bg-linesLight"
-          }`}
-        ></span>
+          }`}></span>
         <h1
           className={` mr-2 text-900-mobile sm:mr-auto ${
             !settingState.darkMode && "text-black"
-          }`}
-        >
+          }`}>
           Platform Launch
         </h1>
         <button
@@ -142,8 +137,7 @@ const Navbar: React.FC<NavbarProps> = () => {
               view: "viewTask",
               open: !modalsState.open,
             })
-          }
-        >
+          }>
           Open
         </button>
         <button
@@ -153,8 +147,7 @@ const Navbar: React.FC<NavbarProps> = () => {
               ...prev,
               isSidebarOpen: !settingState.isSidebarOpen,
             }))
-          }
-        >
+          }>
           SideBar
         </button>
         {/* <button onClick={fetchData}>Data</button>

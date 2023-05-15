@@ -12,7 +12,7 @@ const Sidebar: React.FC<SidebarProps> = () => {
   const [settingState, setSettingState] = useRecoilState(settingsState);
   return (
     <div
-      className="flex flex-col pr-6 h-[calc(100vh_-_173px)]"
+      className="flex flex-col z-[5] pr-6 h-[calc(100vh_-_173px)]"
       //   onClick={() =>
       //     setSettingState((prev) => ({
       //       ...prev,
@@ -20,7 +20,9 @@ const Sidebar: React.FC<SidebarProps> = () => {
       //     }))
       //   }
     >
-      <h2 className="text-mediumGrey text-400 tracking-[2.4px] sm:px-6 py-4 lg:pl-8">
+      <h2
+        className="text-mediumGrey text-400 tracking-[2.4px] 
+      sm:px-6 py-4 lg:pl-8">
         ALL BOARDS (3)
       </h2>
       <ButtonPrimaryBoards buttonLabel="Platform Launch" />

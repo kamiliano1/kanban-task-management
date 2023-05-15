@@ -7,6 +7,7 @@ import { settingsState } from "../atoms/settingsModal";
 import { useRecoilState } from "recoil";
 import ButtonPrimaryBoards from "../components/Layout/Input/Button/ButtonPrimaryBoards";
 import SidebarOpenButton from "../components/Sidebar/SidebarOpenButton";
+import Board from "../components/Board/Board";
 
 export default function Home() {
   const [settingState, setSettingState] = useRecoilState(settingsState);
@@ -16,6 +17,7 @@ export default function Home() {
       <Navbar />
       <Modal />
       <SidebarOpenButton />
+      <Board />
     </main>
   );
 }

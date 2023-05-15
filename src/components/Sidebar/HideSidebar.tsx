@@ -13,7 +13,7 @@ const HideSidebar: React.FC<HideSidebarProps> = () => {
       onClick={() =>
         setSettingState((prev) => ({
           ...prev,
-          isSidebarOpen: !settingState.isSidebarOpen,
+          isSidebarOpen: false,
         }))
       }
       className={`text-mediumGrey py-3 cursor-pointer flex items-center gap-x-4 sm:px-6
