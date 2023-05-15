@@ -9,8 +9,8 @@ const SidebarOpenButton: React.FC<SidebarOpenButtonProps> = () => {
   const [settingState, setSettingState] = useRecoilState(settingsState);
   return (
     <button
-      className={`bg-purple flex items-center py-3 px-5 absolute bottom-[calc(0px_+_32px)] rounded-[0px_100px_100px_0px] text-700
-     hover:bg-lightPurple disabled:opacity-25 z-[-2]`}
+      className={`hidden bg-purple sm:flex items-center py-3 px-5 bottom-[calc(0px_+_32px)] rounded-[0px_100px_100px_0px] text-700
+     hover:bg-lightPurple disabled:opacity-25 fixed`}
       onClick={() =>
         setSettingState((prev) => ({
           ...prev,

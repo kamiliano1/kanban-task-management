@@ -9,6 +9,8 @@ import EditTaskModal from "./EditTaskModal";
 import ViewTaskModal from "./ViewTaskModal";
 import AllBoardsMobileModal from "./AllBoardsMobileModal";
 import { settingsState } from "@/src/atoms/settingsModal";
+import { boardMobileModalState } from "../../atoms/boardsMobileModalAtom";
+import AddBoardModal from "./AddBoardModal";
 
 type ModalProps = {};
 
@@ -27,11 +29,17 @@ const Modal: React.FC<ModalProps> = () => {
         }));
       }}
     >
+      <Dialog.Overlay
+        className="
+        bg-black opacity-50 fixed inset-0 z-[10]
+        "
+      />
       {activeModal === "editTask" && <EditTaskModal darkMode={darkMode} />}
       {activeModal === "viewTask" && <ViewTaskModal darkMode={darkMode} />}
-      {activeModal === "allBoardsMobile" && (
+      {activeModal === "addBoard" && <AddBoardModal darkMode={darkMode} />}
+      {/* {activeModal === "allBoardsMobile" && (
         <AllBoardsMobileModal darkMode={darkMode} />
-      )}
+      )} */}
       {/* <Dialog.Trigger>
         <button className="">Edit profile</button>
       </Dialog.Trigger> */}

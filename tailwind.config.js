@@ -131,11 +131,11 @@ module.exports = {
           to: { transform: "translateX(-100%)" },
         },
         boardPaddingOpen: {
-         from: { transform: "translateX(0)" },
+          from: { transform: "translateX(0)" },
           to: { transform: "translateX(-100%)" },
         },
         boardPaddingClose: {
-          from: { paddingRight: "24px"  },
+          from: { paddingRight: "24px" },
           to: { paddingRight: "clamp(285px,23vw,324px)" },
         },
       },
@@ -147,8 +147,10 @@ module.exports = {
           "boardMobileHidden 1000ms cubic-bezier(0.16, 1, 0.3, 1)",
         sliderOpen: "sliderOpen 1000ms cubic-bezier(0.16, 1, 0.3, 1)",
         sliderClose: "sliderClose 1000ms cubic-bezier(0.16, 1, 0.3, 1)",
-        boardPaddingOpen: "boardPaddingOpen 5000ms cubic-bezier(0.16, 1, 0.3, 1)",
-        boardPaddingClose: "boardPaddingClose 5000ms cubic-bezier(0.16, 1, 0.3, 1)",
+        boardPaddingOpen:
+          "boardPaddingOpen 5000ms cubic-bezier(0.16, 1, 0.3, 1)",
+        boardPaddingClose:
+          "boardPaddingClose 5000ms cubic-bezier(0.16, 1, 0.3, 1)",
       },
     },
   },

@@ -3,9 +3,9 @@ import { BiHide } from "react-icons/bi";
 import { settingsState } from "../../atoms/settingsModal";
 import { useRecoilState, useRecoilValue } from "recoil";
 
-type HideSidebarProps = {};
+type HideSidebarButtonProps = {};
 
-const HideSidebar: React.FC<HideSidebarProps> = () => {
+const HideSidebarButton: React.FC<HideSidebarButtonProps> = () => {
   const [settingState, setSettingState] = useRecoilState(settingsState);
   const darkMode = settingState.darkMode;
   return (
@@ -19,13 +19,14 @@ const HideSidebar: React.FC<HideSidebarProps> = () => {
       className={`text-mediumGrey py-3 cursor-pointer flex items-center gap-x-4 sm:px-6
     lg:pl-8 rounded-[0px_100px_100px_0px] hover:text-purple ${
       darkMode ? "hover:bg-white" : "hover:bg-purple hover:bg-opacity-10"
-    } `}>
+    } `}
+    >
       <BiHide />
       <p>Hide Sidebar</p>
     </div>
   );
 };
-export default HideSidebar;
+export default HideSidebarButton;
 
 // import React from 'react';
 // import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
