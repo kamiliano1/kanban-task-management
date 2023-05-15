@@ -7,6 +7,7 @@ type HideSidebarProps = {};
 
 const HideSidebar: React.FC<HideSidebarProps> = () => {
   const [settingState, setSettingState] = useRecoilState(settingsState);
+  const darkMode = settingState.darkMode;
   return (
     <div
       onClick={() =>
@@ -15,9 +16,10 @@ const HideSidebar: React.FC<HideSidebarProps> = () => {
           isSidebarOpen: !settingState.isSidebarOpen,
         }))
       }
-      className="text-mediumGrey cursor-pointer flex items-center gap-x-4 sm:px-6
-    lg:pl-8"
-    >
+      className={`text-mediumGrey py-3 cursor-pointer flex items-center gap-x-4 sm:px-6
+    lg:pl-8 rounded-[0px_100px_100px_0px] hover:text-purple ${
+      darkMode ? "hover:bg-white" : "hover:bg-purple hover:bg-opacity-10"
+    } `}>
       <BiHide />
       <p>Hide Sidebar</p>
     </div>

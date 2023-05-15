@@ -4,6 +4,7 @@ import ThemeSwitcher from "../Layout/Input/ThemeSwitcher";
 import HideSidebar from "./HideSidebar";
 import { settingsState } from "../../atoms/settingsModal";
 import { useRecoilState, useRecoilValue } from "recoil";
+import ButtonAddBoard from "../Layout/Input/Button/ButtonAddBoard";
 
 type SidebarProps = {};
 
@@ -25,7 +26,7 @@ const Sidebar: React.FC<SidebarProps> = () => {
       <ButtonPrimaryBoards buttonLabel="Platform Launch" />
       <ButtonPrimaryBoards buttonLabel="Marketing Plan" />
       <ButtonPrimaryBoards buttonLabel="RoadMap" />
-      <ButtonPrimaryBoards buttonLabel="RoadMap" />
+      <ButtonAddBoard />
       <ThemeSwitcher />
       {/* <h1 className=" bg-red text-[5rem] mt-auto">aa</h1> */}
       <HideSidebar />
