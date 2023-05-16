@@ -1,14 +1,20 @@
 import React from "react";
 
-type ButtonPrimarySmallProps = { buttonLabel: string };
+type ButtonPrimarySmallProps = {
+  buttonLabel: string;
+  buttonAction: () => void;
+};
 
 const ButtonPrimarySmall: React.FC<ButtonPrimarySmallProps> = ({
   buttonLabel,
+  buttonAction,
 }) => {
   return (
     <button
-      disabled
-      className="bg-purple py-1 px-5 rounded-3xl text-500 hover:bg-lightPurple disabled:opacity-25"
+      onClick={buttonAction}
+      className="bg-purple rounded-3xl text-500 py-2
+     hover:bg-lightPurple disabled:opacity-25 inline-block
+     w-full"
     >
       {buttonLabel}
     </button>

@@ -1,17 +1,23 @@
 import React from "react";
 
-type ButtonSecondaryProps = { darkMode: boolean };
+type ButtonSecondaryProps = {
+  darkMode: boolean;
+  buttonLabel: string;
+  cssClasses: string;
+};
 
-const ButtonSecondary: React.FC<ButtonSecondaryProps> = ({ darkMode }) => {
-  console.log(darkMode, "button");
-
+const ButtonSecondary: React.FC<ButtonSecondaryProps> = ({
+  darkMode,
+  buttonLabel,
+  cssClasses,
+}) => {
   return (
     <button
-      className={`bg-white text-purple py-2 px-20 rounded-3xl text-500 ${
+      className={`bg-white text-purple rounded-3xl mb-4 text-500 inline-block py-2 w-full ${cssClasses} ${
         !darkMode && "hover:bg-[rgba(99,_95,_199,_0.25)]"
       }`}
     >
-      Priamry Small
+      {buttonLabel}
     </button>
   );
 };

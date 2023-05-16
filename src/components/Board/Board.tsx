@@ -33,38 +33,31 @@ const Board: React.FC<BoardProps> = () => {
     setActivatedBoard(
       boardState.filter((board) => board.name === activeBoard)[0]
     );
-    console.log(activatedBoard, "aa");
+    // console.log(activatedBoard, "aa");
   }, [settingState]);
 
-  const activatedColumns = activatedBoard.columns.map((item) => (
-    <BoardColumn columnNamme={item.name} />
-  ));
+  const activatedColumns = activatedBoard
+    ? activatedBoard.columns.map((item) => (
+        <BoardColumn
+          key={item.name}
+          columnNamme={item.name}
+          tasks={item.tasks}
+          taskQty={item.tasks.length}
+        />
+      ))
+    : [];
   return (
     <div
       className={`${
         darkMode ? "bg-veryDarkGrey" : "bg-white"
-      } w-full flex gap-x-6 z-[-300] overflow-x-auto
-    h-full pt-6 pl-6 ${
+      } w-full flex z-[-300] overflow-x-auto
+    h-full pt-6 ${
       settingState.isSidebarOpen
-        ? "pl-[clamp(285px,_23vw,_324px)] animate-boardPaddingOpenn"
-        : "pl-6 animate-boardPaddingClosen"
-    }`}>
+        ? "pl-[clamp(285px,_23vw,_300px)] animate-boardPaddingOpenn"
+        : " animate-boardPaddingClosen"
+    }`}
+    >
       {activatedColumns}
-      {/* <BoardColumn />
-      <BoardColumn />
-      <BoardColumn />
-      <BoardColumn />
-      <BoardColumn />
-      <BoardColumn />
-      <BoardColumn />
-      <BoardColumn />
-      <BoardColumn />
-      <BoardColumn />
-      <BoardColumn />
-      <BoardColumn />
-      <BoardColumn />
-      <BoardColumn />
-      <BoardColumn /> */}
     </div>
   );
 };
