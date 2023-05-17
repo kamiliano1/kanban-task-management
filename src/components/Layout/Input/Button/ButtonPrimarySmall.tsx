@@ -11,6 +11,7 @@ const ButtonPrimarySmall: React.FC<ButtonPrimarySmallProps> = ({
 }) => {
   return (
     <button
+      type="submit"
       onClick={buttonAction}
       className="bg-purple rounded-3xl text-500 py-2
      hover:bg-lightPurple disabled:opacity-25 inline-block

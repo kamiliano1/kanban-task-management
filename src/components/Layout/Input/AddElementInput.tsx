@@ -1,13 +1,25 @@
 import React from "react";
 import * as Form from "@radix-ui/react-form";
 import { AiOutlineClose } from "react-icons/ai";
+import { ColumnType } from "../../Board/BoardType";
+import { useForm } from "react-hook-form";
 type AddElementInputProps = {
   darkMode: boolean;
+  column: ColumnType;
 };
 
-const AddElementInput: React.FC<AddElementInputProps> = ({ darkMode }) => {
+const AddElementInput: React.FC<AddElementInputProps> = ({
+  darkMode,
+  column,
+}) => {
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm();
   return (
-    <Form.Root className=" text-500">
+    <Form.Root className="text-500">
       <Form.Field className="grid relative" name="name">
         <div className="flex items-baseline justify-between relative ">
           <Form.Message
@@ -27,8 +39,7 @@ const AddElementInput: React.FC<AddElementInputProps> = ({ darkMode }) => {
                  ? "text-white bg-[#2B2C37] placeholder:text-white"
                  : "text-black placeholder:text-black"
              }`}
-              type="text"
-              required
+              {...register("column.id", { required: true })}
               placeholder={"placeholder"}
             />
             <AiOutlineClose className="text-[.95rem] ml-4 text-mediumGrey cursor-pointer hover:text-lightGrey" />

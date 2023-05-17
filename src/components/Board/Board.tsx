@@ -1,13 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { settingsState } from "../../atoms/settingsModal";
-import {
-  BoardType,
-  BoardsAtom,
-  ColumnType,
-  boardsState,
-} from "../../atoms/boardsAtom";
+import { BoardsAtom, boardsState } from "../../atoms/boardsAtom";
 import { useRecoilState, useRecoilValue } from "recoil";
 import BoardColumn from "./BoardColumn";
+import { BoardType } from "./BoardType";
 
 type BoardProps = {};
 
