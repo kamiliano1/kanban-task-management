@@ -7,29 +7,51 @@ import TextArea from "../Layout/Input/TextArea";
 import ButtonSecondary from "../Layout/Input/Button/ButtonSecondary";
 import ButtonPrimarySmall from "../Layout/Input/Button/ButtonPrimarySmall";
 import AddElementInput from "../Layout/Input/AddElementInput";
-import { BoardType } from "../Board/BoardType";
+// import { BoardType } from "../Board/BoardType";
 import { nanoid } from "nanoid";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import * as Form from "@radix-ui/react-form";
+import { BoardType, ColumnType } from "@/src/atoms/boardsAtom";
 type AddBoardModalProps = {
   darkMode: boolean;
 };
 interface IFormInputs {
-  TextField: string;
-  MyCheckbox: boolean;
+  name: string;
+  namee: string;
+  columns: ColumnType[];
 }
+// eslint-disable-next-line react-hooks/rules-of-hooks
 const AddBoardModal: React.FC<AddBoardModalProps> = ({ darkMode }) => {
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm<IFormInputs>();
   const [newBoard, setNewBoard] = useState<BoardType>({
     name: "",
     id: nanoid(),
     columns: [],
   });
-  const onSubmit: SubmitHandler<IFormInputs> = (data) => console.log(data);
-  const { handleSubmit, control, reset } = useForm<IFormInputs>({
-    defaultValues: {
-      MyCheckbox: false,
-    },
-  });
+  const onSubmit: SubmitHandler<IFormInputs> = (data) => {
+    console.log(data);
+    setNewBoard((prev) => ({ ...prev, name: data.name }));
+    console.log(newBoard);
+  };
+
+  const addColumn = () => {
+    setNewBoard((prev) => ({
+      ...prev,
+      columns: [...prev.columns, { name: "", id: nanoid(), tasks: [] }],
+    }));
+
+    console.log(newBoard);
+  };
+
+  const columns = newBoard.columns.map((item) => (
+    <AddElementInput key={item.id} darkMode={darkMode} />
+  ));
+
   return (
     <Dialog.Portal>
       <Dialog.Content
@@ -38,11 +60,11 @@ const AddBoardModal: React.FC<AddBoardModalProps> = ({ darkMode }) => {
        darkMode ? "bg-darkGrey" : "bg-white"
      }
       p-[25px] shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px]
-      focus:outline-none`}
-      >
+      focus:outline-none`}>
         <Dialog.Title
-          className={` ${darkMode ? "text-white" : "text-black"} text-800 pb-4`}
-        >
+          className={` ${
+            darkMode ? "text-white" : "text-black"
+          } text-800 pb-4`}>
           Add New Board
         </Dialog.Title>
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -50,14 +72,12 @@ const AddBoardModal: React.FC<AddBoardModalProps> = ({ darkMode }) => {
             <Form.Field className="grid relative" name="name">
               <div className="flex items-baseline justify-between relative ">
                 <Form.Label
-                  className={`pb-2 ${!darkMode && "text-mediumGrey"}`}
-                >
+                  className={`pb-2 ${!darkMode && "text-mediumGrey"}`}>
                   {"title"}
                 </Form.Label>
                 <Form.Message
                   className="text-red text-500 pr-2 absolute top-[40px] left-[70%]"
-                  match="valueMissing"
-                >
+                  match="valueMissing">
                   Can`t be empty
                 </Form.Message>
               </div>
@@ -70,27 +90,27 @@ const AddBoardModal: React.FC<AddBoardModalProps> = ({ darkMode }) => {
                  ? "text-white bg-[#2B2C37] placeholder:text-white"
                  : "text-black placeholder:text-black"
              }`}
-                  type="text"
-                  required
-                  placeholder={"placeholder"}
+                  {...register("name", { required: true })}
                 />
               </Form.Control>
             </Form.Field>
           </Form.Root>
-
+          {errors.name && <span>Name</span>}
+          {/* {errors.namee && <span>Namee</span>} */}
           <button type="submit">SUBMIT </button>
 
           <Dialog.Description>
             <h3 className="text-400 pb-2">Boards Columns</h3>
-            <AddElementInput darkMode={darkMode} />
-            <AddElementInput darkMode={darkMode} />
+            {columns}
           </Dialog.Description>
           <ButtonSecondary
             darkMode={darkMode}
             buttonLabel="+ Add New Column"
             cssClasses="mb-6"
+            buttonAction={addColumn}
           />
 
+          <button type="button">kkk</button>
           <Dialog.Close asChild>
             <ButtonPrimarySmall
               buttonLabel="Create New Board"
