@@ -15,8 +15,9 @@ const ButtonSecondary: React.FC<ButtonSecondaryProps> = ({
 }) => {
   return (
     <button
+      type="button"
       onClick={buttonAction}
-      className={`bg-white text-purple rounded-3xltext-500 inline-block py-2 w-full ${cssClasses} ${
+      className={`bg-white text-purple rounded-3xl text-500 inline-block py-2 w-full ${cssClasses} ${
         !darkMode && "hover:bg-[rgba(99,_95,_199,_0.25)]"
       }`}
     >
