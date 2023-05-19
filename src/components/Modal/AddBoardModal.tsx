@@ -18,7 +18,7 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import { BoardsAtom, boardsState } from "../../atoms/boardsAtom";
 import { modalState } from "@/src/atoms/modalAtom";
 
-const nanoid = customAlphabet("1234567890", 18);
+const nanoid = customAlphabet("1234567890", 2);
 // import { BoardType, ColumnType } from "@/src/atoms/boardsAtom";
 type AddBoardModalProps = {
   darkMode: boolean;
@@ -39,6 +39,8 @@ const AddBoardModal: React.FC<AddBoardModalProps> = ({ darkMode }) => {
     register,
     handleSubmit,
     watch,
+    setFocus,
+    reset,
     formState: { errors },
   } = useForm<IFormInputs>();
   const [newBoard, setNewBoard] = useState<BoardType>({
@@ -46,12 +48,13 @@ const AddBoardModal: React.FC<AddBoardModalProps> = ({ darkMode }) => {
     id: parseInt(nanoid()),
     columns: [],
   });
+  const myValue = watch("columns");
   const onSubmit: SubmitHandler<IFormInputs> = (data) => {
-    console.log(data);
-
     const columns = newBoard.columns.map((items, id) => {
-      return { ...items, name: data.columns[id].name };
+      // console.log(data);
+      return { ...items, name: data.columns[items.id].name };
     });
+    // console.log(columns), "data";
 
     setNewBoard((prev) => ({
       ...prev,
@@ -59,17 +62,19 @@ const AddBoardModal: React.FC<AddBoardModalProps> = ({ darkMode }) => {
       columns: columns,
     }));
     setBoardState((prev) => [...prev, newBoard]);
-    console.log(boardState, "nowa");
+    // console.log(boardState, "nowa");
   };
 
   const addColumn = () => {
+    const columnId = parseInt(nanoid());
+    console.log(myValue, "cols");
+    // console.log(myValue[0]);
+
     setNewBoard((prev) => ({
       ...prev,
-      columns: [
-        ...prev.columns,
-        { name: "", id: parseInt(nanoid()), tasks: [] },
-      ],
+      columns: [...prev.columns, { name: "", id: columnId, tasks: [] }],
     }));
+    // setFocus(`columns.${columnId}`);
 
     // console.log(newBoard);
   };
@@ -85,13 +90,13 @@ const AddBoardModal: React.FC<AddBoardModalProps> = ({ darkMode }) => {
   };
   useEffect(() => {
     setNewBoard({ name: "", id: parseInt(nanoid()), columns: [] }); // reset to default after close
-  }, [modalsState]);
+    reset({ name: "", columns: [] });
+  }, [modalsState, reset]);
   const AddInput: React.FC<AddElementInputProps> = ({ darkMode, column }) => {
     const deleteColumn = (columnId: number) => {
-      let kk = 9864;
       // console.log(errors);
       // console.log(errors.columns);
-      console.log(errors.columns?.[columnId]);
+      // console.log(errors.columns?.[columnId]);
 
       const updatedColumns = newBoard.columns.filter(
         (item) => item.id !== columnId
@@ -115,7 +120,6 @@ const AddBoardModal: React.FC<AddBoardModalProps> = ({ darkMode }) => {
          : "text-black placeholder:text-black"
      }`}
           {...register(`columns.${column.id}.name`, { required: true })}
-          placeholder={"column.id"}
         />
         {errors.columns?.[column.id] && (
           <span className="absolute text-red text-500 left-[65%] top-[.6rem]">
@@ -157,11 +161,11 @@ const AddBoardModal: React.FC<AddBoardModalProps> = ({ darkMode }) => {
        darkMode ? "bg-darkGrey" : "bg-white"
      }
       p-[25px] shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px]
-      focus:outline-none`}
-      >
+      focus:outline-none`}>
         <Dialog.Title
-          className={` ${darkMode ? "text-white" : "text-black"} text-800 pb-4`}
-        >
+          className={` ${
+            darkMode ? "text-white" : "text-black"
+          } text-800 pb-4`}>
           Add New Board
         </Dialog.Title>
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -194,6 +198,50 @@ const AddBoardModal: React.FC<AddBoardModalProps> = ({ darkMode }) => {
 
           <h3 className="text-400 pb-2 mt-6">Boards Columns</h3>
           {columns}
+          <div className="relative ">
+            <input
+              placeholder="e.g. Web Design"
+              className={`text-500 placeholder:text-black
+            FormLabel placeholder:opacity-25 px-4 py-2 rounded border-[1px]
+             ${
+               errors.name ? "border-red" : "border-[rgba(130,_143,_163,_0.25)]"
+             }
+              w-full ${
+                darkMode
+                  ? "text-white bg-[#2B2C37] placeholder:text-white"
+                  : "text-black placeholder:text-black"
+              }`}
+              {...register(`columns.${1}.name`, { required: true })}
+            />
+
+            {errors.columns?.[1] && (
+              <span className="absolute text-red text-500 left-[70%] top-[.6rem]">
+                Can`t be empty
+              </span>
+            )}
+          </div>
+          <div className="relative ">
+            <input
+              placeholder="e.g. Web Design"
+              className={`text-500 placeholder:text-black
+            FormLabel placeholder:opacity-25 px-4 py-2 rounded border-[1px]
+             ${
+               errors.name ? "border-red" : "border-[rgba(130,_143,_163,_0.25)]"
+             }
+              w-full ${
+                darkMode
+                  ? "text-white bg-[#2B2C37] placeholder:text-white"
+                  : "text-black placeholder:text-black"
+              }`}
+              {...register(`columns.${2}.name`, { required: true })}
+            />
+
+            {errors.columns?.[2] && (
+              <span className="absolute text-red text-500 left-[70%] top-[.6rem]">
+                Can`t be empty
+              </span>
+            )}
+          </div>
 
           <ButtonSecondary
             darkMode={darkMode}

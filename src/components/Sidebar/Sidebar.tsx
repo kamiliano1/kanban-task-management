@@ -17,7 +17,7 @@ const Sidebar: React.FC<SidebarProps> = () => {
   ));
   return (
     <div
-      className={`hidden sm:block fixed h-[100vh] left-0 top-0 z-[5] 
+      className={`hiddenn sm:block fixed h-[100vh] left-0 top-0 z-[5] 
 
 w-[clamp(261px,_23vw,_300px)] border-r-[1px] sm:pt-[clamp(81px,_18vw,_97px)]
 ${
@@ -27,13 +27,11 @@ ${
         settingState.darkMode
           ? "bg-darkGrey border-linesDark"
           : "bg-white border-linesLight"
-      }`}
-    >
+      }`}>
       <div className="flex flex-col z-[5] pr-6 h-[calc(100vh_-_173px)]">
         <h2
           className="text-mediumGrey text-400 tracking-[2.4px] 
-      sm:px-6 py-4 lg:pl-8"
-        >
+      sm:px-6 py-4 lg:pl-8">
           ALL BOARDS (3)
         </h2>
         {boardList}
