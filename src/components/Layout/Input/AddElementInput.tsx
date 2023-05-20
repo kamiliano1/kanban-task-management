@@ -2,18 +2,25 @@ import React from "react";
 import * as Form from "@radix-ui/react-form";
 import { AiOutlineClose } from "react-icons/ai";
 import { ColumnType } from "../../Board/BoardType";
-import { useForm } from "react-hook-form";
+import { FieldErrors, UseFormRegister, useForm } from "react-hook-form";
 import { ImCross } from "react-icons/im";
+interface IFormInputs {
+  name: string;
+  columns: ColumnType[];
+}
 type AddElementInputProps = {
   darkMode: boolean;
   column: ColumnType;
-  deleteColumn: (columnId: string) => void;
+  deleteColumn: (columnId: number) => void;
+  errors: FieldErrors<IFormInputs>;
+  register: UseFormRegister<IFormInputs>;
 };
-
 const AddElementInput: React.FC<AddElementInputProps> = ({
   darkMode,
   column,
   deleteColumn,
+  errors,
+  register,
 }) => {
   return (
     <div className="flex items-center mb-3 relative">
