@@ -18,11 +18,12 @@ import { MdKeyboardArrowDown } from "react-icons/md";
 import { BiDotsVerticalRounded } from "react-icons/bi";
 import AllBoardsMobileModal from "../Modal/AllBoardsMobileModal";
 import { modalState } from "../../atoms/modalAtom";
-import { settingsState } from "../../atoms/settingsModal";
+import { settingsModalState } from "../../atoms/settingsModalAtom";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { nanoid } from "nanoid";
 import { boardMobileModalState } from "../../atoms/boardsMobileModalAtom";
 import Sidebar from "../Sidebar/Sidebar";
+import BoardDropDownMenu from "./BoardDropDownMenu";
 type NavbarProps = {};
 
 const Navbar: React.FC<NavbarProps> = () => {
@@ -45,7 +46,7 @@ const Navbar: React.FC<NavbarProps> = () => {
   const [ladowanieDanych, setLdowanieDanych] = useState([""]);
   const [darkMode, setDarMode] = useState<boolean>(true);
   const [modalsState, setModalsState] = useRecoilState(modalState);
-  const [settingState, setSettingState] = useRecoilState(settingsState);
+  const [settingState, setSettingState] = useRecoilState(settingsModalState);
   useEffect(() => {
     if (windowWidth < 768) {
       setActiveLogo(logoMobile);
@@ -68,15 +69,13 @@ const Navbar: React.FC<NavbarProps> = () => {
     fetch("data/data.json")
       .then((res) => res.json())
       .then((data) => {
-        setStaraData(data.boards);
+        // setStaraData(data.boards);
         // console.log(staraData);
-
         // setStaraData((prev) => {
         //   prev.map((item) => {
         //     // console.log(item.columns);
         //     item.columns.map((col) => {
         //       // console.log(col);
-
         //       // console.log(col.tasks);
         //       col.tasks.map((taski) => {
         //         // console.log(taski);
@@ -92,7 +91,6 @@ const Navbar: React.FC<NavbarProps> = () => {
         //   // return prev.map((board) => {
         //   //   const columns = board.columns;
         //   //   columns.map(task=>{
-
         //   //   })
         //   //   return { ...board, columns: columns, id: nanoid() };
         //   // });
@@ -101,7 +99,6 @@ const Navbar: React.FC<NavbarProps> = () => {
     // console.log(staraData);
   };
 
-  const aktualizaDanych = () => {};
   return (
     <div>
       <div
@@ -171,7 +168,11 @@ const Navbar: React.FC<NavbarProps> = () => {
           buttonLabel={windowWidth > 768 ? "+ Add New Task" : "+"}
           buttonAction={() => console.log("klicked")}
         />
-        <BiDotsVerticalRounded className="text-mediumGrey ml-4 sm:mr-6 lg:mr-8" />
+        <div className="ml-4 sm:mr-6 lg:mr-8 relative">
+          {/* <BiDotsVerticalRounded className="text-mediumGrey" /> */}
+
+          <BoardDropDownMenu />
+        </div>
       </div>
       {/* <div className="hidden sm:block fixed h-[100vh] bg-darkGrey w-[193px] border-r-[1px] border-[hsl(236_11%_27%)]"></div> */}
     </div>

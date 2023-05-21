@@ -1,5 +1,5 @@
 import React from "react";
-import { settingsState } from "../../atoms/settingsModal";
+import { settingsModalState } from "../../atoms/settingsModalAtom";
 import { useRecoilState, useRecoilValue } from "recoil";
 import ColumnElement from "./ColumnElement";
 import { TaskType } from "./BoardType";
@@ -15,7 +15,7 @@ const BoardColumn: React.FC<BoardColumnProps> = ({
   taskQty,
   tasks,
 }) => {
-  const settingState = useRecoilValue(settingsState);
+  const settingState = useRecoilValue(settingsModalState);
   const darkMode = settingState.darkMode;
   const columnElements = tasks?.map((item) => (
     <ColumnElement

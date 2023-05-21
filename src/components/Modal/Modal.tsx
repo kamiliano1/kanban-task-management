@@ -8,15 +8,16 @@ import DropMenu from "../Layout/Input/DropMenu";
 import EditTaskModal from "./EditTaskModal";
 import ViewTaskModal from "./ViewTaskModal";
 import AllBoardsMobileModal from "./AllBoardsMobileModal";
-import { settingsState } from "@/src/atoms/settingsModal";
+import { settingsModalState } from "@/src/atoms/settingsModalAtom";
 import { boardMobileModalState } from "../../atoms/boardsMobileModalAtom";
 import AddBoardModal from "./AddBoardModal";
+import DeleteBoardModal from "./DeleteBoardModal";
 
 type ModalProps = {};
 
 const Modal: React.FC<ModalProps> = () => {
   const [modalsState, setModalsState] = useRecoilState(modalState);
-  const settingState = useRecoilValue(settingsState);
+  const settingState = useRecoilValue(settingsModalState);
   const activeModal = modalsState.view;
   const darkMode = settingState.darkMode;
   return (
@@ -27,7 +28,8 @@ const Modal: React.FC<ModalProps> = () => {
           ...prev,
           open: !modalsState.open,
         }));
-      }}>
+      }}
+    >
       <Dialog.Overlay
         className="
         bg-black opacity-50 fixed inset-0 z-[15]
@@ -36,6 +38,10 @@ const Modal: React.FC<ModalProps> = () => {
       {activeModal === "editTask" && <EditTaskModal darkMode={darkMode} />}
       {activeModal === "viewTask" && <ViewTaskModal darkMode={darkMode} />}
       {activeModal === "addBoard" && <AddBoardModal darkMode={darkMode} />}
+      {activeModal === "editBoard" && <AddBoardModal darkMode={darkMode} />}
+      {activeModal === "deleteBoard" && (
+        <DeleteBoardModal darkMode={darkMode} />
+      )}
       {/* {activeModal === "allBoardsMobile" && (
         <AllBoardsMobileModal darkMode={darkMode} />
       )} */}

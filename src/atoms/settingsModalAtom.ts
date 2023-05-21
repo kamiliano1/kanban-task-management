@@ -6,13 +6,13 @@ export interface SettingsState {
   activeBoard: string;
 }
 
-const defaultSettingsState: SettingsState = {
+const defaultSettingsModalState: SettingsState = {
   darkMode: true,
   isSidebarOpen: true,
   activeBoard: "",
 };
 
-export const settingsState = atom<SettingsState>({
-  key: "settingState",
-  default: defaultSettingsState,
+export const settingsModalState = atom<SettingsState>({
+  key: "settingModalState",
+  default: defaultSettingsModalState,
 });

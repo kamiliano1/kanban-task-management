@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { settingsState } from "../../atoms/settingsModal";
+import { settingsModalState } from "../../atoms/settingsModalAtom";
 import { BoardsAtom, boardsState } from "../../atoms/boardsAtom";
 import { useRecoilState, useRecoilValue } from "recoil";
 import BoardColumn from "./BoardColumn";
@@ -8,7 +8,7 @@ import { BoardType } from "./BoardType";
 type BoardProps = {};
 
 const Board: React.FC<BoardProps> = () => {
-  const settingState = useRecoilValue(settingsState);
+  const settingState = useRecoilValue(settingsModalState);
   const [boardState, setBoardState] = useRecoilState(boardsState);
   const [activatedBoard, setActivatedBoard] = useState<BoardType>(
     boardState[0]
@@ -29,13 +29,12 @@ const Board: React.FC<BoardProps> = () => {
     setActivatedBoard(
       boardState.filter((board) => board.name === activeBoard)[0]
     );
-    // console.log(activatedBoard, "aa");
   }, [settingState]);
 
   const activatedColumns = activatedBoard
     ? activatedBoard.columns.map((item) => (
         <BoardColumn
-          key={item.name}
+          key={item.id}
           columnNamme={item.name}
           tasks={item.tasks}
           taskQty={item.tasks.length}
@@ -46,7 +45,7 @@ const Board: React.FC<BoardProps> = () => {
     <div
       className={`${
         darkMode ? "bg-veryDarkGrey" : "bg-white"
-      } w-full flex z-[-300] overflow-x-auto
+      } w-full flex z-[-300] overflow-x-auto ml-[300px]
     h-full pt-6 ${
       settingState.isSidebarOpen
         ? "pl-[clamp(285px,_23vw,_300px)] animate-boardPaddingOpenn"

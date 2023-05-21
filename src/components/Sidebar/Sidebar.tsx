@@ -2,7 +2,8 @@ import React from "react";
 import ButtonPrimaryBoards from "../Layout/Input/Button/ButtonPrimaryBoards";
 import ThemeSwitcher from "../Layout/Input/ThemeSwitcher";
 import HideSidebarButton from "./HideSidebarButton";
-import { settingsState } from "../../atoms/settingsModal";
+// import { settingsModalState } from "../../atoms/settingsModalAtom";
+import { settingsModalState } from "../../atoms/settingsModalAtom";
 import { useRecoilState, useRecoilValue } from "recoil";
 import ButtonAddBoard from "../Layout/Input/Button/ButtonAddBoard";
 
@@ -11,7 +12,7 @@ type SidebarProps = {};
 
 const Sidebar: React.FC<SidebarProps> = () => {
   const [boardState, setBoardState] = useRecoilState(boardsState);
-  const [settingState, setSettingState] = useRecoilState(settingsState);
+  const [settingState, setSettingState] = useRecoilState(settingsModalState);
   const boardList = boardState.map((item) => (
     <ButtonPrimaryBoards key={item.name} buttonLabel={item.name} />
   ));
@@ -27,11 +28,13 @@ ${
         settingState.darkMode
           ? "bg-darkGrey border-linesDark"
           : "bg-white border-linesLight"
-      }`}>
+      }`}
+    >
       <div className="flex flex-col z-[5] pr-6 h-[calc(100vh_-_173px)]">
         <h2
           className="text-mediumGrey text-400 tracking-[2.4px] 
-      sm:px-6 py-4 lg:pl-8">
+      sm:px-6 py-4 lg:pl-8"
+        >
           ALL BOARDS (3)
         </h2>
         {boardList}

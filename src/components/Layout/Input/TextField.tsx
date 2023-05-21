@@ -9,7 +9,7 @@ const TextField: React.FC<TextFieldProps> = ({
   placeholder,
 }) => {
   return (
-    <Form.Root className=" text-500">
+    <Form.Root className="text-500">
       <Form.Field className="grid relative" name="name">
         <div className="flex items-baseline justify-between relative ">
           <Form.Label className={`pb-2 ${!darkMode && "text-mediumGrey"}`}>

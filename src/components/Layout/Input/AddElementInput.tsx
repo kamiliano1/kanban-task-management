@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import * as Form from "@radix-ui/react-form";
 import { AiOutlineClose } from "react-icons/ai";
 import { ColumnType } from "../../Board/BoardType";
@@ -22,6 +22,7 @@ const AddElementInput: React.FC<AddElementInputProps> = ({
   errors,
   register,
 }) => {
+  const [currentValue, setCurrentValue] = useState<string>("");
   return (
     <div className="flex items-center mb-3 relative">
       <input
@@ -38,7 +39,11 @@ const AddElementInput: React.FC<AddElementInputProps> = ({
          ? "text-white bg-[#2B2C37] placeholder:text-white"
          : "text-black placeholder:text-black"
      }`}
-        {...register(`columns.${column.id}.name`, { required: true })}
+        {...register(`columns.${column.id}.name`, {
+          onChange: (e) => {
+            setCurrentValue(e.target.value);
+          },
+        })}
       />
       {errors.columns?.[column.id] && (
         <span className="absolute text-red text-500 left-[65%] top-[.6rem]">

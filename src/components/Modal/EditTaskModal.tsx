@@ -39,7 +39,7 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ darkMode }) => {
         >
           Subtasks (2 of 3)
         </Dialog.Description>
-        <TextField title={"Title"} darkMode={darkMode} />
+        <TextField title={"Title"} darkMode={darkMode} placeholder="WPISAC!!" />
         <TextArea darkMode={darkMode} />
         <Checkbox
           checkboxLabel="Research competitor pricing and business models"

@@ -1,12 +1,12 @@
 import React from "react";
 import { BiHide } from "react-icons/bi";
-import { settingsState } from "../../atoms/settingsModal";
+import { settingsModalState } from "../../atoms/settingsModalAtom";
 import { useRecoilState, useRecoilValue } from "recoil";
 
 type HideSidebarButtonProps = {};
 
 const HideSidebarButton: React.FC<HideSidebarButtonProps> = () => {
-  const [settingState, setSettingState] = useRecoilState(settingsState);
+  const [settingState, setSettingState] = useRecoilState(settingsModalState);
   const darkMode = settingState.darkMode;
   return (
     <div

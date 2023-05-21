@@ -1,11 +1,20 @@
 import React from "react";
 
-type ButtonDestructiveProps = {};
+type ButtonDestructiveProps = {
+  buttonLabel: string;
+  buttonAction: () => void;
+};
 
-const ButtonDestructive: React.FC<ButtonDestructiveProps> = () => {
+const ButtonDestructive: React.FC<ButtonDestructiveProps> = ({
+  buttonLabel,
+  buttonAction,
+}) => {
   return (
-    <button className="bg-red py-2 px-20 rounded-3xl text-500 hover:bg-lightRed">
-      Destructive
+    <button
+      className="bg-red py-2 rounded-3xl text-500 w-full hover:bg-lightRed"
+      onClick={buttonAction}
+    >
+      {buttonLabel}
     </button>
   );
 };

@@ -1,13 +1,13 @@
 import React from "react";
 import { MdOutlineSpaceDashboard } from "react-icons/md";
-import { settingsState } from "../../../../atoms/settingsModal";
+import { settingsModalState } from "../../../../atoms/settingsModalAtom";
 import { useRecoilState } from "recoil";
 type ButtonPrimaryBoardsProps = { buttonLabel: string };
 
 const ButtonPrimaryBoards: React.FC<ButtonPrimaryBoardsProps> = ({
   buttonLabel,
 }) => {
-  const [settingState, setSettingState] = useRecoilState(settingsState);
+  const [settingState, setSettingState] = useRecoilState(settingsModalState);
   const activeBoard = settingState.activeBoard;
   const darkMode = settingState.darkMode;
   // const buttonBackground =
@@ -24,7 +24,8 @@ const ButtonPrimaryBoards: React.FC<ButtonPrimaryBoardsProps> = ({
        
        ${
          darkMode ? "hover:bg-white" : "hover:bg-purple hover:bg-opacity-10"
-       } hover:text-purple disabled:opacity-25`}>
+       } hover:text-purple disabled:opacity-25`}
+    >
       <MdOutlineSpaceDashboard className="mr-3" /> {buttonLabel}
     </button>
   );

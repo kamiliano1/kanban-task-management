@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import { settingsState } from "../../atoms/settingsModal";
+import { settingsModalState } from "../../atoms/settingsModalAtom";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { SubtasksType } from "./BoardType";
 type ColumnElementProps = { taskName: string; subTasks: SubtasksType[] };
@@ -10,7 +10,7 @@ const ColumnElement: React.FC<ColumnElementProps> = ({
   subTasks,
 }) => {
   const [completedTasks, setCompletedTasks] = useState<number>(0);
-  const settingState = useRecoilValue(settingsState);
+  const settingState = useRecoilValue(settingsModalState);
   const darkMode = settingState.darkMode;
   // console.log(subTasks.filter((item) => item.isCompleted));
   useEffect(() => {

@@ -4,7 +4,7 @@ import ButtonPrimaryBoards from "../Layout/Input/Button/ButtonPrimaryBoards";
 import ThemeSwitcher from "../Layout/Input/ThemeSwitcher";
 import { modalState } from "../../atoms/modalAtom";
 import { useRecoilState } from "recoil";
-import { settingsState } from "../../atoms/settingsModal";
+import { settingsModalState } from "../../atoms/settingsModalAtom";
 import { boardMobileModalState } from "../../atoms/boardsMobileModalAtom";
 type AllBoardsMobileModalProps = { darkMode: boolean };
 const AllBoardsMobileModal: React.FC<AllBoardsMobileModalProps> = ({
@@ -13,7 +13,7 @@ const AllBoardsMobileModal: React.FC<AllBoardsMobileModalProps> = ({
   const [boardMobileModalStates, setBoardMobileModalStates] = useRecoilState(
     boardMobileModalState
   );
-  const [settingState, setSettingsState] = useRecoilState(settingsState);
+  const [settingState, setSettingsState] = useRecoilState(settingsModalState);
 
   return (
     <Dialog.Root

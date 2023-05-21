@@ -1,35 +1,27 @@
-import React, { useEffect, useRef, useState } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
-import TextField from "../Layout/Input/TextField";
-import Checkbox from "../Layout/Input/Checkbox";
-import DropMenu from "../Layout/Input/DropMenu";
-import TextArea from "../Layout/Input/TextArea";
-import { AiOutlineClose } from "react-icons/ai";
-import { ImCross } from "react-icons/im";
-import ButtonSecondary from "../Layout/Input/Button/ButtonSecondary";
-import ButtonPrimarySmall from "../Layout/Input/Button/ButtonPrimarySmall";
+import React, { useEffect, useRef, useState } from "react";
 import AddElementInput from "../Layout/Input/AddElementInput";
-// import { BoardType } from "../Board/BoardType";
-import { customAlphabet } from "nanoid";
-import { useForm, Controller, SubmitHandler } from "react-hook-form";
-import * as Form from "@radix-ui/react-form";
-import { BoardType, ColumnType, TaskType } from "../Board/BoardType";
-import { useRecoilState, useRecoilValue } from "recoil";
-import { BoardsAtom, boardsState } from "../../atoms/boardsAtom";
+import ButtonPrimarySmall from "../Layout/Input/Button/ButtonPrimarySmall";
+import ButtonSecondary from "../Layout/Input/Button/ButtonSecondary";
 import { modalState } from "@/src/atoms/modalAtom";
-
+import { settingsModalState } from "@/src/atoms/settingsModalAtom";
+import { customAlphabet } from "nanoid";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { useRecoilState } from "recoil";
+import { boardsState } from "../../atoms/boardsAtom";
+import { BoardType, ColumnType } from "../Board/BoardType";
 const nanoid = customAlphabet("1234567890", 2);
 type AddBoardModalProps = {
   darkMode: boolean;
 };
-
-interface IFormInputs {
+interface BoardInputs {
   name: string;
   columns: ColumnType[];
 }
 const AddBoardModal: React.FC<AddBoardModalProps> = ({ darkMode }) => {
   const [modalsState, setModalsState] = useRecoilState(modalState);
   const [boardState, setBoardState] = useRecoilState(boardsState);
+  const [settingState, setSettingState] = useRecoilState(settingsModalState);
   const [errorBoardName, setErrorBoardName] = useState<string>("");
   const firstNameRef = useRef<HTMLInputElement | null>(null);
   const {
@@ -40,22 +32,33 @@ const AddBoardModal: React.FC<AddBoardModalProps> = ({ darkMode }) => {
     reset,
     setError,
     formState: { errors },
-  } = useForm<IFormInputs>();
+  } = useForm<BoardInputs>();
   const [newBoard, setNewBoard] = useState<BoardType>({
     name: "",
     id: parseInt(nanoid()),
     columns: [],
   });
-  const onSubmit: SubmitHandler<IFormInputs> = (data) => {
+  const onSubmit: SubmitHandler<BoardInputs> = (data) => {
+    if (
+      boardState.find(
+        (item) =>
+          item.name.toLocaleLowerCase() === watch("name").toLocaleLowerCase()
+      )
+    ) {
+      setErrorBoardName("Name already exist");
+      return;
+    }
     const columns = newBoard.columns.map((items) => {
       return { ...items, name: data.columns[items.id].name };
     });
-    setNewBoard((prev) => ({
-      ...prev,
+    const readyBoard: BoardType = {
       name: data.name,
+      id: newBoard.id,
       columns: columns,
-    }));
-    setBoardState((prev) => [...prev, newBoard]);
+    };
+    setBoardState((prev) => [...prev, readyBoard]);
+    setModalsState((prev) => ({ ...prev, open: false }));
+    setSettingState((prev) => ({ ...prev, activeBoard: data.name }));
   };
   const addColumn = () => {
     const columnId = parseInt(nanoid());
@@ -63,16 +66,6 @@ const AddBoardModal: React.FC<AddBoardModalProps> = ({ darkMode }) => {
       ...prev,
       columns: [...prev.columns, { name: "", id: columnId, tasks: [] }],
     }));
-    console.log(
-      boardState.find((item) => {
-        console.log(item.name, watch("name"));
-
-        return (
-          item.name.toLocaleLowerCase() === watch("name").toLocaleLowerCase()
-        );
-      }),
-      "konsola"
-    );
   };
   const deleteColumn = (columnId: number) => {
     const updatedColumns = newBoard.columns.filter(
@@ -83,6 +76,7 @@ const AddBoardModal: React.FC<AddBoardModalProps> = ({ darkMode }) => {
   useEffect(() => {
     setNewBoard({ name: "", id: parseInt(nanoid()), columns: [] }); // reset to default after close
     reset({ name: "", columns: [] });
+    setErrorBoardName("");
   }, [modalsState, reset]);
 
   const columns = newBoard.columns.map((item) => (
@@ -119,33 +113,38 @@ const AddBoardModal: React.FC<AddBoardModalProps> = ({ darkMode }) => {
               className={`text-500 placeholder:text-black
             FormLabel placeholder:opacity-25 px-4 py-2 rounded border-[1px]
              ${
-               errors.name ? "border-red" : "border-[rgba(130,_143,_163,_0.25)]"
+               errors.name || errorBoardName
+                 ? "border-red"
+                 : "border-[rgba(130,_143,_163,_0.25)]"
              }
               w-full ${
                 darkMode
                   ? "text-white bg-[#2B2C37] placeholder:text-white"
                   : "text-black placeholder:text-black"
               }`}
-              {...register("name", { required: true })}
+              {...register("name", {
+                required: true,
+              })}
             />
-
             {errors.name && (
               <span className="absolute text-red text-500 left-[70%] top-[.6rem]">
                 Can`t be empty
               </span>
             )}
+            {errorBoardName && (
+              <span className="absolute text-red text-500 left-[65%] top-[.6rem]">
+                {errorBoardName}
+              </span>
+            )}
           </div>
-
           <h3 className="text-400 pb-2 mt-6">Boards Columns</h3>
           {columns}
-
           <ButtonSecondary
             darkMode={darkMode}
             buttonLabel="+ Add New Column"
             cssClasses="mb-6"
             buttonAction={addColumn}
           />
-
           <ButtonPrimarySmall
             buttonLabel="Create New Board"
             buttonAction={() => handleSubmit(onSubmit)}

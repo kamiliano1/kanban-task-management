@@ -1,13 +1,13 @@
 import React from "react";
 import * as Switch from "@radix-ui/react-switch";
 import { BsMoonStarsFill, BsFillSunFill } from "react-icons/bs";
-import { settingsState } from "../../../atoms/settingsModal";
+import { settingsModalState } from "../../../atoms/settingsModalAtom";
 import { useRecoilState, useRecoilValue } from "recoil";
 
 type ThemeSwitcherProps = {};
 
 const ThemeSwitcher: React.FC<ThemeSwitcherProps> = () => {
-  const [settingState, setSettingsState] = useRecoilState(settingsState);
+  const [settingState, setSettingsState] = useRecoilState(settingsModalState);
   const darkMode = settingState.darkMode;
   return (
     <div

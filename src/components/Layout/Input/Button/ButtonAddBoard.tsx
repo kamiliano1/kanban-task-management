@@ -1,6 +1,6 @@
 import React from "react";
 import { MdOutlineSpaceDashboard } from "react-icons/md";
-import { settingsState } from "../../../../atoms/settingsModal";
+import { settingsModalState } from "../../../../atoms/settingsModalAtom";
 import { useRecoilState } from "recoil";
 
 import { modalState } from "@/src/atoms/modalAtom";
@@ -8,7 +8,7 @@ type ButtonAddBoardProps = {};
 
 const ButtonAddBoard: React.FC<ButtonAddBoardProps> = () => {
   const [modalsState, setModalsState] = useRecoilState(modalState);
-  const [settingState, setSettingState] = useRecoilState(settingsState);
+  const [settingState, setSettingState] = useRecoilState(settingsModalState);
   const darkMode = settingState.darkMode;
   return (
     <button
