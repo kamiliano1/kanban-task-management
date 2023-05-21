@@ -8,7 +8,6 @@ type BoardDropDownMenuProps = {};
 const BoardDropDownMenu: React.FC<BoardDropDownMenuProps> = () => {
   const [modalsState, setModalsState] = useRecoilState(modalState);
   const darkMode = true;
-  console.log(modalsState);
 
   return (
     <DropdownMenu.Root>
