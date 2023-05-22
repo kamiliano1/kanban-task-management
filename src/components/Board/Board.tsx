@@ -29,7 +29,7 @@ const Board: React.FC<BoardProps> = () => {
     setActivatedBoard(
       boardState.filter((board) => board.name === activeBoard)[0]
     );
-  }, [settingState]);
+  }, [activeBoard, boardState, settingState]);
 
   const activatedColumns = activatedBoard
     ? activatedBoard.columns.map((item) => (

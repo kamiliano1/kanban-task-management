@@ -4,7 +4,7 @@ import {
   useCreateUserWithEmailAndPassword,
   useSignInWithEmailAndPassword,
 } from "react-firebase-hooks/auth";
-import { auth } from "../../firebase/clientApp";
+import { auth } from "../../../firebase/clientApp";
 type RegisterModalProps = {};
 
 const RegisterModal: React.FC<RegisterModalProps> = () => {

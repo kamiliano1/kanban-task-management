@@ -10,7 +10,7 @@ import ButtonPrimarySmall from "../Layout/Input/Button/ButtonPrimarySmall";
 import ButtonSecondary from "../Layout/Input/Button/ButtonSecondary";
 import ButtonDestructive from "../Layout/Input/Button/ButtonDestructive";
 import ThemeSwitcher from "../Layout/Input/ThemeSwitcher";
-import ViewTaskModal from "../Modal/ViewTaskModal";
+import ViewTaskModal from "../Modal/Task/ViewTaskModal";
 import logoMobile from "../../../public/logo-mobile.svg";
 import logoDark from "../../../public/logo-dark.svg";
 import logoLight from "../../../public/logo-light.svg";
@@ -65,40 +65,6 @@ const Navbar: React.FC<NavbarProps> = () => {
     windowWidth,
   ]);
 
-  const fetchData = () => {
-    fetch("data/data.json")
-      .then((res) => res.json())
-      .then((data) => {
-        // setStaraData(data.boards);
-        // console.log(staraData);
-        // setStaraData((prev) => {
-        //   prev.map((item) => {
-        //     // console.log(item.columns);
-        //     item.columns.map((col) => {
-        //       // console.log(col);
-        //       // console.log(col.tasks);
-        //       col.tasks.map((taski) => {
-        //         // console.log(taski);
-        //         taski.subtasks.map((suby) => {
-        //           // console.log(suby);
-        //           const kk = { ...suby, id: nanoid() };
-        //           // console.log(kk);
-        //         });
-        //       });
-        //     });
-        //   });
-        //   // return prev.map((board) => ({ ...board, id: nanoid() }));
-        //   // return prev.map((board) => {
-        //   //   const columns = board.columns;
-        //   //   columns.map(task=>{
-        //   //   })
-        //   //   return { ...board, columns: columns, id: nanoid() };
-        //   // });
-        // });
-      });
-    // console.log(staraData);
-  };
-
   return (
     <div>
       <div
@@ -147,8 +113,6 @@ const Navbar: React.FC<NavbarProps> = () => {
         >
           SideBar
         </button>
-        {/* <button onClick={fetchData}>Data</button>
-        <button onClick={aktualizaDanych}>Daner</button> */}
         <MdKeyboardArrowDown
           className={`text-purple mr-auto sm:hidden ${
             !boardMobileModalStates.open && "rotate-180"
@@ -166,7 +130,12 @@ const Navbar: React.FC<NavbarProps> = () => {
 
         <ButtonPrimarySmall
           buttonLabel={windowWidth > 768 ? "+ Add New Task" : "+"}
-          buttonAction={() => console.log("klicked")}
+          buttonAction={() =>
+            setModalsState({
+              view: "addTask",
+              open: true,
+            })
+          }
         />
         <div className="ml-4 sm:mr-6 lg:mr-8 relative">
           {/* <BiDotsVerticalRounded className="text-mediumGrey" /> */}

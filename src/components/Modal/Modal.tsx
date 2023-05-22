@@ -5,13 +5,15 @@ import { modalState } from "@/src/atoms/modalAtom";
 import { BiDotsVerticalRounded } from "react-icons/bi";
 import Checkbox from "../Layout/Input/Checkbox";
 import DropMenu from "../Layout/Input/DropMenu";
-import EditTaskModal from "./EditTaskModal";
-import ViewTaskModal from "./ViewTaskModal";
+import EditTaskModal from "./Task/EditTaskModal";
+import ViewTaskModal from "./Task/ViewTaskModal";
 import AllBoardsMobileModal from "./AllBoardsMobileModal";
 import { settingsModalState } from "@/src/atoms/settingsModalAtom";
 import { boardMobileModalState } from "../../atoms/boardsMobileModalAtom";
-import AddBoardModal from "./AddBoardModal";
-import DeleteBoardModal from "./DeleteBoardModal";
+import AddBoardModal from "./Board/AddBoardModal";
+import DeleteBoardModal from "./Board/DeleteBoardModal";
+import EditBoardModal from "./Board/EditBoardModal";
+import AddTaskModal from "./Task/AddTaskModal";
 
 type ModalProps = {};
 
@@ -37,18 +39,13 @@ const Modal: React.FC<ModalProps> = () => {
       />
       {activeModal === "editTask" && <EditTaskModal darkMode={darkMode} />}
       {activeModal === "viewTask" && <ViewTaskModal darkMode={darkMode} />}
+      {activeModal === "addTask" && <AddTaskModal darkMode={darkMode} />}
+
       {activeModal === "addBoard" && <AddBoardModal darkMode={darkMode} />}
-      {activeModal === "editBoard" && <AddBoardModal darkMode={darkMode} />}
+      {activeModal === "editBoard" && <EditBoardModal darkMode={darkMode} />}
       {activeModal === "deleteBoard" && (
         <DeleteBoardModal darkMode={darkMode} />
       )}
-      {/* {activeModal === "allBoardsMobile" && (
-        <AllBoardsMobileModal darkMode={darkMode} />
-      )} */}
-      {/* <Dialog.Trigger>
-        <button className="">Edit profile</button>
-      </Dialog.Trigger> */}
-      {/* <EditTaskModal darkMode={darkMode} /> */}
     </Dialog.Root>
   );
 };

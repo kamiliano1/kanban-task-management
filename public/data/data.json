@@ -2,9 +2,11 @@
   "boards": [
     {
       "name": "Platform Launch",
+      "id": 1234568,
       "columns": [
         {
           "name": "Todo",
+          "id": 1234567,
           "tasks": [
             {
               "title": "Build UI for onboarding flow",
@@ -70,6 +72,7 @@
         },
         {
           "name": "Doing",
+          "id": 1234566,
           "tasks": [
             {
               "title": "Design settings and search pages",
@@ -181,6 +184,7 @@
         },
         {
           "name": "Done",
+          "id": 1234565,
           "tasks": [
             {
               "title": "Conduct 5 wireframe tests",
@@ -285,9 +289,11 @@
     },
     {
       "name": "Marketing Plan",
+      "id": 1232564,
       "columns": [
         {
           "name": "Todo",
+          "id": 1134563,
           "tasks": [
             {
               "title": "Plan Product Hunt launch",
@@ -366,19 +372,23 @@
         },
         {
           "name": "Doing",
+          "id": 1234563,
           "tasks": []
         },
         {
           "name": "Done",
+          "id": 1234562,
           "tasks": []
         }
       ]
     },
     {
       "name": "Roadmap",
+      "id": 1234561,
       "columns": [
         {
           "name": "Now",
+          "id": 1234560,
           "tasks": [
             {
               "title": "Launch version one",
@@ -418,10 +428,12 @@
         },
         {
           "name": "Next",
+          "id": 1234564,
           "tasks": []
         },
         {
           "name": "Later",
+          "id": 1234530,
           "tasks": []
         }
       ]

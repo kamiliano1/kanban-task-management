@@ -1,12 +1,12 @@
 import React from "react";
 import * as Dialog from "@radix-ui/react-dialog";
-import ButtonDestructive from "../Layout/Input/Button/ButtonDestructive";
-import ButtonPrimarySmall from "../Layout/Input/Button/ButtonPrimarySmall";
-import ButtonSecondary from "../Layout/Input/Button/ButtonSecondary";
+import ButtonDestructive from "../../Layout/Input/Button/ButtonDestructive";
+import ButtonPrimarySmall from "../../Layout/Input/Button/ButtonPrimarySmall";
+import ButtonSecondary from "../../Layout/Input/Button/ButtonSecondary";
 import { useRecoilState } from "recoil";
-import { settingsModalState } from "../../atoms/settingsModalAtom";
-import { modalState } from "../../atoms/modalAtom";
-import { boardsState } from "../../atoms/boardsAtom";
+import { settingsModalState } from "../../../atoms/settingsModalAtom";
+import { modalState } from "../../../atoms/modalAtom";
+import { boardsState } from "../../../atoms/boardsAtom";
 
 type DeleteBoardModalProps = { darkMode: boolean };
 
