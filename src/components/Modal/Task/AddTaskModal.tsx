@@ -6,13 +6,14 @@ import ButtonSecondary from "../../Layout/Input/Button/ButtonSecondary";
 import { modalState } from "@/src/atoms/modalAtom";
 import { settingsModalState } from "@/src/atoms/settingsModalAtom";
 import { customAlphabet } from "nanoid";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { SubmitHandler, useForm, Controller } from "react-hook-form";
 import { useRecoilState } from "recoil";
 import { boardsState } from "../../../atoms/boardsAtom";
 import { BoardType } from "../../Board/BoardType";
 import { SubtasksType, TaskType } from "../../Board/BoardType";
 import AddSubTaskInput from "./AddSubTaskInput";
 import DropMenu from "../../Layout/Input/DropMenu";
+import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 const nanoid = customAlphabet("1234567890", 2);
 type AddTaskModalProps = { darkMode: boolean };
 interface BoardInputs {
@@ -40,6 +41,7 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ darkMode }) => {
     setFocus,
     reset,
     setError,
+    control,
     formState: { errors },
   } = useForm<BoardInputs>();
   const [newTask, setNewTask] = useState<TaskType>({
@@ -61,6 +63,8 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ darkMode }) => {
     ],
   });
   const onSubmit: SubmitHandler<BoardInputs> = (data) => {
+    console.log(data);
+
     // if (
     //   boardState.find(
     //     (item) =>
@@ -120,6 +124,10 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ darkMode }) => {
       boardState.find((item) => item.name === settingState.activeBoard)
     );
   };
+
+  const activatedElement = (name: string) => {
+    console.log(name);
+  };
   const subTasks = newTask.subtasks.map((item, number) => (
     <AddSubTaskInput
       key={item.id}
@@ -139,11 +147,11 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ darkMode }) => {
        darkMode ? "bg-darkGrey" : "bg-white"
      }
       p-[25px] shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px]
-      focus:outline-none`}
-      >
+      focus:outline-none`}>
         <Dialog.Title
-          className={` ${darkMode ? "text-white" : "text-black"} text-800 pb-4`}
-        >
+          className={` ${
+            darkMode ? "text-white" : "text-black"
+          } text-800 pb-4`}>
           Add New Task
         </Dialog.Title>
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -164,7 +172,7 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ darkMode }) => {
                   : "text-black placeholder:text-black"
               }`}
               {...register("title", {
-                required: true,
+                required: false,
               })}
             />
             {errors.title && (
@@ -192,7 +200,7 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ darkMode }) => {
               placeholder="e.g. It`s always good to take a break. This 15 minute break will 
             recharge the batteries a little."
               {...register("description", {
-                required: true,
+                required: false,
               })}
             />
             <p className="text-400 pb-2">Subtasks</p>
@@ -206,7 +214,41 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ darkMode }) => {
             buttonAction={addSubTask}
           />
           <p className="text-400 pb-2">Status</p>
-          <DropMenu darkMode={darkMode} columnsNames={columnsName} />
+          <Controller
+            control={control}
+            name="status"
+            render={({ field }) => (
+              <DropMenu
+                field={field}
+                // onChange={onChange}
+                darkMode={darkMode}
+                columnsNames={columnsName}
+                activatedElement={() => activatedElement("elementName")}
+                // selected={value}
+              />
+            )}
+          />
+          <Controller
+            name="status"
+            control={control}
+            render={({ field }) => (
+              <DropdownMenu.Root>
+                <DropdownMenu.Trigger {...field}>
+                  Select an option
+                </DropdownMenu.Trigger>
+                <DropdownMenu.Content>
+                  <DropdownMenu.Item>Option 1</DropdownMenu.Item>
+                  <DropdownMenu.Item>Option 2</DropdownMenu.Item>
+                  <DropdownMenu.Item>Option 3</DropdownMenu.Item>
+                </DropdownMenu.Content>
+              </DropdownMenu.Root>
+            )}
+          />
+          {/* <DropMenu
+            darkMode={darkMode}
+            columnsNames={columnsName}
+            activatedElement={() => activatedElement("elementName")}
+          /> */}
           <ButtonPrimarySmall
             buttonLabel="Create Task"
             buttonAction={() => handleSubmit(onSubmit)}
