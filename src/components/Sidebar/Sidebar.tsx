@@ -14,8 +14,6 @@ const Sidebar: React.FC<SidebarProps> = () => {
   const [settingState, setSettingState] = useRecoilState(settingsModalState);
   const [loading, setLoading] = useState<boolean>(true);
   useEffect(() => {
-    // console.log(boardState[0].name, "board");
-
     if (loading && boardState.length) {
       setSettingState((prev) => ({
         ...prev,
@@ -30,7 +28,6 @@ const Sidebar: React.FC<SidebarProps> = () => {
   return (
     <div
       className={`hiddenn sm:block fixed h-[100vh] left-0 top-0 z-[5] 
-
 w-[clamp(261px,_23vw,_300px)] border-r-[1px] sm:pt-[clamp(81px,_18vw,_97px)]
 ${true ? "animate-sliderOpen" : "-translate-x-[100%] animate-sliderClose"} ${
         settingState.darkMode

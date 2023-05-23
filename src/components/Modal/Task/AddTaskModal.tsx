@@ -1,4 +1,5 @@
 import * as Dialog from "@radix-ui/react-dialog";
+import * as Select from "@radix-ui/react-select";
 import React, { useEffect, useRef, useState } from "react";
 import AddElementInput from "../../Layout/Input/AddElementInput";
 import ButtonPrimarySmall from "../../Layout/Input/Button/ButtonPrimarySmall";
@@ -139,6 +140,23 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ darkMode }) => {
       number={number}
     />
   ));
+
+  const selectElements = columnsName.map((item) => (
+    <Select.Item
+      value={item}
+      key={item}
+      className={`text-500 w-[330px]
+      rounded-[8px] py-2
+      select-none data-[disabled]:pointer-events-none
+      data-[highlighted]:outline-none cursor-pointer ${
+        darkMode
+          ? "data-[highlighted]:text-white"
+          : "data-[highlighted]:text-darkGrey"
+      }`}
+    >
+      <Select.ItemText>{item}</Select.ItemText>
+    </Select.Item>
+  ));
   return (
     <Dialog.Portal>
       <Dialog.Content
@@ -147,11 +165,11 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ darkMode }) => {
        darkMode ? "bg-darkGrey" : "bg-white"
      }
       p-[25px] shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px]
-      focus:outline-none`}>
+      focus:outline-none`}
+      >
         <Dialog.Title
-          className={` ${
-            darkMode ? "text-white" : "text-black"
-          } text-800 pb-4`}>
+          className={` ${darkMode ? "text-white" : "text-black"} text-800 pb-4`}
+        >
           Add New Task
         </Dialog.Title>
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -186,9 +204,9 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ darkMode }) => {
               </span>
             )} */}
             <p className="text-400 pb-2">Description</p>
-            <button type="button" onClick={testuj}>
+            {/* <button type="button" onClick={testuj}>
               Sprawdzaj
-            </button>
+            </button> */}
             <textarea
               className={`text-500 placeholder:text-black w-full h-[112px]
                         FormLabel placeholder:opacity-25 px-4 py-2 rounded border-[1px] 
@@ -214,41 +232,21 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ darkMode }) => {
             buttonAction={addSubTask}
           />
           <p className="text-400 pb-2">Status</p>
+
           <Controller
             control={control}
             name="status"
-            render={({ field }) => (
+            render={({ field: { onChange, value, ref } }) => (
               <DropMenu
-                field={field}
-                // onChange={onChange}
                 darkMode={darkMode}
-                columnsNames={columnsName}
-                activatedElement={() => activatedElement("elementName")}
-                // selected={value}
-              />
+                onChange={onChange} // send value to hook form
+                value={value}
+                ref={ref}
+              >
+                {selectElements}
+              </DropMenu>
             )}
           />
-          <Controller
-            name="status"
-            control={control}
-            render={({ field }) => (
-              <DropdownMenu.Root>
-                <DropdownMenu.Trigger {...field}>
-                  Select an option
-                </DropdownMenu.Trigger>
-                <DropdownMenu.Content>
-                  <DropdownMenu.Item>Option 1</DropdownMenu.Item>
-                  <DropdownMenu.Item>Option 2</DropdownMenu.Item>
-                  <DropdownMenu.Item>Option 3</DropdownMenu.Item>
-                </DropdownMenu.Content>
-              </DropdownMenu.Root>
-            )}
-          />
-          {/* <DropMenu
-            darkMode={darkMode}
-            columnsNames={columnsName}
-            activatedElement={() => activatedElement("elementName")}
-          /> */}
           <ButtonPrimarySmall
             buttonLabel="Create Task"
             buttonAction={() => handleSubmit(onSubmit)}

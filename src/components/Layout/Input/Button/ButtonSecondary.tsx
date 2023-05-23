@@ -3,7 +3,7 @@ import React from "react";
 type ButtonSecondaryProps = {
   darkMode: boolean;
   buttonLabel: string;
-  cssClasses: string;
+  cssClasses?: string;
   buttonAction: () => void;
 };
 

@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import RegisterModal from "../components/Modal/Register/RegisterModal";
+import RegisterModal from "../components/Modal/Account/RegisterModal";
 import Navbar from "../components/Navbar/Navbar";
 import Modal from "../components/Modal/Modal";
 // import { settingsModalState } from "../atoms/settingsModalAtom";

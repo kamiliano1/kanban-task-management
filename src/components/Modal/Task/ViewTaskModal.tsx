@@ -66,7 +66,7 @@ const ViewTaskModal: React.FC<ViewTaskModalProps> = ({ darkMode }) => {
         >
           Current Status
         </p>
-        <DropMenu darkMode={darkMode} />
+        {/* <DropMenu darkMode={darkMode} /> */}
       </Dialog.Content>
     </Dialog.Portal>
   );

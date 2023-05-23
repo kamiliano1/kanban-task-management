@@ -57,7 +57,7 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ darkMode }) => {
         >
           Current Status
         </p>
-        <DropMenu darkMode={darkMode} />
+        {/* <DropMenu darkMode={darkMode} /> */}
         <Dialog.Close asChild>
           <button className="bg-green4 text-green11 hover:bg-green5 focus:shadow-green7 inline-flex h-[35px] items-center justify-center rounded-[4px] px-[15px] font-medium leading-none focus:shadow-[0_0_0_2px] focus:outline-none">
             Save changes
