@@ -42,6 +42,7 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ darkMode }) => {
     setFocus,
     reset,
     setError,
+    setValue,
     control,
     formState: { errors },
   } = useForm<BoardInputs>();
@@ -64,8 +65,9 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ darkMode }) => {
     ],
   });
   const onSubmit: SubmitHandler<BoardInputs> = (data) => {
-    console.log(data);
-
+    // console.log(data);
+    if (!data.status) setValue("status", columnsName[0]);
+    // console.log(data);
     // if (
     //   boardState.find(
     //     (item) =>
@@ -75,14 +77,28 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ darkMode }) => {
     //   setErrorBoardName("Name already exist");
     //   return;
     // }
-    // const columns = newBoard.columns.map((items) => {
-    //   return { ...items, name: data.columns[items.id].name };
-    // });
-    // const readyBoard: BoardType = {
-    //   name: data.name,
-    //   id: newBoard.id,
-    //   columns: columns,
-    // };
+    const subtasks = newTask.subtasks.map((items) => {
+      return {
+        ...items,
+        title: data.subtasks[items.id].title,
+        isCompleted: false,
+      };
+    });
+    // console.log(subtasks, "suby");
+
+    const readyTask: TaskType = {
+      title: data.title,
+      status: data.status,
+      description: data.description,
+      id: newTask.id,
+      subtasks: subtasks,
+    };
+    console.log(
+      boardState
+        .filter((item) => item.name === settingState.activeBoard)[0]
+        .columns.filter((item) => item.name === data.status)[0].tasks
+    );
+
     // setBoardState((prev) => [...prev, readyBoard]);
     // setModalsState((prev) => ({ ...prev, open: false }));
     // setSettingState((prev) => ({ ...prev, activeBoard: data.name }));
@@ -115,11 +131,6 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ darkMode }) => {
     );
     setNewTask((prev) => ({ ...prev, subtasks: updatedColumns }));
   };
-  useEffect(() => {
-    // setNewBoard({ name: "", id: parseInt(nanoid()), columns: [] }); // reset to default after close
-    // reset({ name: "", columns: [] });
-    // setErrorBoardName("");
-  }, [modalsState, reset]);
   const testuj = () => {
     console.log(
       boardState.find((item) => item.name === settingState.activeBoard)
@@ -129,6 +140,31 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ darkMode }) => {
   const activatedElement = (name: string) => {
     console.log(name);
   };
+
+  useEffect(() => {
+    setNewTask({
+      title: "",
+      status: "",
+      description: "",
+      id: parseInt(nanoid()),
+      subtasks: [
+        {
+          title: "",
+          id: parseInt(nanoid()),
+          isCompleted: false,
+        },
+        {
+          title: "",
+          id: parseInt(nanoid()),
+          isCompleted: false,
+        },
+      ],
+    }); // reset to default after close
+    reset({ title: "", status: "", description: "", subtasks: [] });
+    setErrorBoardName("");
+    console.log(modalsState);
+    setLoading(true);
+  }, [modalsState, reset]);
   const subTasks = newTask.subtasks.map((item, number) => (
     <AddSubTaskInput
       key={item.id}
@@ -141,22 +177,6 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ darkMode }) => {
     />
   ));
 
-  const selectElements = columnsName.map((item) => (
-    <Select.Item
-      value={item}
-      key={item}
-      className={`text-500 w-[330px]
-      rounded-[8px] py-2
-      select-none data-[disabled]:pointer-events-none
-      data-[highlighted]:outline-none cursor-pointer ${
-        darkMode
-          ? "data-[highlighted]:text-white"
-          : "data-[highlighted]:text-darkGrey"
-      }`}
-    >
-      <Select.ItemText>{item}</Select.ItemText>
-    </Select.Item>
-  ));
   return (
     <Dialog.Portal>
       <Dialog.Content
@@ -165,11 +185,11 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ darkMode }) => {
        darkMode ? "bg-darkGrey" : "bg-white"
      }
       p-[25px] shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px]
-      focus:outline-none`}
-      >
+      focus:outline-none`}>
         <Dialog.Title
-          className={` ${darkMode ? "text-white" : "text-black"} text-800 pb-4`}
-        >
+          className={` ${
+            darkMode ? "text-white" : "text-black"
+          } text-800 pb-4`}>
           Add New Task
         </Dialog.Title>
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -236,15 +256,15 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ darkMode }) => {
           <Controller
             control={control}
             name="status"
+            defaultValue={columnsName[0]}
             render={({ field: { onChange, value, ref } }) => (
               <DropMenu
                 darkMode={darkMode}
-                onChange={onChange} // send value to hook form
+                onChange={onChange}
                 value={value}
+                columnsName={columnsName}
                 ref={ref}
-              >
-                {selectElements}
-              </DropMenu>
+              />
             )}
           />
           <ButtonPrimarySmall
