@@ -10,7 +10,7 @@ import { customAlphabet } from "nanoid";
 import { SubmitHandler, useForm, Controller } from "react-hook-form";
 import { useRecoilState } from "recoil";
 import { boardsState } from "../../../atoms/boardsAtom";
-import { BoardType } from "../../Board/BoardType";
+import { BoardType, ColumnType } from "../../Board/BoardType";
 import { SubtasksType, TaskType } from "../../Board/BoardType";
 import AddSubTaskInput from "./AddSubTaskInput";
 import DropMenu from "../../Layout/Input/DropMenu";
@@ -65,18 +65,10 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ darkMode }) => {
     ],
   });
   const onSubmit: SubmitHandler<BoardInputs> = (data) => {
+    setValue("status", columnsName[0]);
     // console.log(data);
-    if (!data.status) setValue("status", columnsName[0]);
-    // console.log(data);
-    // if (
-    //   boardState.find(
-    //     (item) =>
-    //       item.name.toLocaleLowerCase() === watch("name").toLocaleLowerCase()
-    //   )
-    // ) {
-    //   setErrorBoardName("Name already exist");
-    //   return;
-    // }
+    // console.log(columnsName[0]);
+
     const subtasks = newTask.subtasks.map((items) => {
       return {
         ...items,
@@ -84,8 +76,6 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ darkMode }) => {
         isCompleted: false,
       };
     });
-    // console.log(subtasks, "suby");
-
     const readyTask: TaskType = {
       title: data.title,
       status: data.status,
@@ -93,13 +83,43 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ darkMode }) => {
       id: newTask.id,
       subtasks: subtasks,
     };
-    console.log(
-      boardState
-        .filter((item) => item.name === settingState.activeBoard)[0]
-        .columns.filter((item) => item.name === data.status)[0].tasks
-    );
+    console.log(readyTask);
+    console.log(data.status);
 
-    // setBoardState((prev) => [...prev, readyBoard]);
+    // console.log(boardState[0].columns[0]);
+    const updatedBoard = boardState.map((item) => {
+      if (item.name === settingState.activeBoard) {
+        const activatedColumns = item.columns.map((col) => {
+          if (col.name === data.status) {
+            return { ...col, tasks: [...col.tasks, readyTask] };
+          }
+          return col;
+        });
+        // console.log(activatedColumns[0].tasks, "cols");
+
+        return { ...item, columns: activatedColumns };
+      }
+      return item;
+    });
+    // });
+    // setBoardState((prev) => {
+    //   return prev.map((item) => {
+    //     if (item.name === settingState.activeBoard) {
+    //       const activatedColumns = item.columns.map((col) => {
+    //         if (col.name === data.status) {
+    //           return { ...col, tasks: [...col.tasks, readyTask] };
+    //         }
+    //         return col;
+    //       });
+    //       return { ...item, columns: activatedColumns };
+    //     }
+    //     return item;
+    //   });
+    // });
+    // console.log(boardState[0].columns[0]);
+    // console.log(updatedBoard[0].columns[0].tasks, "board");
+    // setBoardState(updatedBoard);
+
     // setModalsState((prev) => ({ ...prev, open: false }));
     // setSettingState((prev) => ({ ...prev, activeBoard: data.name }));
   };
@@ -135,10 +155,6 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ darkMode }) => {
     console.log(
       boardState.find((item) => item.name === settingState.activeBoard)
     );
-  };
-
-  const activatedElement = (name: string) => {
-    console.log(name);
   };
 
   useEffect(() => {
@@ -185,11 +201,11 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ darkMode }) => {
        darkMode ? "bg-darkGrey" : "bg-white"
      }
       p-[25px] shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px]
-      focus:outline-none`}>
+      focus:outline-none`}
+      >
         <Dialog.Title
-          className={` ${
-            darkMode ? "text-white" : "text-black"
-          } text-800 pb-4`}>
+          className={` ${darkMode ? "text-white" : "text-black"} text-800 pb-4`}
+        >
           Add New Task
         </Dialog.Title>
         <form onSubmit={handleSubmit(onSubmit)}>
