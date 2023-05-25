@@ -118,11 +118,14 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ darkMode }) => {
     // });
     // console.log(boardState[0].columns[0]);
     // console.log(updatedBoard[0].columns[0].tasks, "board");
-    // setBoardState(updatedBoard);
+    setBoardState(updatedBoard);
 
     // setModalsState((prev) => ({ ...prev, open: false }));
     // setSettingState((prev) => ({ ...prev, activeBoard: data.name }));
   };
+  useEffect(() => {
+    setValue("status", columnsName[0]);
+  }, [columnsName, setValue]);
   const addSubTask = () => {
     const subTaskId = parseInt(nanoid());
     setNewTask((prev) => ({

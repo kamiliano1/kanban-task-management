@@ -18,7 +18,10 @@ const ColumnElement: React.FC<ColumnElementProps> = ({
   }, [subTasks]);
   return (
     <div
-      className={`w-[280px] shadow-[0px_4px_6px_rgba(54,_78,_126,_0.101545)] z-[-30] mb-5 rounded-lg px-4 py-[1.4375rem] ${
+      onClick={() => {
+        console.log(taskName);
+      }}
+      className={`w-[280px] cursor-pointer shadow-[0px_4px_6px_rgba(54,_78,_126,_0.101545)] z-[-30] mb-5 rounded-lg px-4 py-[1.4375rem] hover:bg-opacity-80 ${
         darkMode ? "bg-darkGrey" : "bg-white"
       }`}
     >
