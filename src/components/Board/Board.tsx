@@ -20,6 +20,39 @@ const Board: React.FC<BoardProps> = () => {
       .then((res) => res.json())
       .then((data) => {
         setBoardState(data.boards);
+        setBoardState((prev) =>
+          prev.map((item) => {
+            let subTask: SubtasksType;
+            let letTask: TaskType;
+            let letColumn: ColumnType;
+            let letBoard: BoardType;
+            letBoard = { ...item, columns: [] };
+            item.columns.map((cols) => {
+              letColumn = { ...cols, id: parseInt(nanoid()), tasks: [] };
+              cols.tasks.map((task) => {
+                letTask = { ...task, id: parseInt(nanoid()), subtasks: [] };
+                task.subtasks.map((subtask) => {
+                  subTask = { ...subtask, id: parseInt(nanoid()) };
+                  letTask = {
+                    ...letTask,
+                    subtasks: [...letTask.subtasks, subTask],
+                  };
+
+                  // subTask = { ...subtask, id: parseInt(nanoid()) };
+                });
+                letColumn = {
+                  ...letColumn,
+                  tasks: [...letColumn.tasks, letTask],
+                };
+              });
+              letBoard = {
+                ...letBoard,
+                columns: [...letBoard.columns, letColumn],
+              };
+            });
+            return letBoard;
+          })
+        );
       });
   }, []);
   // console.log(boardState[0]);
@@ -60,7 +93,7 @@ const Board: React.FC<BoardProps> = () => {
         return letBoard;
       })
     );
-    console.log(newBoardState, "nowy");
+    // console.log(newBoardState, "nowy");
   };
   const darkMode = settingState.darkMode;
   const activeBoard = settingState.activeBoard;
@@ -77,10 +110,11 @@ const Board: React.FC<BoardProps> = () => {
     ? activatedBoard.columns.map((item) => (
         <BoardColumn
           key={item.id}
-          id={parseInt(nanoid())}
+          // id={parseInt(nanoid())}
           columnNamme={item.name}
           tasks={item.tasks}
           taskQty={item.tasks.length}
+          columnId={item.id}
         />
       ))
     : [];
@@ -94,8 +128,7 @@ const Board: React.FC<BoardProps> = () => {
       settingState.isSidebarOpen
         ? "pl-[clamp(285px,_23vw,_300px)] animate-boardPaddingOpenn"
         : " animate-boardPaddingClosen"
-    }`}
-    >
+    }`}>
       {activatedColumns}
     </div>
   );

@@ -30,8 +30,7 @@ const Modal: React.FC<ModalProps> = () => {
           ...prev,
           open: !modalsState.open,
         }));
-      }}
-    >
+      }}>
       <Dialog.Overlay
         className="
         bg-black opacity-50 fixed inset-0 z-[15]

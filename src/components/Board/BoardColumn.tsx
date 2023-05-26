@@ -8,12 +8,14 @@ type BoardColumnProps = {
   columnNamme: string;
   taskQty: number;
   tasks?: TaskType[];
+  columnId: number;
 };
 
 const BoardColumn: React.FC<BoardColumnProps> = ({
   columnNamme,
   taskQty,
   tasks,
+  columnId,
 }) => {
   const settingState = useRecoilValue(settingsModalState);
   const darkMode = settingState.darkMode;
@@ -22,6 +24,8 @@ const BoardColumn: React.FC<BoardColumnProps> = ({
       key={item.title}
       taskName={item.title}
       subTasks={item.subtasks}
+      taskId={item.id}
+      columnId={columnId}
     />
   ));
   return (
@@ -33,16 +37,6 @@ const BoardColumn: React.FC<BoardColumnProps> = ({
         </h2>
       </div>
       {columnElements}
-
-      {/* <ColumnElement />
-      <ColumnElement />
-      <ColumnElement />
-      <ColumnElement />
-      <ColumnElement />
-      <ColumnElement />
-      <ColumnElement />
-      <ColumnElement />
-      <ColumnElement /> */}
     </div>
   );
 };

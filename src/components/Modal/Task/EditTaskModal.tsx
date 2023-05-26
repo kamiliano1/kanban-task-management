@@ -22,11 +22,9 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ darkMode }) => {
          darkMode ? "bg-darkGrey" : "bg-white"
        }
         p-[25px] shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px]
-        focus:outline-none`}
-      >
+        focus:outline-none`}>
         <Dialog.Title
-          className={` ${darkMode ? "text-white" : "text-black"} text-800`}
-        >
+          className={` ${darkMode ? "text-white" : "text-black"} text-800`}>
           <div className="flex items-center">
             <p>Edit Task</p>
           </div>
@@ -35,8 +33,7 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ darkMode }) => {
         <Dialog.Description
           className={` pb-4 text-500 ${
             darkMode ? "text-white" : "text-mediumGrey"
-          }`}
-        >
+          }`}>
           Subtasks (2 of 3)
         </Dialog.Description>
         <TextField title={"Title"} darkMode={darkMode} placeholder="WPISAC!!" />
@@ -53,8 +50,7 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ darkMode }) => {
         <p
           className={` text-400 pt-4 pb-2 ${
             darkMode ? "text-white" : "text-mediumGrey"
-          }`}
-        >
+          }`}>
           Current Status
         </p>
         {/* <DropMenu darkMode={darkMode} /> */}
