@@ -111,7 +111,7 @@ const Board: React.FC<BoardProps> = () => {
         <BoardColumn
           key={item.id}
           // id={parseInt(nanoid())}
-          columnNamme={item.name}
+          columnName={item.name}
           tasks={item.tasks}
           taskQty={item.tasks.length}
           columnId={item.id}
@@ -128,7 +128,8 @@ const Board: React.FC<BoardProps> = () => {
       settingState.isSidebarOpen
         ? "pl-[clamp(285px,_23vw,_300px)] animate-boardPaddingOpenn"
         : " animate-boardPaddingClosen"
-    }`}>
+    }`}
+    >
       {activatedColumns}
     </div>
   );
