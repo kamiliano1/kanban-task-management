@@ -24,7 +24,8 @@ const DropMenu = forwardRef<HTMLButtonElement, DropMenuProps>(
         darkMode
           ? "data-[highlighted]:text-white"
           : "data-[highlighted]:text-darkGrey"
-      }`}>
+      }`}
+      >
         <Select.ItemText>{item}</Select.ItemText>
       </Select.Item>
     ));
@@ -35,11 +36,13 @@ const DropMenu = forwardRef<HTMLButtonElement, DropMenuProps>(
           <div
             className={`flex items-center cursor-pointer px-4 py-2
         rounded-[4px] border-[1px] border-[rgba(130,_143,_163,_0.25)] hover:border-purple
-        justify-between ${darkMode ? "text-white" : "text-black"}`}>
+        justify-between ${darkMode ? "text-white" : "text-black"}`}
+          >
             <Select.Value
               className="w-[200px]"
               aria-label={value}
-              onChange={onChange}>
+              onChange={onChange}
+            >
               {value ? value : columnsName[0]}
             </Select.Value>
             <MdKeyboardArrowDown className="text-purple text-800" />
@@ -51,7 +54,8 @@ const DropMenu = forwardRef<HTMLButtonElement, DropMenuProps>(
             className={`mt-2 flex text-mediumGrey z-[300]
       flex-col w-full p-4 space-y-2 rounded-lg ${
         darkMode ? "bg-veryDarkGrey " : "bg-white "
-      } `}>
+      } `}
+          >
             <Select.Group>{selectElements}</Select.Group>
           </Select.Content>
         </Select.Portal>

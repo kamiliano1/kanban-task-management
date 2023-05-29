@@ -19,8 +19,6 @@ const BoardColumn: React.FC<BoardColumnProps> = ({
 }) => {
   const settingState = useRecoilValue(settingsModalState);
   const darkMode = settingState.darkMode;
-  console.log(tasks, "taski");
-
   const columnElements = tasks?.map((item) => (
     <ColumnElement
       key={item.title}
