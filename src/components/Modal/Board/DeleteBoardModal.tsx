@@ -1,12 +1,11 @@
-import React from "react";
 import * as Dialog from "@radix-ui/react-dialog";
-import ButtonDestructive from "../../Layout/Input/Button/ButtonDestructive";
-import ButtonPrimarySmall from "../../Layout/Input/Button/ButtonPrimarySmall";
-import ButtonSecondary from "../../Layout/Input/Button/ButtonSecondary";
+import React from "react";
 import { useRecoilState } from "recoil";
-import { settingsModalState } from "../../../atoms/settingsModalAtom";
-import { modalState } from "../../../atoms/modalAtom";
 import { boardsState } from "../../../atoms/boardsAtom";
+import { modalState } from "../../../atoms/modalAtom";
+import { settingsModalState } from "../../../atoms/settingsModalAtom";
+import ButtonDestructive from "../../Layout/Input/Button/ButtonDestructive";
+import ButtonSecondary from "../../Layout/Input/Button/ButtonSecondary";
 
 type DeleteBoardModalProps = { darkMode: boolean };
 
@@ -16,15 +15,17 @@ const DeleteBoardModal: React.FC<DeleteBoardModalProps> = ({ darkMode }) => {
   const [boardState, setBoardState] = useRecoilState(boardsState);
 
   const deleteBoard = () => {
-    console.log(settingState.activeBoard);
-    console.log(
-      boardState.find((item) => item.name === settingState.activeBoard)
-    );
+    const remainingBoards = boardState.filter((item, id) => {
+      return id;
+    });
     setBoardState((prev) =>
-      prev.filter((item) => item.name != settingState.activeBoard)
+      prev.filter((item) => item.name !== settingState.activeBoard)
     );
     setModalStates((prev) => ({ ...prev, open: false }));
-    setSettingState((prev) => ({ ...prev, activeBoard: boardState[0].name }));
+    setSettingState((prev) => ({
+      ...prev,
+      activeBoard: remainingBoards.length ? remainingBoards[0].name : "",
+    }));
   };
   return (
     <Dialog.Portal>
@@ -35,8 +36,7 @@ const DeleteBoardModal: React.FC<DeleteBoardModalProps> = ({ darkMode }) => {
          darkMode ? "bg-darkGrey" : "bg-white"
        }
         p-[25px] shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px]
-        focus:outline-none`}
-      >
+        focus:outline-none`}>
         <Dialog.Title className="text-red text-800  pb-6">
           Delete this board?
         </Dialog.Title>

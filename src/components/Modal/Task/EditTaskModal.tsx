@@ -38,7 +38,7 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ darkMode }) => {
         </Dialog.Description>
         <TextField title={"Title"} darkMode={darkMode} placeholder="WPISAC!!" />
         <TextArea darkMode={darkMode} />
-        <Checkbox
+        {/* <Checkbox
           checkboxLabel="Research competitor pricing and business models"
           darkMode={darkMode}
         />
@@ -46,7 +46,7 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ darkMode }) => {
           checkboxLabel="Outline a business model that works for our solution"
           darkMode={darkMode}
         />
-        <Checkbox checkboxLabel="Surveying and testing" darkMode={darkMode} />
+        <Checkbox checkboxLabel="Surveying and testing" darkMode={darkMode} /> */}
         <p
           className={` text-400 pt-4 pb-2 ${
             darkMode ? "text-white" : "text-mediumGrey"

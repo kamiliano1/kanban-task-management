@@ -1,20 +1,16 @@
-import * as Dialog from "@radix-ui/react-dialog";
-import * as Select from "@radix-ui/react-select";
-import React, { useEffect, useRef, useState } from "react";
-import AddElementInput from "../../Layout/Input/AddElementInput";
-import ButtonPrimarySmall from "../../Layout/Input/Button/ButtonPrimarySmall";
-import ButtonSecondary from "../../Layout/Input/Button/ButtonSecondary";
 import { modalState } from "@/src/atoms/modalAtom";
 import { settingsModalState } from "@/src/atoms/settingsModalAtom";
+import * as Dialog from "@radix-ui/react-dialog";
 import { customAlphabet } from "nanoid";
-import { SubmitHandler, useForm, Controller } from "react-hook-form";
+import React, { useEffect, useRef, useState } from "react";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useRecoilState } from "recoil";
 import { boardsState } from "../../../atoms/boardsAtom";
-import { BoardType, ColumnType } from "../../Board/BoardType";
 import { SubtasksType, TaskType } from "../../Board/BoardType";
-import AddSubTaskInput from "./AddSubTaskInput";
+import ButtonPrimarySmall from "../../Layout/Input/Button/ButtonPrimarySmall";
+import ButtonSecondary from "../../Layout/Input/Button/ButtonSecondary";
 import DropMenu from "../../Layout/Input/DropMenu";
-import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
+import AddSubTaskInput from "./AddSubTaskInput";
 const nanoid = customAlphabet("1234567890", 2);
 type AddTaskModalProps = { darkMode: boolean };
 interface BoardInputs {
@@ -23,10 +19,6 @@ interface BoardInputs {
   subtasks: SubtasksType[];
   status: string;
 }
-// "title": "Plan Product Hunt launch",
-// "description": "",
-// "status": "Todo",
-// "subtasks": [
 const AddTaskModal: React.FC<AddTaskModalProps> = ({ darkMode }) => {
   const [modalsState, setModalsState] = useRecoilState(modalState);
   const [boardState, setBoardState] = useRecoilState(boardsState);
@@ -66,8 +58,6 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ darkMode }) => {
   });
   const onSubmit: SubmitHandler<BoardInputs> = (data) => {
     setValue("status", columnsName[0]);
-    // console.log(data);
-    // console.log(columnsName[0]);
 
     const subtasks = newTask.subtasks.map((items) => {
       return {
@@ -83,10 +73,7 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ darkMode }) => {
       id: newTask.id,
       subtasks: subtasks,
     };
-    console.log(readyTask);
-    console.log(data.status);
 
-    // console.log(boardState[0].columns[0]);
     const updatedBoard = boardState.map((item) => {
       if (item.name === settingState.activeBoard) {
         const activatedColumns = item.columns.map((col) => {
@@ -95,33 +82,13 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ darkMode }) => {
           }
           return col;
         });
-        // console.log(activatedColumns[0].tasks, "cols");
 
         return { ...item, columns: activatedColumns };
       }
       return item;
     });
-    // });
-    // setBoardState((prev) => {
-    //   return prev.map((item) => {
-    //     if (item.name === settingState.activeBoard) {
-    //       const activatedColumns = item.columns.map((col) => {
-    //         if (col.name === data.status) {
-    //           return { ...col, tasks: [...col.tasks, readyTask] };
-    //         }
-    //         return col;
-    //       });
-    //       return { ...item, columns: activatedColumns };
-    //     }
-    //     return item;
-    //   });
-    // });
-    // console.log(boardState[0].columns[0]);
-    // console.log(updatedBoard[0].columns[0].tasks, "board");
     setBoardState(updatedBoard);
-
-    // setModalsState((prev) => ({ ...prev, open: false }));
-    // setSettingState((prev) => ({ ...prev, activeBoard: data.name }));
+    setModalsState((prev) => ({ ...prev, open: false }));
   };
   useEffect(() => {
     setValue("status", columnsName[0]);
@@ -153,11 +120,6 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ darkMode }) => {
       (item) => item.id !== subTaskId
     );
     setNewTask((prev) => ({ ...prev, subtasks: updatedColumns }));
-  };
-  const testuj = () => {
-    console.log(
-      boardState.find((item) => item.name === settingState.activeBoard)
-    );
   };
 
   useEffect(() => {
@@ -204,11 +166,11 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ darkMode }) => {
        darkMode ? "bg-darkGrey" : "bg-white"
      }
       p-[25px] shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px]
-      focus:outline-none`}
-      >
+      focus:outline-none`}>
         <Dialog.Title
-          className={` ${darkMode ? "text-white" : "text-black"} text-800 pb-4`}
-        >
+          className={` ${
+            darkMode ? "text-white" : "text-black"
+          } text-800 pb-4`}>
           Add New Task
         </Dialog.Title>
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -229,7 +191,7 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ darkMode }) => {
                   : "text-black placeholder:text-black"
               }`}
               {...register("title", {
-                required: false,
+                required: true,
               })}
             />
             {errors.title && (
@@ -237,15 +199,7 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ darkMode }) => {
                 Can`t be empty
               </span>
             )}
-            {/* {errorBoardName && (
-              <span className="absolute text-red text-500 left-[65%] top-[.6rem]">
-                {errorBoardName}
-              </span>
-            )} */}
             <p className="text-400 pb-2">Description</p>
-            {/* <button type="button" onClick={testuj}>
-              Sprawdzaj
-            </button> */}
             <textarea
               className={`text-500 placeholder:text-black w-full h-[112px]
                         FormLabel placeholder:opacity-25 px-4 py-2 rounded border-[1px] 

@@ -51,7 +51,7 @@ const AddSubTaskInput: React.FC<AddSubTaskInputProps> = ({
              : "text-black placeholder:text-black"
          }`}
         {...register(`subtasks.${subtasks.id}.title`, {
-          required: false,
+          required: true,
           onChange: (e) => {
             setCurrentValue(e.target.value);
           },

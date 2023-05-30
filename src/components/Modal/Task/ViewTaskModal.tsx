@@ -134,7 +134,7 @@ const ViewTaskModal: React.FC<ViewTaskModalProps> = ({ darkMode }) => {
   useEffect(() => {
     if (!modalsState.open) {
       setLoading(true);
-      reset({ status: activateColumn });
+      // reset({ status: activateColumn });
     }
   }, [activateColumn, modalsState, reset]);
 
@@ -178,50 +178,50 @@ const ViewTaskModal: React.FC<ViewTaskModalProps> = ({ darkMode }) => {
     });
   };
   const updateStatus = () => {
-    setBoardState((prev) => {
-      return prev.map((board) => {
-        if (board.name === settingState.activeBoard) {
-          let columns = board.columns;
-          let targetColumn = columns.find(
-            (cols) => cols.name === watch("status")[0]
-          );
+    // setBoardState((prev) => {
+    //   return prev.map((board) => {
+    //     if (board.name === settingState.activeBoard) {
+    //       let columns = board.columns;
+    //       let targetColumn = columns.find(
+    //         (cols) => cols.name === watch("status")[0]
+    //       );
 
-          let activatedColumn = columns.find(
-            (cols) => cols.id === settingState.activateColumn
-          );
-          let targetTasks = targetColumn?.tasks;
-          let activatedTasks = activatedColumn?.tasks;
-          let taskToMove = activatedTasks?.find(
-            (task) => task.id === settingState.activateTask
-          );
-          taskToMove = {
-            ...(taskToMove as TaskType),
-            status: watch("status")[0],
-          };
-          targetTasks = [
-            ...(targetTasks as TaskType[]),
-            taskToMove as TaskType,
-          ];
-          activatedTasks = activatedTasks?.filter(
-            (task) => task.id !== taskToMove?.id
-          );
-          // setTargetColumnId(targetColumn?.id);
-          // setTargetTaskId(taskToMove.id);
-          // console.log(activatedColumn?.name, targetColumn?.name);
-          if (activatedColumn?.name === targetColumn?.name) return board;
-          columns = columns.map((cols) => {
-            if (cols.name === watch("status")[0])
-              return { ...cols, tasks: targetTasks as TaskType[] };
-            if (cols.id === settingState.activateColumn)
-              return { ...cols, tasks: activatedTasks as TaskType[] };
-            return cols;
-          });
-          return { ...board, columns: columns };
-          return board;
-        }
-        return board;
-      });
-    });
+    //       let activatedColumn = columns.find(
+    //         (cols) => cols.id === settingState.activateColumn
+    //       );
+    //       let targetTasks = targetColumn?.tasks;
+    //       let activatedTasks = activatedColumn?.tasks;
+    //       let taskToMove = activatedTasks?.find(
+    //         (task) => task.id === settingState.activateTask
+    //       );
+    //       taskToMove = {
+    //         ...(taskToMove as TaskType),
+    //         status: watch("status")[0],
+    //       };
+    //       targetTasks = [
+    //         ...(targetTasks as TaskType[]),
+    //         taskToMove as TaskType,
+    //       ];
+    //       activatedTasks = activatedTasks?.filter(
+    //         (task) => task.id !== taskToMove?.id
+    //       );
+    //       // setTargetColumnId(targetColumn?.id);
+    //       // setTargetTaskId(taskToMove.id);
+    //       // console.log(activatedColumn?.name, targetColumn?.name);
+    //       if (activatedColumn?.name === targetColumn?.name) return board;
+    //       columns = columns.map((cols) => {
+    //         if (cols.name === watch("status")[0])
+    //           return { ...cols, tasks: targetTasks as TaskType[] };
+    //         if (cols.id === settingState.activateColumn)
+    //           return { ...cols, tasks: activatedTasks as TaskType[] };
+    //         return cols;
+    //       });
+    //       return { ...board, columns: columns };
+    //       return board;
+    //     }
+    //     return board;
+    //   });
+    // });
     console.log(settingState);
 
     // setSettingState((prev) => ({
@@ -255,11 +255,9 @@ const ViewTaskModal: React.FC<ViewTaskModalProps> = ({ darkMode }) => {
          }
           p-[25px] 
           shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px]
-          focus:outline-none`}
-      >
+          focus:outline-none`}>
         <Dialog.Title
-          className={` ${darkMode ? "text-white" : "text-black"} text-800`}
-        >
+          className={` ${darkMode ? "text-white" : "text-black"} text-800`}>
           <div className="flex items-center">
             <p>
               {" "}
@@ -273,22 +271,29 @@ const ViewTaskModal: React.FC<ViewTaskModalProps> = ({ darkMode }) => {
         <Dialog.Description
           className={` pb-4 text-500 ${
             darkMode ? "text-white" : "text-mediumGrey"
-          }`}
-        >
+          }`}>
           Subtasks ({completedTask} of {currentTask?.subtasks.length})
         </Dialog.Description>
         {checkBox}
         <p
           className={` text-400 pt-4 pb-2 ${
             darkMode ? "text-white" : "text-mediumGrey"
-          }`}
-        >
+          }`}>
           Current Status
         </p>
+        <input list="browsers">
+          <datalist id="browsers">
+            <option value="Internet Explorer" />
+            <option value="Firefox" />
+            <option value="Google Chrome" />
+            <option value="Opera" />
+            <option value="Safari" />
+          </datalist>
+        </input>
         <Controller
           control={control}
           name="status"
-          defaultValue={activateColumn}
+          defaultValue={"activateColumn"}
           render={({ field: { onChange, value, ref } }) => (
             <DropMenu
               darkMode={darkMode}
