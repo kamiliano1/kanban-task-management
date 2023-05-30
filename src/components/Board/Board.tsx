@@ -37,8 +37,6 @@ const Board: React.FC<BoardProps> = () => {
                     ...letTask,
                     subtasks: [...letTask.subtasks, subTask],
                   };
-
-                  // subTask = { ...subtask, id: parseInt(nanoid()) };
                 });
                 letColumn = {
                   ...letColumn,
@@ -55,7 +53,6 @@ const Board: React.FC<BoardProps> = () => {
         );
       });
   }, []);
-  // console.log(boardState[0]);
   const aktywacja = () => {
     setNewBoardState((prev) =>
       prev.map((item) => ({ ...item, id: parseInt(nanoid()) }))
@@ -77,8 +74,6 @@ const Board: React.FC<BoardProps> = () => {
                 ...letTask,
                 subtasks: [...letTask.subtasks, subTask],
               };
-
-              // subTask = { ...subtask, id: parseInt(nanoid()) };
             });
             letColumn = {
               ...letColumn,
@@ -93,7 +88,6 @@ const Board: React.FC<BoardProps> = () => {
         return letBoard;
       })
     );
-    // console.log(newBoardState, "nowy");
   };
   const darkMode = settingState.darkMode;
   const activeBoard = settingState.activeBoard;

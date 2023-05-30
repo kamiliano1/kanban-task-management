@@ -1,6 +1,6 @@
 "use client";
 import * as Select from "@radix-ui/react-select";
-import React, { forwardRef, useEffect, useState } from "react";
+import { forwardRef } from "react";
 import { MdKeyboardArrowDown } from "react-icons/md";
 
 type DropMenuProps = {

@@ -14,6 +14,7 @@ import AddBoardModal from "./Board/AddBoardModal";
 import DeleteBoardModal from "./Board/DeleteBoardModal";
 import EditBoardModal from "./Board/EditBoardModal";
 import AddTaskModal from "./Task/AddTaskModal";
+import DeleteTaskModal from "./Task/DeleteTaskModal";
 
 type ModalProps = {};
 
@@ -30,7 +31,8 @@ const Modal: React.FC<ModalProps> = () => {
           ...prev,
           open: !modalsState.open,
         }));
-      }}>
+      }}
+    >
       <Dialog.Overlay
         className="
         bg-black opacity-50 fixed inset-0 z-[15]
@@ -39,6 +41,7 @@ const Modal: React.FC<ModalProps> = () => {
       {activeModal === "editTask" && <EditTaskModal darkMode={darkMode} />}
       {activeModal === "viewTask" && <ViewTaskModal darkMode={darkMode} />}
       {activeModal === "addTask" && <AddTaskModal darkMode={darkMode} />}
+      {activeModal === "deleteTask" && <DeleteTaskModal darkMode={darkMode} />}
 
       {activeModal === "addBoard" && <AddBoardModal darkMode={darkMode} />}
       {activeModal === "editBoard" && <EditBoardModal darkMode={darkMode} />}

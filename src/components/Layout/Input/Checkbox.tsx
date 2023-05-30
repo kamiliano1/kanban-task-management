@@ -19,11 +19,12 @@ const Checkbox: React.FC<CheckboxProps> = ({
   isCompleted,
   toggleSubtask,
 }) => {
-  const [isClicked, setIsClicked] = useState(false);
-
   return (
     <div
-      className={`flex items-center justify-start bg-veryDarkGrey 
+      onClick={() => {
+        toggleSubtask(subTaskId);
+      }}
+      className={`flex items-center justify-start bg-veryDarkGrey cursor-pointer
        hover:bg-[rgba(99,_95,_199,_.25)] text-400 py-3 px-3 mb-2 ${
          darkMode ? "bg-veryDarkGrey text-white" : "bg-white text-black"
        }`}
@@ -31,10 +32,6 @@ const Checkbox: React.FC<CheckboxProps> = ({
       <CheckBox.Root
         className={`h-4 aspect-square border-[1px] border-[rgba(130,_143,_163,_0.24)] rounded-sm bg-white `}
         checked={isCompleted}
-        // onClick={() => setIsClicked((prev) => !prev)}
-        onClick={() => {
-          toggleSubtask(subTaskId);
-        }}
         id={checkboxLabel}
       >
         <CheckBox.Indicator>
@@ -43,7 +40,7 @@ const Checkbox: React.FC<CheckboxProps> = ({
       </CheckBox.Root>
       <label
         className={`text-bold px-4 cursor-pointer ${
-          isClicked && "line-through opacity-50"
+          isCompleted && "line-through opacity-50"
         }`}
         htmlFor={checkboxLabel}
       >

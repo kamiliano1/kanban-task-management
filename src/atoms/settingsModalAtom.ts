@@ -6,6 +6,7 @@ export interface SettingsState {
   activeBoard: string;
   activateColumn: number;
   activateTask: number;
+  activateTaskName: string;
 }
 
 const defaultSettingsModalState: SettingsState = {
@@ -14,6 +15,7 @@ const defaultSettingsModalState: SettingsState = {
   activeBoard: "",
   activateColumn: 0,
   activateTask: 0,
+  activateTaskName: "",
 };
 
 export const settingsModalState = atom<SettingsState>({

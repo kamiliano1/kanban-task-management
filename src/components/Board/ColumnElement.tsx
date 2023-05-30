@@ -28,6 +28,7 @@ const ColumnElement: React.FC<ColumnElementProps> = ({
       ...prev,
       activateTask: taskId,
       activateColumn: columnId,
+      activateTaskName: taskName,
     }));
     setModalsState({ open: true, view: "viewTask" });
   };
