@@ -34,11 +34,6 @@ const EditBoardModal: React.FC<EditBoardModalProps> = ({ darkMode }) => {
     formState: { errors },
   } = useForm<BoardInputs>();
 
-  useForm({
-    defaultValues: {
-      name: "kk",
-    },
-  });
   const [newBoard, setNewBoard] = useState<BoardType>({
     name: "",
     id: parseInt(nanoid()),
