@@ -11,6 +11,7 @@ import ButtonPrimarySmall from "../../Layout/Input/Button/ButtonPrimarySmall";
 import ButtonSecondary from "../../Layout/Input/Button/ButtonSecondary";
 import DropMenu from "../../Layout/Input/DropMenu";
 import AddSubTaskInput from "./AddSubTaskInput";
+
 const nanoid = customAlphabet("1234567890", 15);
 type EditTaskModalProps = {
   darkMode: boolean;
@@ -23,6 +24,9 @@ interface BoardInputs {
 }
 const EditTaskModal: React.FC<EditTaskModalProps> = ({ darkMode }) => {
   const [modalsState, setModalsState] = useRecoilState(modalState);
+  const [targetColumnId, setTargetColumnId] = useState<number>();
+  const [isUpdatedTask, setIsUpdatedTask] = useState<boolean>(false);
+  const [targetTaskId, setTargetTaskId] = useState<number>();
   const [boardState, setBoardState] = useRecoilState(boardsState);
   const [settingState, setSettingState] = useRecoilState(settingsModalState);
   const [errorBoardName, setErrorBoardName] = useState<string>("");
@@ -43,24 +47,24 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ darkMode }) => {
     control,
     formState: { errors },
   } = useForm<BoardInputs>();
-  const [newTask, setNewTask] = useState<TaskType>({
-    title: "",
-    status: "",
-    description: "",
-    id: parseInt(nanoid()),
-    subtasks: [
-      {
-        title: "",
-        id: parseInt(nanoid()),
-        isCompleted: false,
-      },
-      {
-        title: "",
-        id: parseInt(nanoid()),
-        isCompleted: false,
-      },
-    ],
-  });
+  // const [newTask, setNewTask] = useState<TaskType>({
+  //   title: "",
+  //   status: "",
+  //   description: "",
+  //   id: parseInt(nanoid()),
+  //   subtasks: [
+  //     {
+  //       title: "",
+  //       id: parseInt(nanoid()),
+  //       isCompleted: false,
+  //     },
+  //     {
+  //       title: "",
+  //       id: parseInt(nanoid()),
+  //       isCompleted: false,
+  //     },
+  //   ],
+  // });
   useEffect(() => {
     setActivatedColumn(
       boardState
@@ -70,6 +74,49 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ darkMode }) => {
   }, [boardState, settingState.activateColumn, settingState.activeBoard]);
   const aktualizacja = () => {
     console.log(boardState[0]);
+    // setIsUpdatedTask(true);
+    // setBoardState((prev) => {
+    //   return prev.map((board) => {
+    //     if (board.name === settingState.activeBoard) {
+    //       let columns = board.columns;
+    //       let targetColumn = columns.find(
+    //         (cols) => cols.name === watch("status")[0]
+    //       );
+
+    //       let activatedColumn = columns.find(
+    //         (cols) => cols.id === settingState.activateColumn
+    //       );
+    //       let targetTasks = targetColumn?.tasks;
+    //       let activatedTasks = activatedColumn?.tasks;
+    //       let taskToMove = activatedTasks?.find(
+    //         (task) => task.id === settingState.activateTask
+    //       );
+    //       taskToMove = {
+    //         ...(taskToMove as TaskType),
+    //         status: watch("status")[0],
+    //       };
+    //       targetTasks = [
+    //         ...(targetTasks as TaskType[]),
+    //         taskToMove as TaskType,
+    //       ];
+    //       activatedTasks = activatedTasks?.filter(
+    //         (task) => task.id !== taskToMove?.id
+    //       );
+    //       setTargetColumnId(targetColumn?.id);
+    //       setTargetTaskId(taskToMove.id);
+    //       if (activatedColumn?.name === targetColumn?.name) return board;
+    //       columns = columns.map((cols) => {
+    //         if (cols.name === watch("status")[0])
+    //           return { ...cols, tasks: targetTasks as TaskType[] };
+    //         if (cols.id === settingState.activateColumn)
+    //           return { ...cols, tasks: activatedTasks as TaskType[] };
+    //         return cols;
+    //       });
+    //       return { ...board, columns: columns };
+    //     }
+    //     return board;
+    //   });
+    // });
 
     // setActivatedColumn(
     //   boardState
@@ -96,17 +143,32 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ darkMode }) => {
     //   });
     // }
   };
-
   useEffect(() => {
-    const currentBoard = boardState.find(
-      (item) => item.name === settingState.activeBoard
-    );
-    const activatedColumn = currentBoard?.columns.find(
-      (item) => item.id === settingState.activateColumn
-    );
-    if (currentBoard) {
-      setColumnsName(currentBoard.columns.map((item) => item.name));
-      if (!loading) {
+    if (isUpdatedTask) {
+      setSettingState((prev) => ({
+        ...prev,
+        activateColumn: targetColumnId as number,
+        activateTask: targetTaskId as number,
+      }));
+      setIsUpdatedTask(false);
+    }
+  }, [
+    isUpdatedTask,
+    modalsState.view,
+    setSettingState,
+    targetColumnId,
+    targetTaskId,
+  ]);
+  useEffect(() => {
+    if (loading) {
+      const currentBoard = boardState.find(
+        (item) => item.name === settingState.activeBoard
+      );
+      const activatedColumn = currentBoard?.columns.find(
+        (item) => item.id === settingState.activateColumn
+      );
+      if (currentBoard) {
+        setColumnsName(currentBoard.columns.map((item) => item.name));
         setCurrentTask(
           activatedColumn?.tasks.find(
             (item) => item.id === settingState.activateTask
@@ -118,11 +180,12 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ darkMode }) => {
         currentTask?.subtasks.map((subtask) => {
           setValue(`subtasks.${subtask.id}.title`, subtask.title);
         });
-        setLoading(true);
       }
+      if (currentTask) setLoading(false);
     }
   }, [
     boardState,
+    currentTask,
     currentTask?.description,
     currentTask?.status,
     currentTask?.subtasks,
@@ -135,94 +198,54 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ darkMode }) => {
   ]);
 
   const onSubmit: SubmitHandler<BoardInputs> = (data) => {
-    // setValue("status", columnsName[0]);
-    // console.log(data);
-
-    // const subtasks = newTask.subtasks.map((items) => {
-    //   return {
-    //     ...items,
-    //     title: data.subtasks[items.id].title,
-    //     isCompleted: false,
-    //   };
-    // });
-    // const readyTask: TaskType = {
-    //   title: data.title,
-    //   status: data.status,
-    //   description: data.description,
-    //   id: currentTask?.id as number,
-    //   subtasks: data.subtasks,
-    // };
-    // console.log(readyTask, "ready");
-
+    const updatedSubtasks = currentTask?.subtasks.map((subtask) => {
+      return { ...subtask, title: data.subtasks[subtask.id].title };
+    });
     setCurrentTask({
       title: data.title,
       status: data.status,
       description: data.description,
       id: currentTask?.id as number,
-      subtasks: data.subtasks,
+      subtasks: updatedSubtasks as SubtasksType[],
     });
-    // console.log(currentTask);
-    // console.log(data.status);
-
-    const updatedBoard = boardState.map((board) => {
-      if (board.name === settingState.activeBoard) {
-        const activatedColumns = board.columns.map((col) => {
-          // console.log(col.name, "col.name");
-          // console.log(data.status, "data.status");
-
-          if (col.name === data.status) {
-            console.log(col.tasks, "task");
-
-            const updatedTask = col.tasks.map((task) => {
-              console.log(task.id, currentTask?.id);
-
-              return task.id === currentTask?.id ? currentTask : task;
-            });
-            // console.log(updatedTask);
-
-            return { ...col, tasks: updatedTask };
-          }
-          return col;
-        });
-
-        return { ...board, columns: activatedColumns };
-      }
-      return board;
-    });
-    console.log(updatedBoard);
-
-    setBoardState(updatedBoard);
-    // setModalsState((prev) => ({ ...prev, open: false }));
-    setLoading(true);
+    setTimeout(() => {
+      setModalsState((prev) => ({ ...prev, view: "viewTask" }));
+    }, 1);
   };
-  // useEffect(() => {
-  //   // setValue("status", columnsName[0]);
-  // }, [columnsName, setValue]);
+  useEffect(() => {
+    setBoardState((prev) =>
+      prev.map((board) => {
+        if (board.name === settingState.activeBoard) {
+          const activatedColumns = board.columns.map((col) => {
+            if (col.name === getValues("status")) {
+              console.log(col.tasks, "task");
+              const updatedTask = col.tasks.map((task) => {
+                if (task.id === currentTask?.id) {
+                }
+                return task.id === currentTask?.id ? currentTask : task;
+              });
+              return { ...col, tasks: updatedTask };
+            }
+            return col;
+          });
+          return { ...board, columns: activatedColumns };
+        }
+        return board;
+      })
+    );
+    // setModalsState((prev) => ({ ...prev, view: "viewTask" }));
+  }, [currentTask, getValues, setBoardState, settingState.activeBoard]);
   const addSubTask = () => {
-    console.log(currentTask?.subtasks);
-
     const subTaskId = parseInt(nanoid());
     setCurrentTask((task) => ({
       ...(task as TaskType),
       subtasks: [
         ...(task?.subtasks as SubtasksType[]),
-        { title: "", id: subTaskId, isCompleted: false },
+        { title: "", isCompleted: false, id: subTaskId },
       ],
     }));
-    console.log(currentTask?.subtasks);
   };
 
-  useEffect(() => {
-    if (loading) {
-      const activatedBoard = boardState.find(
-        (item) => item.name === settingState.activeBoard
-      );
-      if (activatedBoard) {
-        setColumnsName(activatedBoard.columns.map((item) => item.name));
-        setLoading(false);
-      }
-    }
-  }, [boardState, columnsName, loading, settingState.activeBoard]);
   const deleteSubTask = (subTaskId: number) => {
     const updatedColumns = currentTask?.subtasks.filter(
       (item) => item.id !== subTaskId
@@ -232,35 +255,6 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ darkMode }) => {
       subtasks: updatedColumns as SubtasksType[],
     }));
   };
-
-  // useEffect(() => {
-  //   setNewTask({
-  //     title: "",
-  //     status: "",
-  //     description: "",
-  //     id: parseInt(nanoid()),
-  //     subtasks: [
-  //       {
-  //         title: "",
-  //         id: parseInt(nanoid()),
-  //         isCompleted: false,
-  //       },
-  //       {
-  //         title: "",
-  //         id: parseInt(nanoid()),
-  //         isCompleted: false,
-  //       },
-  //     ],
-  //   }); // reset to default after close
-  // reset({ title: "", status: "", description: "", subtasks: [] });
-  // setErrorBoardName("");
-  // console.log(modalsState);
-  // setLoading(true);
-  // }, [modalsState, reset]);
-  // const updateStatus = (e) => {
-  //   console.log(e[0]);
-  //   // setActivatedColumn("aaa");
-  // };
   const subTasks = currentTask?.subtasks.map((item, number) => (
     <AddSubTaskInput
       key={item.id}
@@ -281,15 +275,16 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ darkMode }) => {
        darkMode ? "bg-darkGrey" : "bg-white"
      }
       p-[25px] shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px]
-      focus:outline-none`}
-      >
+      focus:outline-none`}>
         <Dialog.Title
-          className={` ${darkMode ? "text-white" : "text-black"} text-800 pb-4`}
-        >
+          className={` ${
+            darkMode ? "text-white" : "text-black"
+          } text-800 pb-4`}>
           Edit Task
         </Dialog.Title>
         <form onSubmit={handleSubmit(onSubmit)}>
           <p className="text-400 pb-2">Title</p>
+          <p className="text-400 pb-2">{currentTask?.title}</p>
           <div className="relative">
             <input
               placeholder="e.g. Take coffee break"
