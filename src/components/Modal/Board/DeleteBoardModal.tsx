@@ -15,8 +15,8 @@ const DeleteBoardModal: React.FC<DeleteBoardModalProps> = ({ darkMode }) => {
   const [boardState, setBoardState] = useRecoilState(boardsState);
 
   const deleteBoard = () => {
-    const remainingBoards = boardState.filter((item, id) => {
-      return id;
+    const remainingBoards = boardState.filter((item) => {
+      return item.name !== settingState.activeBoard;
     });
     setBoardState((prev) =>
       prev.filter((item) => item.name !== settingState.activeBoard)
@@ -29,7 +29,7 @@ const DeleteBoardModal: React.FC<DeleteBoardModalProps> = ({ darkMode }) => {
   };
   return (
     <Dialog.Portal>
-      <Dialog.Overlay className="bg-blackA9 data-[state=open]:animate-overlayShow fixed inset-0" />
+      <Dialog.Overlay className="data-[state=open]:animate-overlayShow fixed inset-0" />
       <Dialog.Content
         className={`data-[state=open]:animate-contentShow fixed top-[50%] left-[50%] max-h-[85vh] w-[90vw] z-[500] max-w-[450px]
        translate-x-[-50%] translate-y-[-50%] rounded-[6px] ${
@@ -38,7 +38,7 @@ const DeleteBoardModal: React.FC<DeleteBoardModalProps> = ({ darkMode }) => {
         p-[25px] shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px]
         focus:outline-none`}
       >
-        <Dialog.Title className="text-red text-800  pb-6">
+        <Dialog.Title className="text-red text-800 pb-6">
           Delete this board?
         </Dialog.Title>
 

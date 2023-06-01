@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 
-import { settingsModalState } from "../../atoms/settingsModalAtom";
-import { useRecoilState, useRecoilValue } from "recoil";
-import { SubtasksType } from "./BoardType";
 import { modalState } from "@/src/atoms/modalAtom";
+import { useRecoilState } from "recoil";
+import { settingsModalState } from "../../atoms/settingsModalAtom";
+import { SubtasksType } from "./BoardType";
 
 type ColumnElementProps = {
   taskName: string;

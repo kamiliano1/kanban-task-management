@@ -10,9 +10,9 @@ const BoardDropDownMenu: React.FC<BoardDropDownMenuProps> = () => {
   const [modalsState, setModalsState] = useRecoilState(modalState);
   const settingState = useRecoilValue(settingsModalState);
   const [isDisabled, setIsDisabled] = useState<boolean>(true);
-  const darkMode = true;
+  const darkMode = settingState.darkMode;
   useEffect(() => {
-    if (settingState.activeBoard === "") {
+    if (!settingState.activeBoard) {
       setIsDisabled(true);
       return;
     }
@@ -33,19 +33,22 @@ const BoardDropDownMenu: React.FC<BoardDropDownMenuProps> = () => {
           className={` flex text-mediumGrey  z-[300] mx-6 mt-[2rem]
         flex-col w-[192px] p-4 gap-4 space-y-2 rounded-lg ${
           darkMode ? "bg-veryDarkGrey " : "bg-white "
-        } `}>
+        } `}
+        >
           <DropdownMenu.Item
             className="hover:outline-none cursor-pointer hover:opacity-70"
             onClick={() => {
               setModalsState({ open: true, view: "editBoard" });
-            }}>
+            }}
+          >
             Edit Board
           </DropdownMenu.Item>
           <DropdownMenu.Item
             className="hover:outline-none cursor-pointer hover:opacity-70 text-red"
             onClick={() => {
               setModalsState({ open: true, view: "deleteBoard" });
-            }}>
+            }}
+          >
             Delete Board
           </DropdownMenu.Item>
         </DropdownMenu.Content>

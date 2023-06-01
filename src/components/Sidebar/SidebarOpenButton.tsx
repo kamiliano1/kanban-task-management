@@ -1,7 +1,7 @@
 import React from "react";
 import { FaEye } from "react-icons/fa";
 import { settingsModalState } from "../../atoms/settingsModalAtom";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState } from "recoil";
 
 type SidebarOpenButtonProps = {};
 
@@ -18,7 +18,6 @@ const SidebarOpenButton: React.FC<SidebarOpenButtonProps> = () => {
         }))
       }
     >
-      {" "}
       <span className="sr-only">Eye Icon</span>
       <FaEye />
     </button>

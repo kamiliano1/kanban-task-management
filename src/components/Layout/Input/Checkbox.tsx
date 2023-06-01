@@ -1,9 +1,7 @@
 "use client";
-import React, { useState } from "react";
-
+import React from "react";
 import * as CheckBox from "@radix-ui/react-checkbox";
 import { CheckIcon } from "@radix-ui/react-icons";
-
 type CheckboxProps = {
   darkMode: boolean;
   checkboxLabel: string;

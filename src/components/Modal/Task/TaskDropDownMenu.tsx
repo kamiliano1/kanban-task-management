@@ -8,7 +8,7 @@ import { settingsModalState } from "@/src/atoms/settingsModalAtom";
 const TaskDropDownMenu: React.FC<TaskDropDownMenuProps> = () => {
   const [modalsState, setModalsState] = useRecoilState(modalState);
   const settingState = useRecoilValue(settingsModalState);
-  const darkMode = true;
+  const darkMode = settingState.darkMode;
 
   return (
     <DropdownMenu.Root>

@@ -12,83 +12,51 @@ const Board: React.FC<BoardProps> = () => {
   const settingState = useRecoilValue(settingsModalState);
   const [boardState, setBoardState] = useRecoilState(boardsState);
   const [newBoardState, setNewBoardState] = useState<BoardType[]>(boardState);
+  const [loading, setLoading] = useState<boolean>(true);
   const [activatedBoard, setActivatedBoard] = useState<BoardType>(
     boardState[0]
   );
   useEffect(() => {
-    fetch("data/data.json")
-      .then((res) => res.json())
-      .then((data) => {
-        setBoardState(data.boards);
-        setBoardState((prev) =>
-          prev.map((item) => {
-            let subTask: SubtasksType;
-            let letTask: TaskType;
-            let letColumn: ColumnType;
-            let letBoard: BoardType;
-            letBoard = { ...item, columns: [] };
-            item.columns.map((cols) => {
-              letColumn = { ...cols, id: parseInt(nanoid()), tasks: [] };
-              cols.tasks.map((task) => {
-                letTask = { ...task, id: parseInt(nanoid()), subtasks: [] };
-                task.subtasks.map((subtask) => {
-                  subTask = { ...subtask, id: parseInt(nanoid()) };
-                  letTask = {
-                    ...letTask,
-                    subtasks: [...letTask.subtasks, subTask],
+    if (loading) {
+      fetch("data/data.json")
+        .then((res) => res.json())
+        .then((data) => {
+          setBoardState(data.boards);
+          setBoardState((prev) =>
+            prev.map((item) => {
+              let subTask: SubtasksType;
+              let letTask: TaskType;
+              let letColumn: ColumnType;
+              let letBoard: BoardType;
+              letBoard = { ...item, columns: [] };
+              item.columns.map((cols) => {
+                letColumn = { ...cols, id: parseInt(nanoid()), tasks: [] };
+                cols.tasks.map((task) => {
+                  letTask = { ...task, id: parseInt(nanoid()), subtasks: [] };
+                  task.subtasks.map((subtask) => {
+                    subTask = { ...subtask, id: parseInt(nanoid()) };
+                    letTask = {
+                      ...letTask,
+                      subtasks: [...letTask.subtasks, subTask],
+                    };
+                  });
+                  letColumn = {
+                    ...letColumn,
+                    tasks: [...letColumn.tasks, letTask],
                   };
                 });
-                letColumn = {
-                  ...letColumn,
-                  tasks: [...letColumn.tasks, letTask],
+                letBoard = {
+                  ...letBoard,
+                  columns: [...letBoard.columns, letColumn],
                 };
               });
-              letBoard = {
-                ...letBoard,
-                columns: [...letBoard.columns, letColumn],
-              };
-            });
-            return letBoard;
-          })
-        );
-      });
-  }, []);
-  const aktywacja = () => {
-    setNewBoardState((prev) =>
-      prev.map((item) => ({ ...item, id: parseInt(nanoid()) }))
-    );
-    setNewBoardState((prev) =>
-      prev.map((item) => {
-        let subTask: SubtasksType;
-        let letTask: TaskType;
-        let letColumn: ColumnType;
-        let letBoard: BoardType;
-        letBoard = { ...item, columns: [] };
-        item.columns.map((cols) => {
-          letColumn = { ...cols, id: parseInt(nanoid()), tasks: [] };
-          cols.tasks.map((task) => {
-            letTask = { ...task, id: parseInt(nanoid()), subtasks: [] };
-            task.subtasks.map((subtask) => {
-              subTask = { ...subtask, id: parseInt(nanoid()) };
-              letTask = {
-                ...letTask,
-                subtasks: [...letTask.subtasks, subTask],
-              };
-            });
-            letColumn = {
-              ...letColumn,
-              tasks: [...letColumn.tasks, letTask],
-            };
-          });
-          letBoard = {
-            ...letBoard,
-            columns: [...letBoard.columns, letColumn],
-          };
+              return letBoard;
+            })
+          );
         });
-        return letBoard;
-      })
-    );
-  };
+      setLoading(false);
+    }
+  }, [loading, nanoid, setBoardState]);
   const darkMode = settingState.darkMode;
   const activeBoard = settingState.activeBoard;
   useEffect(() => {
@@ -114,10 +82,9 @@ const Board: React.FC<BoardProps> = () => {
     : [];
   return (
     <div
-      onClick={aktywacja}
       className={`${
         darkMode ? "bg-veryDarkGrey" : "bg-white"
-      } w-full flex z-[-300] overflow-x-auto ml-[300px] 
+      } w-full flex z-[-300] overflow-x-auto
     h-full pt-6 ${
       settingState.isSidebarOpen
         ? "pl-[clamp(285px,_23vw,_300px)] animate-boardPaddingOpenn"

@@ -1,8 +1,8 @@
-import React from "react";
 import * as Switch from "@radix-ui/react-switch";
-import { BsMoonStarsFill, BsFillSunFill } from "react-icons/bs";
+import React from "react";
+import { BsFillSunFill, BsMoonStarsFill } from "react-icons/bs";
+import { useRecoilState } from "recoil";
 import { settingsModalState } from "../../../atoms/settingsModalAtom";
-import { useRecoilState, useRecoilValue } from "recoil";
 
 type ThemeSwitcherProps = {};
 

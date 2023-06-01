@@ -1,9 +1,7 @@
 import React, { useState } from "react";
-import * as Form from "@radix-ui/react-form";
-import { AiOutlineClose } from "react-icons/ai";
-import { ColumnType } from "../../Board/BoardType";
-import { FieldErrors, UseFormRegister, useForm } from "react-hook-form";
+import { FieldErrors, UseFormRegister } from "react-hook-form";
 import { ImCross } from "react-icons/im";
+import { ColumnType } from "../../Board/BoardType";
 interface IFormInputs {
   name: string;
   columns: ColumnType[];

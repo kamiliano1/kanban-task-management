@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
-import * as Form from "@radix-ui/react-form";
-import { AiOutlineClose } from "react-icons/ai";
-import { ColumnType, SubtasksType } from "../../Board/BoardType";
-import { FieldErrors, UseFormRegister, useForm } from "react-hook-form";
+import { FieldErrors, UseFormRegister } from "react-hook-form";
 import { ImCross } from "react-icons/im";
+import { SubtasksType } from "../../Board/BoardType";
 
 interface TaskFormInputs {
   title: string;
@@ -69,8 +67,9 @@ const AddSubTaskInput: React.FC<AddSubTaskInputProps> = ({
         }}
         className={`text-[1rem] font-bold ml-4  ${
           errors.subtasks?.[subtasks.id] ? "text-red" : "text-mediumGrey"
-        } cursor-pointer
-               hover:text-lightGrey`}
+        } cursor-pointer ${
+          darkMode ? "hover:text-lightGrey" : "hover:text-darkGrey"
+        } `}
       />
     </div>
   );
