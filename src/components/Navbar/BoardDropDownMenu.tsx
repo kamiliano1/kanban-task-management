@@ -24,7 +24,9 @@ const BoardDropDownMenu: React.FC<BoardDropDownMenuProps> = () => {
       <DropdownMenu.Trigger asChild disabled={isDisabled}>
         <div className={`${!isDisabled && "cursor-pointer"}`}>
           <BiDotsVerticalRounded
-            className={`text-mediumGrey ${isDisabled && "opacity-70"}`}
+            className={`text-mediumGrey sm:text-[1.7rem] ${
+              isDisabled && "opacity-70"
+            }`}
           />
         </div>
       </DropdownMenu.Trigger>

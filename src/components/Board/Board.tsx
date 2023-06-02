@@ -5,11 +5,15 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import BoardColumn from "./BoardColumn";
 import { BoardType, ColumnType, SubtasksType, TaskType } from "./BoardType";
 import { customAlphabet } from "nanoid";
+
+import EmptyBoardInfo from "./EmptyBoardInfo";
+import { modalState } from "@/src/atoms/modalAtom";
 type BoardProps = {};
 
 const Board: React.FC<BoardProps> = () => {
   const nanoid = customAlphabet("1234567890", 15);
   const settingState = useRecoilValue(settingsModalState);
+  const [modalsState, setModalsState] = useRecoilState(modalState);
   const [boardState, setBoardState] = useRecoilState(boardsState);
   const [newBoardState, setNewBoardState] = useState<BoardType[]>(boardState);
   const [loading, setLoading] = useState<boolean>(true);
@@ -72,7 +76,6 @@ const Board: React.FC<BoardProps> = () => {
     ? activatedBoard.columns.map((item) => (
         <BoardColumn
           key={item.id}
-          // id={parseInt(nanoid())}
           columnName={item.name}
           tasks={item.tasks}
           taskQty={item.tasks.length}
@@ -84,14 +87,23 @@ const Board: React.FC<BoardProps> = () => {
     <div
       className={`${
         darkMode ? "bg-veryDarkGrey" : "bg-white"
-      } w-full flex z-[-300] overflow-x-auto
-    h-full pt-6 ${
-      settingState.isSidebarOpen
-        ? "pl-[clamp(285px,_23vw,_300px)] animate-boardPaddingOpenn"
-        : " animate-boardPaddingClosen"
+      } w-full flex z-[-300] overflow-x-auto  
+    pt-6 pr-6 ${
+      settingState.isSidebarOpen && "pl-[clamp(285px,_23vw,_300px)]"
     }`}
     >
-      {activatedColumns}
+      {activatedColumns.length ? activatedColumns : <EmptyBoardInfo />}
+      <div className="flex justify-center items-center ml-6 w-[278px] mt-[2.4375rem] rounded-md bg-[linear-gradient(180deg,_rgba(43,_44,_55,_0.25)_0%,_rgba(43,_44,_55,_0.125)_100%)]">
+        {" "}
+        <button
+          onClick={() => {
+            setModalsState({ open: true, view: "editBoard" });
+          }}
+          className="text-900 text-mediumGrey hover:text-purple"
+        >
+          + New Column
+        </button>
+      </div>{" "}
     </div>
   );
 };

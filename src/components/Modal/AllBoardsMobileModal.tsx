@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import ButtonPrimaryBoards from "../Layout/Input/Button/ButtonPrimaryBoards";
 import ThemeSwitcher from "../Layout/Input/ThemeSwitcher";
@@ -6,6 +6,8 @@ import { modalState } from "../../atoms/modalAtom";
 import { useRecoilState } from "recoil";
 import { settingsModalState } from "../../atoms/settingsModalAtom";
 import { boardMobileModalState } from "../../atoms/boardsMobileModalAtom";
+import { boardsState } from "@/src/atoms/boardsAtom";
+import ButtonAddBoard from "../Layout/Input/Button/ButtonAddBoard";
 type AllBoardsMobileModalProps = { darkMode: boolean };
 const AllBoardsMobileModal: React.FC<AllBoardsMobileModalProps> = ({
   darkMode,
@@ -13,8 +15,23 @@ const AllBoardsMobileModal: React.FC<AllBoardsMobileModalProps> = ({
   const [boardMobileModalStates, setBoardMobileModalStates] = useRecoilState(
     boardMobileModalState
   );
-  const [settingState, setSettingsState] = useRecoilState(settingsModalState);
 
+  const [boardState, setBoardState] = useRecoilState(boardsState);
+  const [settingState, setSettingState] = useRecoilState(settingsModalState);
+
+  const [loading, setLoading] = useState<boolean>(true);
+  useEffect(() => {
+    if (loading && boardState.length) {
+      setSettingState((prev) => ({
+        ...prev,
+        activeBoard: boardState[0].name,
+      }));
+      setLoading(false);
+    }
+  }, [boardState, loading, setSettingState]);
+  const boardList = boardState.map((item) => (
+    <ButtonPrimaryBoards key={item.name} buttonLabel={item.name} />
+  ));
   return (
     <Dialog.Root
       open={boardMobileModalStates.open}
@@ -24,14 +41,6 @@ const AllBoardsMobileModal: React.FC<AllBoardsMobileModalProps> = ({
         });
       }}
     >
-      {/* {activeModal === "allBoardsMobile" && (
-      <AllBoardsMobileModal darkMode={darkMode} />
-    )} */}
-      {/* <Dialog.Trigger>
-      <button className="">Edit profile</button>
-    </Dialog.Trigger> */}
-      {/* <EditTaskModal darkMode={darkMode} /> */}
-
       <Dialog.Portal>
         <Dialog.Overlay
           className="
@@ -51,12 +60,10 @@ const AllBoardsMobileModal: React.FC<AllBoardsMobileModalProps> = ({
         >
           <div className="flex flex-col pr-6">
             <Dialog.Title className="text-mediumGrey text-400 tracking-[2.4px] px-6 py-4">
-              ALL BOARDS (3)
+              ALL BOARDS ({boardState.length})
             </Dialog.Title>
-            <ButtonPrimaryBoards buttonLabel="Platform Launch" />
-            <ButtonPrimaryBoards buttonLabel="Marketing Plan" />
-            <ButtonPrimaryBoards buttonLabel="RoadMap" />
-            <ButtonPrimaryBoards buttonLabel="RoadMap" />
+            {boardList}
+            <ButtonAddBoard />
           </div>
           <ThemeSwitcher />
         </Dialog.Content>

@@ -2,20 +2,25 @@ import React from "react";
 import { MdOutlineSpaceDashboard } from "react-icons/md";
 import { settingsModalState } from "../../../../atoms/settingsModalAtom";
 import { useRecoilState } from "recoil";
+import { boardMobileModalState } from "@/src/atoms/boardsMobileModalAtom";
 type ButtonPrimaryBoardsProps = { buttonLabel: string };
 
 const ButtonPrimaryBoards: React.FC<ButtonPrimaryBoardsProps> = ({
   buttonLabel,
 }) => {
   const [settingState, setSettingState] = useRecoilState(settingsModalState);
+  const [boardMobileModalStates, setBoardMobileModalStates] = useRecoilState(
+    boardMobileModalState
+  );
   const activeBoard = settingState.activeBoard;
   const darkMode = settingState.darkMode;
-  // const buttonBackground =
+  const switchBoard = () => {
+    setSettingState((prev) => ({ ...prev, activeBoard: buttonLabel }));
+    if (boardMobileModalStates.open) setBoardMobileModalStates({ open: false });
+  };
   return (
     <button
-      onClick={() =>
-        setSettingState((prev) => ({ ...prev, activeBoard: buttonLabel }))
-      }
+      onClick={switchBoard}
       className={`${
         activeBoard === buttonLabel
           ? "bg-purple text-wwhite"

@@ -65,48 +65,47 @@ const Navbar: React.FC<NavbarProps> = () => {
   }, [boardState, settingState.activeBoard]);
 
   return (
-    <div>
-      <div
-        className={`flex items-center relative p-4 sm:p-0 sm:py-0  ${
-          settingState.darkMode ? "bg-darkGrey" : "bg-white"
+    <div
+      className={`flex items-center relative p-4 sm:p-0 sm:py-0  ${
+        settingState.darkMode ? "bg-darkGrey" : "bg-white"
+      }`}
+    >
+      <div className="sm:w-[clamp(261px,_23vw,_300px)]">
+        <Image
+          src={activeLogo}
+          alt="KanbanLogo"
+          className="mr-4 sm:ml-6 lg:ml-8"
+        ></Image>
+      </div>
+      <Sidebar />
+      <span
+        className={`hidden sm:inline-block w-[1px] h-[clamp(81px,_10vw,_97px)] mr-4  ${
+          settingState.darkMode ? "bg-linesDark" : "bg-linesLight"
+        }`}
+      ></span>
+      <h1
+        className={` mr-2 text-900-mobile sm:mr-auto ${
+          !settingState.darkMode && "text-black"
         }`}
       >
-        <div className="sm:w-[clamp(261px,_23vw,_300px)]">
-          <Image
-            src={activeLogo}
-            alt="KanbanLogo"
-            className="mr-4 sm:ml-6 lg:ml-8"
-          ></Image>
-        </div>
-        <Sidebar />
-        <span
-          className={`hidden sm:inline-block w-[1px] h-[clamp(81px,_18vw,_97px)] mr-4  ${
-            settingState.darkMode ? "bg-linesDark" : "bg-linesLight"
-          }`}
-        ></span>
-        <h1
-          className={` mr-2 text-900-mobile sm:mr-auto ${
-            !settingState.darkMode && "text-black"
-          }`}
-        >
-          Platform Launch
-        </h1>
-        <MdKeyboardArrowDown
-          className={`text-purple mr-auto sm:hidden ${
-            !boardMobileModalStates.open && "rotate-180"
-          }
+        Platform Launch
+      </h1>
+      <MdKeyboardArrowDown
+        className={`text-purple mr-auto sm:hidden ${
+          boardMobileModalStates.open && "rotate-180"
+        }
           duration-[200ms]
           rotate-0 will-change-transform`}
-          onClick={() =>
-            setBoardMobileModalStates({
-              open: !boardMobileModalStates.open,
-            })
-          }
-        />
-        <AllBoardsMobileModal darkMode={settingState.darkMode} />
-
+        onClick={() =>
+          setBoardMobileModalStates({
+            open: !boardMobileModalStates.open,
+          })
+        }
+      />
+      <AllBoardsMobileModal darkMode={settingState.darkMode} />
+      <div className="w-[48px] sm:w-[193px]">
         <ButtonPrimarySmall
-          buttonLabel={windowWidth > 768 ? "+ Add New Task" : "+"}
+          buttonLabel={windowWidth >= 768 ? "+ Add New Task" : "+"}
           buttonAction={() =>
             setModalsState({
               view: "addTask",
@@ -115,9 +114,9 @@ const Navbar: React.FC<NavbarProps> = () => {
           }
           isDisabled={isDisabled}
         />
-        <div className="ml-4 sm:mr-6 lg:mr-8 relative">
-          <BoardDropDownMenu />
-        </div>
+      </div>
+      <div className="ml-4 sm:mr-6 lg:mr-8 relative">
+        <BoardDropDownMenu />
       </div>
     </div>
   );
