@@ -5,7 +5,19 @@ import HideSidebarButton from "./HideSidebarButton";
 import { settingsModalState } from "../../atoms/settingsModalAtom";
 import { useRecoilState, useRecoilValue } from "recoil";
 import ButtonAddBoard from "../Layout/Input/Button/ButtonAddBoard";
+import {
+  DndContext,
+  useDraggable,
+  useDroppable,
+  closestCenter,
+  DragEndEvent,
+} from "@dnd-kit/core";
 
+import {
+  arrayMove,
+  SortableContext,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
 import { BoardsAtom, boardsState } from "../../atoms/boardsAtom";
 type SidebarProps = {};
 
@@ -23,9 +35,28 @@ const Sidebar: React.FC<SidebarProps> = () => {
       setLoading(false);
     }
   }, [boardState, loading, setSettingState]);
-  const boardList = boardState.map((item) => (
+  const boardList = boardState.map((item, index) => (
     <ButtonPrimaryBoards key={item.name} buttonLabel={item.name} />
   ));
+  // const boardList = boardState.map((item) => (
+  //   <ButtonPrimaryBoards key={item.name} buttonLabel={item.name} />
+  // ));
+  const handleDragDrop = (e: DragEndEvent) => {
+    console.log("drag end called");
+    // const { destination, source, type } = results;
+    // if (!destination) return;
+    // if (destination.droppableId !== source.droppableId) return;
+    // if (
+    //   destination.droppableId === source.droppableId &&
+    //   destination.index === source.index
+    // )
+    //   return;
+    // if (type === "group") {
+    //   const reorderedBoards = [...boardState];
+    //   const sourceIndex = source.index;
+    //   const destinationIndex = destination;
+    // }
+  };
   return (
     <div
       className={`hidden sm:block fixed h-[100vh] left-0 top-0 z-[5] 
@@ -38,14 +69,25 @@ ${
         settingState.darkMode
           ? "bg-darkGrey border-linesDark"
           : "bg-white border-linesLight"
-      }`}>
+      }`}
+    >
       <div className="flex flex-col z-[5] pr-6 h-[calc(100vh_-_173px)]">
         <h2
           className="text-mediumGrey text-400 tracking-[2.4px] 
-      sm:px-6 py-4 lg:pl-8">
+      sm:px-6 py-4 lg:pl-8"
+        >
           ALL BOARDS ({boardState.length})
         </h2>
         {boardList}
+        <DndContext
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragDrop}
+        >
+          <SortableContext
+            items={boardState}
+            strategy={verticalListSortingStrategy}
+          ></SortableContext>
+        </DndContext>
         <ButtonAddBoard />
         <ThemeSwitcher />
         <HideSidebarButton />
