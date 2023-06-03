@@ -6,8 +6,10 @@ import BoardColumn from "./BoardColumn";
 import { BoardType, ColumnType, SubtasksType, TaskType } from "./BoardType";
 import { customAlphabet } from "nanoid";
 
-import EmptyBoardInfo from "./EmptyBoardInfo";
 import { modalState } from "@/src/atoms/modalAtom";
+import AddColumn from "./AddColumn";
+import NoColumnSection from "./NoColumnSection";
+import NoBoardSection from "./NoBoardSection";
 type BoardProps = {};
 
 const Board: React.FC<BoardProps> = () => {
@@ -73,13 +75,14 @@ const Board: React.FC<BoardProps> = () => {
   }, [activeBoard, boardState, settingState]);
 
   const activatedColumns = activatedBoard
-    ? activatedBoard.columns.map((item) => (
+    ? activatedBoard.columns.map((item, number) => (
         <BoardColumn
           key={item.id}
           columnName={item.name}
           tasks={item.tasks}
           taskQty={item.tasks.length}
           columnId={item.id}
+          columnNumber={number}
         />
       ))
     : [];
@@ -87,23 +90,26 @@ const Board: React.FC<BoardProps> = () => {
     <div
       className={`${
         darkMode ? "bg-veryDarkGrey" : "bg-white"
-      } w-full flex z-[-300] overflow-x-auto  
+      } w-full flex z-[-300] overflow-x-auto h-[calc(100vh_-_clamp(64.75px,_10vw,_97px))] ${
+        !activatedColumns.length && "justify-center"
+      }
     pt-6 pr-6 ${
       settingState.isSidebarOpen && "pl-[clamp(285px,_23vw,_300px)]"
-    }`}
-    >
-      {activatedColumns.length ? activatedColumns : <EmptyBoardInfo />}
-      <div className="flex justify-center items-center ml-6 w-[278px] mt-[2.4375rem] rounded-md bg-[linear-gradient(180deg,_rgba(43,_44,_55,_0.25)_0%,_rgba(43,_44,_55,_0.125)_100%)]">
-        {" "}
-        <button
-          onClick={() => {
-            setModalsState({ open: true, view: "editBoard" });
-          }}
-          className="text-900 text-mediumGrey hover:text-purple"
-        >
-          + New Column
-        </button>
-      </div>{" "}
+    }`}>
+      {boardState.length ? (
+        <>
+          {activatedColumns.length ? (
+            <>
+              {activatedColumns}
+              <AddColumn />
+            </>
+          ) : (
+            <NoColumnSection />
+          )}
+        </>
+      ) : (
+        <NoBoardSection />
+      )}
     </div>
   );
 };

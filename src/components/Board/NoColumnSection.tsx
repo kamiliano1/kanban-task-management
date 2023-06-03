@@ -2,9 +2,9 @@ import React from "react";
 import ButtonPrimaryLarge from "../Layout/Input/Button/ButtonPrimaryLarge";
 import { useRecoilState } from "recoil";
 import { modalState } from "@/src/atoms/modalAtom";
-type EmptyBoardInfoProps = {};
+type NoColumnSectionProps = {};
 
-const EmptyBoardInfo: React.FC<EmptyBoardInfoProps> = () => {
+const NoColumnSection: React.FC<NoColumnSectionProps> = () => {
   const [modalsState, setModalsState] = useRecoilState(modalState);
   return (
     <div className="flex flex-col items-center justify-center">
@@ -20,4 +20,4 @@ const EmptyBoardInfo: React.FC<EmptyBoardInfoProps> = () => {
     </div>
   );
 };
-export default EmptyBoardInfo;
+export default NoColumnSection;

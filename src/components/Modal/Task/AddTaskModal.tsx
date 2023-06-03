@@ -11,7 +11,7 @@ import ButtonPrimarySmall from "../../Layout/Input/Button/ButtonPrimarySmall";
 import ButtonSecondary from "../../Layout/Input/Button/ButtonSecondary";
 import DropMenu from "../../Layout/Input/DropMenu";
 import AddSubTaskInput from "./AddSubTaskInput";
-const nanoid = customAlphabet("1234567890", 2);
+const nanoid = customAlphabet("1234567890", 15);
 type AddTaskModalProps = { darkMode: boolean };
 interface BoardInputs {
   title: string;
@@ -165,11 +165,11 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ darkMode }) => {
        darkMode ? "bg-darkGrey" : "bg-white"
      }
       p-[25px] shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px]
-      focus:outline-none`}
-      >
+      focus:outline-none`}>
         <Dialog.Title
-          className={` ${darkMode ? "text-white" : "text-black"} text-800 pb-4`}
-        >
+          className={` ${
+            darkMode ? "text-white" : "text-black"
+          } text-800 pb-4`}>
           Add New Task
         </Dialog.Title>
         <form onSubmit={handleSubmit(onSubmit)}>

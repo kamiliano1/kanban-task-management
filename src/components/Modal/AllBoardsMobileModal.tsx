@@ -1,13 +1,12 @@
-import React, { useEffect, useState } from "react";
+import { boardsState } from "@/src/atoms/boardsAtom";
 import * as Dialog from "@radix-ui/react-dialog";
+import React, { useEffect, useState } from "react";
+import { useRecoilState } from "recoil";
+import { boardMobileModalState } from "../../atoms/boardsMobileModalAtom";
+import { settingsModalState } from "../../atoms/settingsModalAtom";
+import ButtonAddBoard from "../Layout/Input/Button/ButtonAddBoard";
 import ButtonPrimaryBoards from "../Layout/Input/Button/ButtonPrimaryBoards";
 import ThemeSwitcher from "../Layout/Input/ThemeSwitcher";
-import { modalState } from "../../atoms/modalAtom";
-import { useRecoilState } from "recoil";
-import { settingsModalState } from "../../atoms/settingsModalAtom";
-import { boardMobileModalState } from "../../atoms/boardsMobileModalAtom";
-import { boardsState } from "@/src/atoms/boardsAtom";
-import ButtonAddBoard from "../Layout/Input/Button/ButtonAddBoard";
 type AllBoardsMobileModalProps = { darkMode: boolean };
 const AllBoardsMobileModal: React.FC<AllBoardsMobileModalProps> = ({
   darkMode,
@@ -39,15 +38,13 @@ const AllBoardsMobileModal: React.FC<AllBoardsMobileModalProps> = ({
         setBoardMobileModalStates({
           open: !boardMobileModalStates.open,
         });
-      }}
-    >
+      }}>
       <Dialog.Portal>
         <Dialog.Overlay
           className="
         bg-black opacity-50 fixed inset-0
         "
         />
-
         <Dialog.Content
           className={`${
             darkMode ? "bg-darkGrey" : "bg-white"
@@ -56,8 +53,7 @@ const AllBoardsMobileModal: React.FC<AllBoardsMobileModalProps> = ({
         max-w-[264px] 
           rounded-[6px]
         shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px]
-         focus:outline-none`}
-        >
+         focus:outline-none`}>
           <div className="flex flex-col pr-6">
             <Dialog.Title className="text-mediumGrey text-400 tracking-[2.4px] px-6 py-4">
               ALL BOARDS ({boardState.length})

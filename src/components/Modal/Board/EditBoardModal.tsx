@@ -10,7 +10,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { useRecoilState } from "recoil";
 import { boardsState } from "../../../atoms/boardsAtom";
 import { BoardType, ColumnType } from "../../Board/BoardType";
-const nanoid = customAlphabet("1234567890", 2);
+const nanoid = customAlphabet("1234567890", 15);
 type EditBoardModalProps = { darkMode: boolean };
 interface BoardInputs {
   name: string;
