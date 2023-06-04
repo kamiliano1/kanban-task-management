@@ -35,27 +35,23 @@ const Sidebar: React.FC<SidebarProps> = () => {
       setLoading(false);
     }
   }, [boardState, loading, setSettingState]);
-  const boardList = boardState.map((item, index) => (
+
+  const boardList = boardState.map((item) => (
     <ButtonPrimaryBoards key={item.name} buttonLabel={item.name} />
   ));
-  // const boardList = boardState.map((item) => (
-  //   <ButtonPrimaryBoards key={item.name} buttonLabel={item.name} />
-  // ));
+  const [boardsList, setBoardsList] = useState<string[]>([]);
+
+  useEffect(() => {
+    setBoardsList(boardState.map((board) => board.name));
+  }, [boardState]);
   const handleDragDrop = (e: DragEndEvent) => {
-    console.log("drag end called");
-    // const { destination, source, type } = results;
-    // if (!destination) return;
-    // if (destination.droppableId !== source.droppableId) return;
-    // if (
-    //   destination.droppableId === source.droppableId &&
-    //   destination.index === source.index
-    // )
-    //   return;
-    // if (type === "group") {
-    //   const reorderedBoards = [...boardState];
-    //   const sourceIndex = source.index;
-    //   const destinationIndex = destination;
-    // }
+    setBoardState((board) => {
+      const activeBoard = board.findIndex(
+        (board) => board.name === e.active.id
+      );
+      const targetBoard = board.findIndex((board) => board.name === e.over?.id);
+      return arrayMove(board, activeBoard, targetBoard);
+    });
   };
   return (
     <div
@@ -78,15 +74,20 @@ ${
         >
           ALL BOARDS ({boardState.length})
         </h2>
-        {boardList}
+        {/* {boardList} */}
         <DndContext
           collisionDetection={closestCenter}
           onDragEnd={handleDragDrop}
         >
           <SortableContext
-            items={boardState}
+            items={boardsList}
             strategy={verticalListSortingStrategy}
-          ></SortableContext>
+          >
+            {boardList}
+            {/* {languages.map((language) => (
+              <ButtonPrimaryBoards key={language} buttonLabel={language} />
+            ))} */}
+          </SortableContext>
         </DndContext>
         <ButtonAddBoard />
         <ThemeSwitcher />
