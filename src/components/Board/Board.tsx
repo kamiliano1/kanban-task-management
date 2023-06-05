@@ -10,6 +10,20 @@ import { modalState } from "@/src/atoms/modalAtom";
 import AddColumn from "./AddColumn";
 import NoColumnSection from "./NoColumnSection";
 import NoBoardSection from "./NoBoardSection";
+import {
+  DndContext,
+  DragEndEvent,
+  DragOverlay,
+  PointerSensor,
+  closestCenter,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  arrayMove,
+  horizontalListSortingStrategy,
+} from "@dnd-kit/sortable";
 type BoardProps = {};
 
 const Board: React.FC<BoardProps> = () => {
@@ -22,6 +36,15 @@ const Board: React.FC<BoardProps> = () => {
   const [activatedBoard, setActivatedBoard] = useState<BoardType>(
     boardState[0]
   );
+  const [columnsListId, setColumnsListId] = useState<number[]>([]);
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    })
+  );
+  const [activeDragTask, setActiveTaskDrag] = useState<string>("");
   useEffect(() => {
     if (loading) {
       fetch("data/data.json")
@@ -63,6 +86,7 @@ const Board: React.FC<BoardProps> = () => {
       setLoading(false);
     }
   }, [loading, nanoid, setBoardState]);
+
   const darkMode = settingState.darkMode;
   const activeBoard = settingState.activeBoard;
   useEffect(() => {
@@ -73,7 +97,10 @@ const Board: React.FC<BoardProps> = () => {
       boardState.filter((board) => board.name === activeBoard)[0]
     );
   }, [activeBoard, boardState, settingState]);
-
+  useEffect(() => {
+    if (activatedBoard)
+      setColumnsListId(activatedBoard.columns.map((column) => column.id));
+  }, [activatedBoard]);
   const activatedColumns = activatedBoard
     ? activatedBoard.columns.map((item, number) => (
         <BoardColumn
@@ -86,6 +113,14 @@ const Board: React.FC<BoardProps> = () => {
         />
       ))
     : [];
+  const handleDragDrop = (e: DragEndEvent) => {
+    console.log(e.active, "start");
+    console.log(e.over, "stop");
+  };
+
+  const handleDragStart = (e: DragEndEvent) => {
+    setActiveTaskDrag(e.active.id);
+  };
   return (
     <div
       className={`${
@@ -95,12 +130,36 @@ const Board: React.FC<BoardProps> = () => {
       }
     pt-6 pr-6 ${
       settingState.isSidebarOpen && "pl-[clamp(285px,_23vw,_300px)]"
-    }`}>
+    }`}
+    >
       {boardState.length ? (
         <>
           {activatedColumns.length ? (
             <>
-              {activatedColumns}
+              {/* <DndContext
+                collisionDetection={closestCenter}
+                onDragEnd={handleDragDrop}
+                sensors={sensors}
+              > */}
+              {/* <SortableContext
+                  items={columnsListId}
+                  strategy={horizontalListSortingStrategy}
+                > */}
+              <DndContext
+                collisionDetection={closestCenter}
+                onDragEnd={handleDragDrop}
+                onDragStart={handleDragStart}
+                sensors={sensors}
+              >
+                {activatedColumns}
+                <DragOverlay>
+                  {activeDragTask ? (
+                    <h2 className="w-[100px] h-[100px] bg-lightRed">KKKK</h2>
+                  ) : null}
+                </DragOverlay>
+              </DndContext>
+              {/* </SortableContext> */}
+              {/* </DndContext> */}
               <AddColumn />
             </>
           ) : (

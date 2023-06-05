@@ -7,10 +7,11 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import ButtonAddBoard from "../Layout/Input/Button/ButtonAddBoard";
 import {
   DndContext,
-  useDraggable,
-  useDroppable,
   closestCenter,
   DragEndEvent,
+  useSensors,
+  useSensor,
+  PointerSensor,
 } from "@dnd-kit/core";
 
 import {
@@ -26,6 +27,13 @@ const Sidebar: React.FC<SidebarProps> = () => {
   const [settingState, setSettingState] = useRecoilState(settingsModalState);
 
   const [loading, setLoading] = useState<boolean>(true);
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    })
+  );
   useEffect(() => {
     if (loading && boardState.length) {
       setSettingState((prev) => ({
@@ -53,6 +61,7 @@ const Sidebar: React.FC<SidebarProps> = () => {
       return arrayMove(board, activeBoard, targetBoard);
     });
   };
+
   return (
     <div
       className={`hidden sm:block fixed h-[100vh] left-0 top-0 z-[5] 
@@ -74,19 +83,16 @@ ${
         >
           ALL BOARDS ({boardState.length})
         </h2>
-        {/* {boardList} */}
         <DndContext
           collisionDetection={closestCenter}
           onDragEnd={handleDragDrop}
+          sensors={sensors}
         >
           <SortableContext
             items={boardsList}
             strategy={verticalListSortingStrategy}
           >
             {boardList}
-            {/* {languages.map((language) => (
-              <ButtonPrimaryBoards key={language} buttonLabel={language} />
-            ))} */}
           </SortableContext>
         </DndContext>
         <ButtonAddBoard />

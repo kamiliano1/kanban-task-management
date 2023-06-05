@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
-
+import { CSS } from "@dnd-kit/utilities";
 import { modalState } from "@/src/atoms/modalAtom";
 import { useRecoilState } from "recoil";
 import { settingsModalState } from "../../atoms/settingsModalAtom";
 import { SubtasksType } from "./BoardType";
+import { useSortable } from "@dnd-kit/sortable";
 
 type ColumnElementProps = {
   taskName: string;
@@ -22,7 +23,9 @@ const ColumnElement: React.FC<ColumnElementProps> = ({
   const [settingState, setSettingState] = useRecoilState(settingsModalState);
   const [modalsState, setModalsState] = useRecoilState(modalState);
   const darkMode = settingState.darkMode;
-
+  const [isHover, setIsHover] = useState(false);
+  const { attributes, listeners, setNodeRef, transform, transition } =
+    useSortable({ id: taskId });
   const viewTask = () => {
     setSettingState((prev) => ({
       ...prev,
@@ -35,12 +38,26 @@ const ColumnElement: React.FC<ColumnElementProps> = ({
   useEffect(() => {
     setCompletedTasks(subTasks.filter((item) => item.isCompleted).length);
   }, [subTasks]);
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
   return (
     <div
+      onMouseEnter={() => {
+        setIsHover(true);
+      }}
+      onMouseLeave={() => setIsHover(false)}
       onClick={viewTask}
-      className={`w-[280px] cursor-pointer shadow-[0px_4px_6px_rgba(54,_78,_126,_0.101545)] z-[-30] mb-5 rounded-lg px-4 py-[1.4375rem] hover:bg-opacity-80 ${
-        darkMode ? "bg-darkGrey" : "bg-white"
-      }`}
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
+      className={`w-[280px] cursor-pointer ${isHover && " z-[599]"}
+      shadow-[0px_4px_6px_rgba(54,_78,_126,_0.101545)]
+       z-[-30] mb-5 rounded-lg px-4 py-[1.4375rem] hover:bg-opacity-80 ${
+         darkMode ? "bg-darkGrey" : "bg-white"
+       }`}
     >
       <h3 className={`text-700 ${!darkMode && "text-black"}`}>{taskName}</h3>
       <p className="text-400 text-mediumGrey pt-2">

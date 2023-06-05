@@ -1,11 +1,10 @@
-import React, { useState } from "react";
-import { MdOutlineSpaceDashboard } from "react-icons/md";
-import { settingsModalState } from "../../../../atoms/settingsModalAtom";
-import { useRecoilState } from "recoil";
 import { boardMobileModalState } from "@/src/atoms/boardsMobileModalAtom";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { HiOutlineHand } from "react-icons/hi";
+import React, { useState } from "react";
+import { MdOutlineSpaceDashboard } from "react-icons/md";
+import { useRecoilState } from "recoil";
+import { settingsModalState } from "../../../../atoms/settingsModalAtom";
 type ButtonPrimaryBoardsProps = { buttonLabel: string };
 
 const ButtonPrimaryBoards: React.FC<ButtonPrimaryBoardsProps> = ({
@@ -15,7 +14,6 @@ const ButtonPrimaryBoards: React.FC<ButtonPrimaryBoardsProps> = ({
   const [boardMobileModalStates, setBoardMobileModalStates] = useRecoilState(
     boardMobileModalState
   );
-  const [isHover, setIsHover] = useState<boolean>(false);
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: buttonLabel });
   const activeBoard = settingState.activeBoard;
@@ -30,11 +28,10 @@ const ButtonPrimaryBoards: React.FC<ButtonPrimaryBoardsProps> = ({
   };
   return (
     <button
-      onMouseEnter={() => setIsHover(true)}
-      onMouseLeave={() => setIsHover(false)}
       ref={setNodeRef}
       style={style}
       {...attributes}
+      {...listeners}
       onClick={switchBoard}
       className={`${
         activeBoard === buttonLabel
@@ -47,12 +44,6 @@ const ButtonPrimaryBoards: React.FC<ButtonPrimaryBoardsProps> = ({
        } hover:text-purple disabled:opacity-25`}
     >
       <MdOutlineSpaceDashboard className="mr-3" /> {buttonLabel}{" "}
-      {isHover && (
-        <HiOutlineHand
-          {...listeners}
-          className="text-purple text-900 ml-auto cursor-grabbing"
-        />
-      )}
     </button>
   );
 };
