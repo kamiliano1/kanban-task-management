@@ -24,6 +24,7 @@ import {
   arrayMove,
   horizontalListSortingStrategy,
 } from "@dnd-kit/sortable";
+import ColumnElement from "./ColumnElement";
 type BoardProps = {};
 
 const Board: React.FC<BoardProps> = () => {
@@ -36,6 +37,7 @@ const Board: React.FC<BoardProps> = () => {
   const [activatedBoard, setActivatedBoard] = useState<BoardType>(
     boardState[0]
   );
+
   const [columnsListId, setColumnsListId] = useState<number[]>([]);
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -44,7 +46,7 @@ const Board: React.FC<BoardProps> = () => {
       },
     })
   );
-  const [activeDragTask, setActiveTaskDrag] = useState<string>("");
+  const [activeDragTask, setActiveTaskDrag] = useState<TaskType>();
   useEffect(() => {
     if (loading) {
       fetch("data/data.json")
@@ -113,14 +115,79 @@ const Board: React.FC<BoardProps> = () => {
         />
       ))
     : [];
-  const handleDragDrop = (e: DragEndEvent) => {
-    console.log(e.active, "start");
-    console.log(e.over, "stop");
-  };
 
   const handleDragStart = (e: DragEndEvent) => {
-    setActiveTaskDrag(e.active.id);
+    const { active, over } = e;
+
+    const activeTaskId = active.id;
+    const activeTaskColumn: number = Number(
+      active.data?.current?.sortable.containerId
+    );
+    setActiveTaskDrag(
+      activatedBoard.columns
+        .find((cols) => cols.id === activeTaskColumn)
+        ?.tasks.find((task) => task.id === activeTaskId)
+    );
   };
+
+  const handleDragOver = (e: DragEndEvent) => {
+    const { active, over } = e;
+    const activeId = active.id;
+    const overId = over?.id;
+    const activeColumnId: number = Number(
+      active.data?.current?.sortable.containerId
+    );
+    const targetColumnId: number = Number(
+      over?.data?.current?.sortable.containerId
+    );
+    let activeColumn = activatedBoard.columns.find(
+      (cols) => cols.id === activeColumnId
+    );
+    let targetColumn = activatedBoard.columns.find(
+      (cols) => cols.id === targetColumnId
+    );
+    const activeIndex = activeColumn?.tasks.findIndex(
+      (task) => task.id === activeId
+    );
+    const overIndex = targetColumn?.tasks.findIndex(
+      (task) => task.id === overId
+    );
+
+    if (!activeColumn || !targetColumn) return;
+    let newIndex: number;
+    setActivatedBoard((prev) => {
+      let boardColumns = prev.columns;
+      boardColumns = prev.columns.map((cols, index) => {
+        if (cols.id === activeColumn?.id) {
+          return {
+            ...cols,
+            tasks: cols.tasks.filter((task) => task.id !== activeId),
+          };
+        }
+
+        const isBelowOverItem =
+          e.over &&
+          e.active.rect.current.translated &&
+          e.active.rect.current.translated.top >
+            e.over.rect.top + e.over.rect.height;
+
+        const modifier = isBelowOverItem ? 1 : 0;
+
+        newIndex =
+          overIndex! >= 0
+            ? overIndex! + modifier
+            : targetColumn!.tasks.length + 1;
+        return cols;
+      });
+      return prev;
+      return { ...prev, columns: boardColumns };
+    });
+  };
+  const handleDragDrop = (e: DragEndEvent) => {
+    // console.log(e.active, "start");
+    // console.log(e.over, "stop");
+  };
+
   return (
     <div
       className={`${
@@ -130,8 +197,7 @@ const Board: React.FC<BoardProps> = () => {
       }
     pt-6 pr-6 ${
       settingState.isSidebarOpen && "pl-[clamp(285px,_23vw,_300px)]"
-    }`}
-    >
+    }`}>
       {boardState.length ? (
         <>
           {activatedColumns.length ? (
@@ -147,14 +213,19 @@ const Board: React.FC<BoardProps> = () => {
                 > */}
               <DndContext
                 collisionDetection={closestCenter}
-                onDragEnd={handleDragDrop}
                 onDragStart={handleDragStart}
-                sensors={sensors}
-              >
+                onDragOver={handleDragOver}
+                onDragEnd={handleDragDrop}
+                sensors={sensors}>
                 {activatedColumns}
                 <DragOverlay>
                   {activeDragTask ? (
-                    <h2 className="w-[100px] h-[100px] bg-lightRed">KKKK</h2>
+                    <ColumnElement
+                      taskName={activeDragTask.title}
+                      subTasks={activeDragTask.subtasks}
+                      taskId={activeDragTask.id}
+                      columnId={activeDragTask.id}
+                    />
                   ) : null}
                 </DragOverlay>
               </DndContext>

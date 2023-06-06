@@ -35,7 +35,7 @@ const BoardColumn: React.FC<BoardColumnProps> = ({
     if (tasks) setTaskListId(tasks.map((task) => task.id));
   }, [tasks]);
   const { attributes, listeners, setNodeRef, transform, transition } =
-    useSortable({ id: columnName });
+    useSortable({ id: columnId });
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
@@ -43,7 +43,6 @@ const BoardColumn: React.FC<BoardColumnProps> = ({
   const columnElements = tasks?.map((item) => (
     <div key={item.title} ref={setNodeRef}>
       <ColumnElement
-        // key={item.title}
         taskName={item.title}
         subTasks={item.subtasks}
         taskId={item.id}
@@ -68,17 +67,15 @@ const BoardColumn: React.FC<BoardColumnProps> = ({
     <div className="pl-6">
       <div className="flex items-center pb-6 w-[280px]">
         <span
-          className={`${dotColor} w-[15px] aspect-square rounded-full mr-3`}
-        ></span>
+          className={`${dotColor} w-[15px] aspect-square rounded-full mr-3`}></span>
         <h2 className="text-mediumGrey text-600">
           {columnName} ({taskQty})
         </h2>
       </div>
       <SortableContext
         items={taskListId}
-        id={columnName}
-        strategy={verticalListSortingStrategy}
-      >
+        id={columnId.toString()}
+        strategy={verticalListSortingStrategy}>
         {columnElements}
       </SortableContext>
     </div>
