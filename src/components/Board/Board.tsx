@@ -134,11 +134,12 @@ const Board: React.FC<BoardProps> = () => {
     const { active, over } = e;
     const activeId = active.id;
     const overId = over?.id;
+    if (overId == null) return;
     const activeColumnId: number = Number(
-      active.data?.current?.sortable.containerId
+      active.data?.current?.sortable?.containerId
     );
     const targetColumnId: number = Number(
-      over?.data?.current?.sortable.containerId
+      over?.data?.current?.sortable?.containerId
     );
     let activeColumn = activatedBoard.columns.find(
       (cols) => cols.id === activeColumnId
@@ -152,19 +153,12 @@ const Board: React.FC<BoardProps> = () => {
     const overIndex = targetColumn?.tasks.findIndex(
       (task) => task.id === overId
     );
-
-    if (!activeColumn || !targetColumn) return;
+    // console.log(overIndex);
+    if (!activeColumn || !targetColumn || activeColumn === targetColumn) return;
     let newIndex: number;
     setActivatedBoard((prev) => {
       let boardColumns = prev.columns;
       boardColumns = prev.columns.map((cols, index) => {
-        if (cols.id === activeColumn?.id) {
-          return {
-            ...cols,
-            tasks: cols.tasks.filter((task) => task.id !== activeId),
-          };
-        }
-
         const isBelowOverItem =
           e.over &&
           e.active.rect.current.translated &&
@@ -173,19 +167,71 @@ const Board: React.FC<BoardProps> = () => {
 
         const modifier = isBelowOverItem ? 1 : 0;
 
-        newIndex =
-          overIndex! >= 0
-            ? overIndex! + modifier
-            : targetColumn!.tasks.length + 1;
+        if (cols.id === activeColumn?.id) {
+          return {
+            ...cols,
+            tasks: cols.tasks.filter((task) => task.id !== activeId),
+          };
+        }
+
+        if (cols.id === targetColumn?.id) {
+          newIndex =
+            overIndex! >= 0
+              ? overIndex! + modifier
+              : targetColumn!.tasks.length + 1;
+          return {
+            ...cols,
+            tasks: [
+              ...cols.tasks.slice(0, newIndex),
+              activeColumn?.tasks[activeIndex || 0],
+              ...cols.tasks.slice(newIndex, targetColumn?.tasks.length),
+            ] as TaskType[],
+          };
+        }
+
         return cols;
       });
-      return prev;
       return { ...prev, columns: boardColumns };
     });
   };
   const handleDragDrop = (e: DragEndEvent) => {
-    // console.log(e.active, "start");
-    // console.log(e.over, "stop");
+    const { active, over } = e;
+    const activeId = active.id;
+    const overId = over?.id;
+    const activeColumnId: number = Number(
+      active.data?.current?.sortable?.containerId
+    );
+    const targetColumnId: number = Number(
+      over?.data?.current?.sortable?.containerId
+    );
+    let activeColumn = activatedBoard.columns.find(
+      (cols) => cols.id === activeColumnId
+    );
+    let targetColumn = activatedBoard.columns.find(
+      (cols) => cols.id === targetColumnId
+    );
+
+    if (!activeColumn || !targetColumn || activeColumn !== targetColumn) return;
+    const activeIndex = activeColumn?.tasks.findIndex(
+      (task) => task.id === activeId
+    );
+    const overIndex = targetColumn?.tasks.findIndex(
+      (task) => task.id === overId
+    );
+    if (activeIndex === overIndex) return;
+    setActivatedBoard((prev) => {
+      let boardColumns = prev.columns;
+      boardColumns = prev.columns.map((cols) => {
+        if (cols.id === activeColumn?.id) {
+          return {
+            ...cols,
+            tasks: arrayMove(cols.tasks, activeIndex, overIndex),
+          };
+        }
+        return cols;
+      });
+      return { ...prev, columns: boardColumns };
+    });
   };
 
   return (
@@ -197,26 +243,19 @@ const Board: React.FC<BoardProps> = () => {
       }
     pt-6 pr-6 ${
       settingState.isSidebarOpen && "pl-[clamp(285px,_23vw,_300px)]"
-    }`}>
+    }`}
+    >
       {boardState.length ? (
         <>
           {activatedColumns.length ? (
             <>
-              {/* <DndContext
-                collisionDetection={closestCenter}
-                onDragEnd={handleDragDrop}
-                sensors={sensors}
-              > */}
-              {/* <SortableContext
-                  items={columnsListId}
-                  strategy={horizontalListSortingStrategy}
-                > */}
               <DndContext
                 collisionDetection={closestCenter}
                 onDragStart={handleDragStart}
                 onDragOver={handleDragOver}
                 onDragEnd={handleDragDrop}
-                sensors={sensors}>
+                sensors={sensors}
+              >
                 {activatedColumns}
                 <DragOverlay>
                   {activeDragTask ? (
@@ -229,8 +268,6 @@ const Board: React.FC<BoardProps> = () => {
                   ) : null}
                 </DragOverlay>
               </DndContext>
-              {/* </SortableContext> */}
-              {/* </DndContext> */}
               <AddColumn />
             </>
           ) : (
