@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { settingsModalState } from "../../atoms/settingsModalAtom";
 import { BoardsAtom, boardsState } from "../../atoms/boardsAtom";
 import { useRecoilState, useRecoilValue } from "recoil";
@@ -11,11 +11,17 @@ import AddColumn from "./AddColumn";
 import NoColumnSection from "./NoColumnSection";
 import NoBoardSection from "./NoBoardSection";
 import {
+  CollisionDetection,
   DndContext,
   DragEndEvent,
   DragOverlay,
+  MeasuringStrategy,
   PointerSensor,
+  UniqueIdentifier,
   closestCenter,
+  getFirstCollision,
+  pointerWithin,
+  rectIntersection,
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
@@ -118,7 +124,6 @@ const Board: React.FC<BoardProps> = () => {
 
   const handleDragStart = (e: DragEndEvent) => {
     const { active, over } = e;
-
     const activeTaskId = active.id;
     const activeTaskColumn: number = Number(
       active.data?.current?.sortable.containerId
@@ -135,6 +140,8 @@ const Board: React.FC<BoardProps> = () => {
     const activeId = active.id;
     const overId = over?.id;
     if (overId == null) return;
+    console.log(overId);
+
     const activeColumnId: number = Number(
       active.data?.current?.sortable?.containerId
     );
@@ -153,17 +160,20 @@ const Board: React.FC<BoardProps> = () => {
     const overIndex = targetColumn?.tasks.findIndex(
       (task) => task.id === overId
     );
-    // console.log(overIndex);
     if (!activeColumn || !targetColumn || activeColumn === targetColumn) return;
     let newIndex: number;
+    // console.log(overId);
+
     setActivatedBoard((prev) => {
       let boardColumns = prev.columns;
       boardColumns = prev.columns.map((cols, index) => {
+        // console.log(targetColumn);
         const isBelowOverItem =
           e.over &&
           e.active.rect.current.translated &&
           e.active.rect.current.translated.top >
             e.over.rect.top + e.over.rect.height;
+        // console.log(isBelowOverItem);
 
         const modifier = isBelowOverItem ? 1 : 0;
 
@@ -243,8 +253,7 @@ const Board: React.FC<BoardProps> = () => {
       }
     pt-6 pr-6 ${
       settingState.isSidebarOpen && "pl-[clamp(285px,_23vw,_300px)]"
-    }`}
-    >
+    }`}>
       {boardState.length ? (
         <>
           {activatedColumns.length ? (
@@ -255,6 +264,11 @@ const Board: React.FC<BoardProps> = () => {
                 onDragOver={handleDragOver}
                 onDragEnd={handleDragDrop}
                 sensors={sensors}
+                // measuring={{
+                //   droppable: {
+                //     strategy: MeasuringStrategy.Always,
+                //   },
+                // }}
               >
                 {activatedColumns}
                 <DragOverlay>
