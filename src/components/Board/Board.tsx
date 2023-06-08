@@ -14,7 +14,9 @@ import {
   CollisionDetection,
   DndContext,
   DragEndEvent,
+  DragOverEvent,
   DragOverlay,
+  DragStartEvent,
   MeasuringStrategy,
   PointerSensor,
   UniqueIdentifier,
@@ -29,8 +31,10 @@ import {
   SortableContext,
   arrayMove,
   horizontalListSortingStrategy,
+  verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import ColumnElement from "./ColumnElement";
+import { log } from "console";
 type BoardProps = {};
 
 const Board: React.FC<BoardProps> = () => {
@@ -52,7 +56,7 @@ const Board: React.FC<BoardProps> = () => {
       },
     })
   );
-  const [activeDragTask, setActiveTaskDrag] = useState<TaskType>();
+  const [activeDragTask, setActiveTaskDrag] = useState<TaskType | null>();
   useEffect(() => {
     if (loading) {
       fetch("data/data.json")
@@ -122,8 +126,8 @@ const Board: React.FC<BoardProps> = () => {
       ))
     : [];
 
-  const handleDragStart = (e: DragEndEvent) => {
-    const { active, over } = e;
+  const handleDragStart = (e: DragStartEvent) => {
+    const { active } = e;
     const activeTaskId = active.id;
     const activeTaskColumn: number = Number(
       active.data?.current?.sortable.containerId
@@ -135,12 +139,13 @@ const Board: React.FC<BoardProps> = () => {
     );
   };
 
-  const handleDragOver = (e: DragEndEvent) => {
+  const handleDragOver = (e: DragOverEvent) => {
     const { active, over } = e;
     const activeId = active.id;
     const overId = over?.id;
-    if (overId == null) return;
-    console.log(overId);
+    // console.log(over?.data?.current?.sortable?.containerId);
+    console.log(active.id, "poczatek dlugi");
+    console.log(over?.id, "koniec krotki");
 
     const activeColumnId: number = Number(
       active.data?.current?.sortable?.containerId
@@ -148,42 +153,52 @@ const Board: React.FC<BoardProps> = () => {
     const targetColumnId: number = Number(
       over?.data?.current?.sortable?.containerId
     );
+    // const activeColumnId: number = Number(
+    //   active.data?.current?.sortable?.containerId
+    // );
+    // const targetColumnId: number = Number(
+    //   over?.data?.current?.sortable?.containerId
+    // );
+    console.log(activeColumnId, "poczatek dlugi");
+    console.log(targetColumnId, "koniec dlugi");
+
     let activeColumn = activatedBoard.columns.find(
       (cols) => cols.id === activeColumnId
     );
     let targetColumn = activatedBoard.columns.find(
       (cols) => cols.id === targetColumnId
     );
+    // let activeColumn = activatedBoard.columns.find(
+    //   (cols) => cols.id === activeColumnId
+    // );
+    // let targetColumn = activatedBoard.columns.find(
+    //   (cols) => cols.id === targetColumnId
+    // );
     const activeIndex = activeColumn?.tasks.findIndex(
       (task) => task.id === activeId
     );
     const overIndex = targetColumn?.tasks.findIndex(
       (task) => task.id === overId
     );
+    // console.log(targetColumn, "celll");
+
     if (!activeColumn || !targetColumn || activeColumn === targetColumn) return;
     let newIndex: number;
-    // console.log(overId);
-
     setActivatedBoard((prev) => {
       let boardColumns = prev.columns;
       boardColumns = prev.columns.map((cols, index) => {
-        // console.log(targetColumn);
         const isBelowOverItem =
           e.over &&
           e.active.rect.current.translated &&
           e.active.rect.current.translated.top >
             e.over.rect.top + e.over.rect.height;
-        // console.log(isBelowOverItem);
-
         const modifier = isBelowOverItem ? 1 : 0;
-
         if (cols.id === activeColumn?.id) {
           return {
             ...cols,
             tasks: cols.tasks.filter((task) => task.id !== activeId),
           };
         }
-
         if (cols.id === targetColumn?.id) {
           newIndex =
             overIndex! >= 0
@@ -242,6 +257,7 @@ const Board: React.FC<BoardProps> = () => {
       });
       return { ...prev, columns: boardColumns };
     });
+    setActiveTaskDrag(null);
   };
 
   return (
@@ -253,7 +269,8 @@ const Board: React.FC<BoardProps> = () => {
       }
     pt-6 pr-6 ${
       settingState.isSidebarOpen && "pl-[clamp(285px,_23vw,_300px)]"
-    }`}>
+    }`}
+    >
       {boardState.length ? (
         <>
           {activatedColumns.length ? (
@@ -264,11 +281,6 @@ const Board: React.FC<BoardProps> = () => {
                 onDragOver={handleDragOver}
                 onDragEnd={handleDragDrop}
                 sensors={sensors}
-                // measuring={{
-                //   droppable: {
-                //     strategy: MeasuringStrategy.Always,
-                //   },
-                // }}
               >
                 {activatedColumns}
                 <DragOverlay>

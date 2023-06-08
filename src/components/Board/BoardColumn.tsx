@@ -32,24 +32,25 @@ const BoardColumn: React.FC<BoardColumnProps> = ({
   const [taskListId, setTaskListId] = useState<number[]>([]);
 
   useEffect(() => {
-    if (tasks) setTaskListId(tasks.map((task) => task.id));
+    tasks?.length
+      ? setTaskListId(tasks.map((task) => task.id))
+      : setTaskListId([0]);
   }, [tasks]);
-  const { attributes, listeners, setNodeRef, transform, transition } =
-    useSortable({ id: columnId });
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-  };
+  // const { attributes, listeners, setNodeRef, transform, transition } =
+  //   useSortable({ id: columnId.toString() });
+
+  const { setNodeRef } = useDroppable({ id: columnId.toString() });
   const columnElements = tasks?.map((item) => (
-    <div key={item.title} ref={setNodeRef}>
-      <ColumnElement
-        taskName={item.title}
-        subTasks={item.subtasks}
-        taskId={item.id}
-        columnId={columnId}
-      />
-    </div>
+    <ColumnElement
+      key={item.id}
+      taskName={item.title}
+      subTasks={item.subtasks}
+      taskId={item.id}
+      columnId={columnId}
+    />
   ));
+  // console.log(taskListId);
+
   useEffect(() => {
     const purpleDotId = [1, 4, 7, 10, 13];
     if (columnNumber % 3 === 0 || columnNumber === 0) {
@@ -65,31 +66,29 @@ const BoardColumn: React.FC<BoardColumnProps> = ({
 
   return (
     <div className="pl-6">
-      <div className="flex items-center pb-6 w-[280px]">
-        <span
-          className={`${dotColor} w-[15px] aspect-square rounded-full mr-3`}></span>
-        <h2 className="text-mediumGrey text-600">
-          {columnName} ({taskQty})
-        </h2>
-      </div>
       <SortableContext
-        items={taskListId}
         id={columnId.toString()}
-        strategy={verticalListSortingStrategy}>
+        items={taskListId}
+        strategy={verticalListSortingStrategy}
+      >
+        <div className="flex items-center pb-6 w-[280px]" ref={setNodeRef}>
+          <span
+            className={`${dotColor} w-[15px] aspect-square rounded-full mr-3`}
+          ></span>
+          <h2 className="text-mediumGrey text-600">
+            {columnName} ({taskQty}) {columnId}
+          </h2>
+        </div>{" "}
+        {/* {taskListId?.map((task) => (
+          <h2 className="w-[300px] h-[100px]" key={task}>
+            {task}
+          </h2>
+        ))} */}
+        {/* <div className="bg-purple min-h-[300px]"> */}
         {columnElements}
+        {/* </div> */}
       </SortableContext>
     </div>
-    // <div className="pl-6" ref={setNodeRef} style={style} {...attributes}>
-    //   <div className="flex items-center pb-6 w-[280px]" {...listeners}>
-    //     <span
-    //       className={`${dotColor} w-[15px] aspect-square rounded-full mr-3`}
-    //     ></span>
-    //     <h2 className="text-mediumGrey text-600">
-    //       {columnName} ({taskQty})
-    //     </h2>
-    //   </div>
-    //   {columnElements}
-    // </div>
   );
 };
 export default BoardColumn;

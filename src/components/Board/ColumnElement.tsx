@@ -23,7 +23,6 @@ const ColumnElement: React.FC<ColumnElementProps> = ({
   const [settingState, setSettingState] = useRecoilState(settingsModalState);
   const [modalsState, setModalsState] = useRecoilState(modalState);
   const darkMode = settingState.darkMode;
-  const [isHover, setIsHover] = useState(false);
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: taskId });
   const viewTask = () => {
@@ -44,16 +43,12 @@ const ColumnElement: React.FC<ColumnElementProps> = ({
   };
   return (
     <div
-      onMouseEnter={() => {
-        setIsHover(true);
-      }}
-      onMouseLeave={() => setIsHover(false)}
       onClick={viewTask}
       ref={setNodeRef}
       style={style}
       {...attributes}
       {...listeners}
-      className={`w-[280px] cursor-pointer ${isHover && " z-[599]"}
+      className={`w-[280px] cursor-pointer 
       shadow-[0px_4px_6px_rgba(54,_78,_126,_0.101545)]
        z-[-30] mb-5 rounded-lg px-4 py-[1.4375rem] hover:bg-opacity-80 ${
          darkMode ? "bg-darkGrey" : "bg-white"
