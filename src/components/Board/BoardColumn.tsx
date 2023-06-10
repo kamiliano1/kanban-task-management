@@ -4,6 +4,7 @@ import ColumnElement from "./ColumnElement";
 import {
   SortableContext,
   horizontalListSortingStrategy,
+  rectSwappingStrategy,
   useSortable,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
@@ -36,10 +37,15 @@ const BoardColumn: React.FC<BoardColumnProps> = ({
       ? setTaskListId(tasks.map((task) => task.id))
       : setTaskListId([0]);
   }, [tasks]);
-  // const { attributes, listeners, setNodeRef, transform, transition } =
-  //   useSortable({ id: columnId.toString() });
 
   const { setNodeRef } = useDroppable({ id: columnId.toString() });
+  const {
+    attributes,
+    listeners,
+    setNodeRef: setNodeRefSortable,
+    transform,
+    transition,
+  } = useSortable({ id: columnName });
   const columnElements = tasks?.map((item) => (
     <ColumnElement
       key={item.id}
@@ -50,6 +56,11 @@ const BoardColumn: React.FC<BoardColumnProps> = ({
     />
   ));
   // console.log(taskListId);
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
 
   useEffect(() => {
     const purpleDotId = [1, 4, 7, 10, 13];
@@ -65,28 +76,29 @@ const BoardColumn: React.FC<BoardColumnProps> = ({
   }, [columnNumber]);
 
   return (
-    <div className="pl-6">
+    <div
+      className="pl-6"
+      ref={setNodeRefSortable}
+      style={style}
+      {...attributes}
+    >
       <SortableContext
         id={columnId.toString()}
         items={taskListId}
-        strategy={verticalListSortingStrategy}
+        strategy={rectSwappingStrategy}
       >
         <div className="flex items-center pb-6 w-[280px]" ref={setNodeRef}>
           <span
             className={`${dotColor} w-[15px] aspect-square rounded-full mr-3`}
           ></span>
           <h2 className="text-mediumGrey text-600">
-            {columnName} ({taskQty}) {columnId}
+            {columnName} ({taskQty})
           </h2>
-        </div>{" "}
-        {/* {taskListId?.map((task) => (
-          <h2 className="w-[300px] h-[100px]" key={task}>
-            {task}
-          </h2>
-        ))} */}
-        {/* <div className="bg-purple min-h-[300px]"> */}
+          <p {...listeners} className="ml-auto">
+            Reka
+          </p>
+        </div>
         {columnElements}
-        {/* </div> */}
       </SortableContext>
     </div>
   );
