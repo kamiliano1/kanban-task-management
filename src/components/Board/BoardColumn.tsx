@@ -9,6 +9,7 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { TfiHandDrag } from "react-icons/tfi";
 import { useRecoilState } from "recoil";
 import { boardsState } from "@/src/atoms/boardsAtom";
 import { useDroppable } from "@dnd-kit/core";
@@ -39,6 +40,7 @@ const BoardColumn: React.FC<BoardColumnProps> = ({
   }, [tasks]);
 
   const { setNodeRef } = useDroppable({ id: columnId.toString() });
+  const [isColumnMoved, setIsColumnMoved] = useState(false);
   const {
     attributes,
     listeners,
@@ -55,8 +57,6 @@ const BoardColumn: React.FC<BoardColumnProps> = ({
       columnId={columnId}
     />
   ));
-  // console.log(taskListId);
-
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
@@ -85,18 +85,32 @@ const BoardColumn: React.FC<BoardColumnProps> = ({
       <SortableContext
         id={columnId.toString()}
         items={taskListId}
-        strategy={rectSwappingStrategy}
+        strategy={verticalListSortingStrategy}
       >
-        <div className="flex items-center pb-6 w-[280px]" ref={setNodeRef}>
+        <div
+          className="flex items-center pb-6 w-[280px]"
+          ref={isColumnMoved ? undefined : setNodeRef}
+        >
           <span
             className={`${dotColor} w-[15px] aspect-square rounded-full mr-3`}
           ></span>
           <h2 className="text-mediumGrey text-600">
             {columnName} ({taskQty})
           </h2>
-          <p {...listeners} className="ml-auto">
-            Reka
-          </p>
+
+          <TfiHandDrag
+            onMouseEnter={() => {
+              setIsColumnMoved(true);
+            }}
+            onMouseDown={() => {
+              setIsColumnMoved(true);
+            }}
+            onMouseUp={() => {
+              setIsColumnMoved(false);
+            }}
+            {...listeners}
+            className=" ml-auto text-[1.5rem] text-mediumGrey"
+          />
         </div>
         {columnElements}
       </SortableContext>

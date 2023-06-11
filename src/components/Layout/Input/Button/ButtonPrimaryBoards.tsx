@@ -38,7 +38,6 @@ const ButtonPrimaryBoards: React.FC<ButtonPrimaryBoardsProps> = ({
           ? "bg-purple text-wwhite"
           : "text-mediumGrey"
       }  flex items-center py-3 px-5 lg:pl-8 rounded-[0px_100px_100px_0px] text-700
-
        ${
          darkMode ? "hover:bg-white" : "hover:bg-purple hover:bg-opacity-10"
        } hover:text-purple disabled:opacity-25`}

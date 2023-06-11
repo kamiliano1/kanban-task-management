@@ -56,7 +56,7 @@ const ColumnElement: React.FC<ColumnElementProps> = ({
     >
       <h3 className={`text-700 ${!darkMode && "text-black"}`}>{taskName}</h3>
       <p className="text-400 text-mediumGrey pt-2">
-        {completedTasks} of {subTasks.length} substasks
+        {completedTasks} of {subTasks?.length} substasks
       </p>
     </div>
   );

@@ -17,6 +17,7 @@ import {
   closestCenter,
   useSensor,
   useSensors,
+  useDroppable,
 } from "@dnd-kit/core";
 import {
   SortableContext,
@@ -37,11 +38,12 @@ const Board: React.FC<BoardProps> = () => {
   const [boardState, setBoardState] = useRecoilState(boardsState);
   const [newBoardState, setNewBoardState] = useState<BoardType[]>(boardState);
   const [loading, setLoading] = useState<boolean>(true);
+  const [isColumnMoved, setIsColumnMoved] = useState(false);
   const [activatedBoard, setActivatedBoard] = useState<BoardType>(
     boardState[0]
   );
 
-  const [columnsListId, setColumnsListId] = useState<string[]>([]);
+  const [columnsListId, setColumnsListId] = useState<string[]>(["addColumn"]);
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
@@ -49,6 +51,9 @@ const Board: React.FC<BoardProps> = () => {
       },
     })
   );
+  const { setNodeRef } = useDroppable({
+    id: "addColumn",
+  });
   const [activeDragTask, setActiveTaskDrag] = useState<TaskType | null>();
   useEffect(() => {
     if (loading) {
@@ -101,10 +106,14 @@ const Board: React.FC<BoardProps> = () => {
     setActivatedBoard(
       boardState.filter((board) => board.name === activeBoard)[0]
     );
+    console.log("nowybord");
   }, [activeBoard, boardState, settingState]);
   useEffect(() => {
-    if (activatedBoard)
+    if (activatedBoard) {
       setColumnsListId(activatedBoard.columns.map((column) => column.name));
+
+      setColumnsListId((prev) => [...prev, "addColumn"]);
+    }
   }, [activatedBoard]);
   const activatedColumns = activatedBoard
     ? activatedBoard.columns.map((item, number) => (
@@ -151,7 +160,6 @@ const Board: React.FC<BoardProps> = () => {
         ? cols.id === Number(overId)
         : cols.id === targetColumnId;
     });
-
     const activeIndex = activeColumn?.tasks.findIndex(
       (task) => task.id === activeId
     );
@@ -196,25 +204,23 @@ const Board: React.FC<BoardProps> = () => {
       });
       return { ...prev, columns: boardColumns };
     });
+    if (isColumnMoved) setIsColumnMoved(false);
   };
+
   const handleDragDrop = (e: DragEndEvent) => {
     const { active, over } = e;
     const activeId = active.id;
     const overId = over?.id;
-    // console.log(active.id);
-    // console.log(over?.id);
     if (activatedBoard.columns.find((col) => col.name === active.id)) {
+      setIsColumnMoved(true);
       setActivatedBoard((prev) => {
         const activeColumn = activatedBoard.columns.findIndex(
-          (col) => col.name === active.id
+          (col) => col.name === activeId
         );
         const targetColumn = activatedBoard.columns.findIndex(
-          (col) => col.name === active.id
+          (col) => col.name === overId
         );
-        console.log(arrayMove(prev.columns, activeColumn, targetColumn));
 
-        // return prev;
-        // return {...prev, columns: arrayMove(prev.columns, activeColumn, targetColumn)};
         return {
           ...prev,
           columns: arrayMove(prev.columns, activeColumn, targetColumn),
@@ -222,14 +228,6 @@ const Board: React.FC<BoardProps> = () => {
       });
       return;
     }
-    // console.log(activatedBoard.columns.find((col) => col.name === active.id));
-    // console.log(
-    //   activatedBoard.columns.findIndex((col) => col.name === active.id)
-    // );
-    // console.log(
-    //   activatedBoard.columns.findIndex((col) => col.name === over?.id)
-    // );
-
     const activeColumnId: number = Number(
       active.data?.current?.sortable?.containerId
     );
@@ -267,7 +265,17 @@ const Board: React.FC<BoardProps> = () => {
     });
     setActiveTaskDrag(null);
   };
-
+  useEffect(() => {
+    const updateBoardState = setTimeout(() => {
+      setBoardState((prev) =>
+        prev.map((board) =>
+          board.name === settingState.activeBoard ? activatedBoard : board
+        )
+      );
+    }, 1000);
+    updateBoardState;
+    return () => clearTimeout(updateBoardState);
+  }, [activatedBoard, setBoardState, settingState.activeBoard]);
   return (
     <div
       className={`${
@@ -295,39 +303,21 @@ const Board: React.FC<BoardProps> = () => {
                   strategy={horizontalListSortingStrategy}
                 >
                   {activatedColumns}
+                  <AddColumn />
                 </SortableContext>
-
-                <DragOverlay>
-                  {activeDragTask ? (
-                    <ColumnElement
-                      taskName={activeDragTask.title}
-                      subTasks={activeDragTask.subtasks}
-                      taskId={activeDragTask.id}
-                      columnId={activeDragTask.id}
-                    />
-                  ) : null}
-                </DragOverlay>
+                {!isColumnMoved && (
+                  <DragOverlay>
+                    {activeDragTask ? (
+                      <ColumnElement
+                        taskName={activeDragTask.title}
+                        subTasks={activeDragTask.subtasks}
+                        taskId={activeDragTask.id}
+                        columnId={activeDragTask.id}
+                      />
+                    ) : null}
+                  </DragOverlay>
+                )}
               </DndContext>
-              {/* <DndContext
-                collisionDetection={closestCenter}
-                onDragStart={handleDragStart}
-                onDragOver={handleDragOver}
-                onDragEnd={handleDragDrop}
-                sensors={sensors}
-              >
-                {activatedColumns}
-                <DragOverlay>
-                  {activeDragTask ? (
-                    <ColumnElement
-                      taskName={activeDragTask.title}
-                      subTasks={activeDragTask.subtasks}
-                      taskId={activeDragTask.id}
-                      columnId={activeDragTask.id}
-                    />
-                  ) : null}
-                </DragOverlay>
-              </DndContext> */}
-              <AddColumn />
             </>
           ) : (
             <NoColumnSection />
