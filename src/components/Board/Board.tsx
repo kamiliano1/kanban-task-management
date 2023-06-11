@@ -106,7 +106,6 @@ const Board: React.FC<BoardProps> = () => {
     setActivatedBoard(
       boardState.filter((board) => board.name === activeBoard)[0]
     );
-    console.log("nowybord");
   }, [activeBoard, boardState, settingState]);
   useEffect(() => {
     if (activatedBoard) {
@@ -249,20 +248,28 @@ const Board: React.FC<BoardProps> = () => {
       (task) => task.id === overId
     );
     if (activeIndex === overIndex) return;
+
     setActivatedBoard((prev) => {
       let boardColumns = prev.columns;
-      if (activatedBoard.columns.find((col) => col.name === active.id))
-        boardColumns = prev.columns.map((cols) => {
-          if (cols.id === activeColumn?.id) {
-            return {
-              ...cols,
-              tasks: arrayMove(cols.tasks, activeIndex, overIndex),
-            };
-          }
-          return cols;
-        });
+      // if (
+      //   activatedBoard.columns.find((col) => {
+      //     console.log(col.id, active.id);
+
+      //     return col.id === active.id;
+      //   })
+      // )
+      boardColumns = prev.columns.map((cols) => {
+        if (cols.id === activeColumn?.id) {
+          return {
+            ...cols,
+            tasks: arrayMove(cols.tasks, activeIndex, overIndex),
+          };
+        }
+        return cols;
+      });
       return { ...prev, columns: boardColumns };
     });
+
     setActiveTaskDrag(null);
   };
   useEffect(() => {

@@ -89,7 +89,8 @@ const BoardColumn: React.FC<BoardColumnProps> = ({
       >
         <div
           className="flex items-center pb-6 w-[280px]"
-          ref={isColumnMoved ? undefined : setNodeRef}
+          // ref={isColumnMoved ? undefined : setNodeRef}
+          ref={setNodeRef}
         >
           <span
             className={`${dotColor} w-[15px] aspect-square rounded-full mr-3`}
