@@ -16,6 +16,7 @@ import EditBoardModal from "./Board/EditBoardModal";
 import AddTaskModal from "./Task/AddTaskModal";
 import DeleteTaskModal from "./Task/DeleteTaskModal";
 import LoginModal from "./Account/LoginModal";
+import RegisterModal from "./Account/RegisterModal";
 
 type ModalProps = {};
 
@@ -40,6 +41,7 @@ const Modal: React.FC<ModalProps> = () => {
         "
       />
       {activeModal === "login" && <LoginModal darkMode={darkMode} />}
+      {activeModal === "register" && <RegisterModal darkMode={darkMode} />}
 
       {activeModal === "editTask" && <EditTaskModal darkMode={darkMode} />}
       {activeModal === "viewTask" && <ViewTaskModal darkMode={darkMode} />}

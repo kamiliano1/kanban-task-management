@@ -22,9 +22,14 @@ import {
 } from "@dnd-kit/sortable";
 import { BoardsAtom, boardsState } from "../../atoms/boardsAtom";
 import LoginButton from "./LoginButton";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { auth } from "@/src/firebase/clientApp";
+import LogoutButton from "./LogoutButton";
+
 type SidebarProps = {};
 
 const Sidebar: React.FC<SidebarProps> = () => {
+  const [user] = useAuthState(auth);
   const [boardState, setBoardState] = useRecoilState(boardsState);
   const [settingState, setSettingState] = useRecoilState(settingsModalState);
 
@@ -99,7 +104,7 @@ ${
         </DndContext>
         <ButtonAddBoard />
         <ThemeSwitcher />
-        <LoginButton />
+        {user ? <LogoutButton /> : <LoginButton />}
         <HideSidebarButton />
       </div>
     </div>

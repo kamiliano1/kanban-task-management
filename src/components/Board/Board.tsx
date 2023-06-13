@@ -29,6 +29,9 @@ import AddColumn from "./AddColumn";
 import ColumnElement from "./ColumnElement";
 import NoBoardSection from "./NoBoardSection";
 import NoColumnSection from "./NoColumnSection";
+import { auth, firestore } from "@/src/firebase/clientApp";
+import { doc, getDoc } from "firebase/firestore";
+import { useAuthState } from "react-firebase-hooks/auth";
 type BoardProps = {};
 
 const Board: React.FC<BoardProps> = () => {
@@ -39,6 +42,7 @@ const Board: React.FC<BoardProps> = () => {
   const [newBoardState, setNewBoardState] = useState<BoardType[]>(boardState);
   const [loading, setLoading] = useState<boolean>(true);
   const [isColumnMoved, setIsColumnMoved] = useState(false);
+  const [user] = useAuthState(auth);
   const [activatedBoard, setActivatedBoard] = useState<BoardType>(
     boardState[0]
   );
@@ -51,9 +55,24 @@ const Board: React.FC<BoardProps> = () => {
       },
     })
   );
-  const { setNodeRef } = useDroppable({
-    id: "addColumn",
-  });
+  // const { setNodeRef } = useDroppable({
+  //   id: "addColumn",
+  // });
+
+  const getUserData = async () => {
+    try {
+      const userDataRef = doc(firestore, "users", user!.uid);
+      const userData = await getDoc(userDataRef);
+      const bookmarkData = userData.data();
+
+      if (bookmarkData) {
+        console.log(bookmarkData.board);
+        setBoardState(bookmarkData.board);
+      }
+    } catch (error: any) {
+      console.log("getBookmarkError", error.message);
+    }
+  };
   const [activeDragTask, setActiveTaskDrag] = useState<TaskType | null>();
   useEffect(() => {
     if (loading) {
@@ -294,6 +313,7 @@ const Board: React.FC<BoardProps> = () => {
       settingState.isSidebarOpen && "pl-[clamp(285px,_23vw,_300px)]"
     }`}
     >
+      <button onClick={getUserData}>getUserData</button>
       {boardState.length ? (
         <>
           {activatedColumns.length ? (

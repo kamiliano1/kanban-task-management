@@ -5,12 +5,11 @@ import { useSignInWithEmailAndPassword } from "react-firebase-hooks/auth";
 import { auth } from "@/src/firebase/clientApp";
 import ButtonPrimarySmall from "../../Layout/Input/Button/ButtonPrimarySmall";
 import { useRecoilState } from "recoil";
-import { boardsState } from "@/src/atoms/boardsAtom";
+import { modalState } from "@/src/atoms/modalAtom";
 type LoginModalProps = { darkMode: boolean };
 
 const LoginModal: React.FC<LoginModalProps> = ({ darkMode }) => {
-  const [boardState, setBoardState] = useRecoilState(boardsState);
-  const [error, setError] = useState("");
+  const [modalsState, setModalsState] = useRecoilState(modalState);
   type loginUserInputs = {
     email: string;
     password: string;
@@ -24,13 +23,11 @@ const LoginModal: React.FC<LoginModalProps> = ({ darkMode }) => {
     useSignInWithEmailAndPassword(auth);
 
   const onSubmit: SubmitHandler<loginUserInputs> = (data) => {
-    setError("");
-
     signInWithEmailAndPassword(data.email, data.password);
   };
   useEffect(() => {
-    if (userName) setBoardState((prev) => ({ ...prev, open: false }));
-  }, [setBoardState, userName]);
+    if (userName) setModalsState((prev) => ({ ...prev, open: false }));
+  }, [setModalsState, userName]);
   return (
     <Dialog.Portal>
       <Dialog.Content
@@ -46,11 +43,13 @@ const LoginModal: React.FC<LoginModalProps> = ({ darkMode }) => {
         >
           Login
         </Dialog.Title>
-        <div className="relative">
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 mb-5">
+
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 mb-5">
+          <div className="relative">
             <input
               placeholder="Email address"
               type="email"
+              autoComplete="username"
               className={`text-500 placeholder:text-black
             FormLabel placeholder:opacity-25 px-4 py-2 rounded border-[1px]
              ${
@@ -68,18 +67,16 @@ const LoginModal: React.FC<LoginModalProps> = ({ darkMode }) => {
               })}
             />
             {errors.email && (
-              <span className="absolute text-red text-500 left-[70%] top-[.6rem]">
+              <span className="absolute text-red text-500 left-[70%] top-[.5rem]">
                 Can`t be empty
               </span>
             )}
-            {/* {firebaseError?.message && (
-            <span className="absolute text-red text-500 left-[70%] top-[.6rem]">
-              Wrong email or password
-            </span>
-          )} */}
+          </div>
+          <div className="relative">
             <input
               placeholder="Password"
               type="password"
+              autoComplete="current-password"
               className={`text-500 placeholder:text-black
             FormLabel placeholder:opacity-25 px-4 py-2 rounded border-[1px]
              ${
@@ -96,13 +93,28 @@ const LoginModal: React.FC<LoginModalProps> = ({ darkMode }) => {
                 required: true,
               })}
             />
-            <ButtonPrimarySmall buttonLabel="Login" loading={loading} />
-          </form>
-        </div>
+            {errors.password && (
+              <span className="absolute text-red text-500 left-[70%] top-[.5rem]">
+                Can`t be empty
+              </span>
+            )}
+          </div>
+          {firebaseError?.message && (
+            <p className={`text-500 ${darkMode ? "text-white" : "text-black"}`}>
+              Invalid email or password
+            </p>
+          )}
+          <ButtonPrimarySmall buttonLabel="Login" loading={loading} />
+        </form>
 
         <p className={`mt-5 ${darkMode ? "text-white" : "text-black"}`}>
-          Don`t have an account?{" "}
-          <span className="ml-3 text-lightPurple hover:text-purple cursor-pointer">
+          Don`t have an account?
+          <span
+            className="ml-3 text-lightPurple hover:text-purple cursor-pointer"
+            onClick={() =>
+              setModalsState((prev) => ({ ...prev, view: "register" }))
+            }
+          >
             Sign Up
           </span>
         </p>
