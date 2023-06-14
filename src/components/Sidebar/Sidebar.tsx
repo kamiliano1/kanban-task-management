@@ -51,7 +51,7 @@ const Sidebar: React.FC<SidebarProps> = () => {
     }
   }, [boardState, loading, setSettingState]);
 
-  const boardList = boardState.map((item) => (
+  const boardList = boardState?.map((item) => (
     <ButtonPrimaryBoards key={item.name} buttonLabel={item.name} />
   ));
   const [boardsList, setBoardsList] = useState<string[]>([]);
@@ -88,7 +88,7 @@ ${
           className="text-mediumGrey text-400 tracking-[2.4px] 
       sm:px-6 py-4 lg:pl-8"
         >
-          ALL BOARDS ({boardState.length})
+          ALL BOARDS ({boardState?.length})
         </h2>
         <DndContext
           collisionDetection={closestCenter}

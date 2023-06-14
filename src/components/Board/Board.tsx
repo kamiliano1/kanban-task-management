@@ -149,6 +149,9 @@ const Board: React.FC<BoardProps> = () => {
       ))
     : [];
 
+  useEffect(() => {
+    console.log("tablica zmieniona");
+  }, [boardState]);
   const handleDragStart = (e: DragStartEvent) => {
     const { active } = e;
     const activeTaskId = active.id;
@@ -314,11 +317,13 @@ const Board: React.FC<BoardProps> = () => {
       }
     pt-6 pr-6 ${
       settingState.isSidebarOpen && "pl-[clamp(285px,_23vw,_300px)]"
-    }`}>
+    }`}
+    >
       <SkeletonTheme
         baseColor="hsl(235 12% 19%)"
         highlightColor="#444"
-        borderRadius={0.5}>
+        borderRadius={0.5}
+      >
         <div>
           <Skeleton height={23} width={200} className="mt-5" />
           <Skeleton
@@ -360,10 +365,12 @@ const Board: React.FC<BoardProps> = () => {
                 onDragStart={handleDragStart}
                 onDragOver={handleDragOver}
                 onDragEnd={handleDragDrop}
-                sensors={sensors}>
+                sensors={sensors}
+              >
                 <SortableContext
                   items={columnsListId}
-                  strategy={horizontalListSortingStrategy}>
+                  strategy={horizontalListSortingStrategy}
+                >
                   {activatedColumns}
                   <AddColumn />
                 </SortableContext>

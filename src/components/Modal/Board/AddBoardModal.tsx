@@ -10,6 +10,18 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { useRecoilState } from "recoil";
 import { boardsState } from "../../../atoms/boardsAtom";
 import { BoardType, ColumnType } from "../../Board/BoardType";
+import {
+  CollectionReference,
+  DocumentData,
+  Timestamp,
+  collection,
+  doc,
+  serverTimestamp,
+  setDoc,
+} from "firebase/firestore";
+import { auth, firestore, storage } from "@/src/firebase/clientApp";
+import { useCollectionData } from "react-firebase-hooks/firestore";
+import { useAuthState } from "react-firebase-hooks/auth";
 const nanoid = customAlphabet("1234567890", 15);
 type AddBoardModalProps = {
   darkMode: boolean;
@@ -19,11 +31,16 @@ interface BoardInputs {
   columns: ColumnType[];
 }
 const AddBoardModal: React.FC<AddBoardModalProps> = ({ darkMode }) => {
+  const [user] = useAuthState(auth);
   const [modalsState, setModalsState] = useRecoilState(modalState);
   const [boardState, setBoardState] = useRecoilState(boardsState);
   const [settingState, setSettingState] = useRecoilState(settingsModalState);
   const [errorBoardName, setErrorBoardName] = useState<string>("");
   const firstNameRef = useRef<HTMLInputElement | null>(null);
+
+  // const [docs, loading, error, snapshot] = useCollectionData(collectionRef);
+  // console.log(docs);
+
   const {
     register,
     handleSubmit,
@@ -38,7 +55,7 @@ const AddBoardModal: React.FC<AddBoardModalProps> = ({ darkMode }) => {
     id: parseInt(nanoid()),
     columns: [],
   });
-  const onSubmit: SubmitHandler<BoardInputs> = (data) => {
+  const onSubmit: SubmitHandler<BoardInputs> = async (data) => {
     if (
       boardState.find(
         (item) =>
@@ -56,6 +73,14 @@ const AddBoardModal: React.FC<AddBoardModalProps> = ({ darkMode }) => {
       id: newBoard.id,
       columns: columns,
     };
+    const boardRef = doc(firestore, `users/${user?.uid}/boards/${newBoard.id}`);
+    console.log(columns);
+
+    await setDoc(boardRef, {
+      name: data.name,
+      id: newBoard.id,
+      createAt: serverTimestamp() as Timestamp,
+    });
     setBoardState((prev) => [...prev, readyBoard]);
     setModalsState((prev) => ({ ...prev, open: false }));
     setSettingState((prev) => ({ ...prev, activeBoard: data.name }));
@@ -97,11 +122,11 @@ const AddBoardModal: React.FC<AddBoardModalProps> = ({ darkMode }) => {
        darkMode ? "bg-darkGrey" : "bg-white"
      }
       p-[25px] shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px]
-      focus:outline-none`}>
+      focus:outline-none`}
+      >
         <Dialog.Title
-          className={` ${
-            darkMode ? "text-white" : "text-black"
-          } text-800 pb-4`}>
+          className={` ${darkMode ? "text-white" : "text-black"} text-800 pb-4`}
+        >
           Add New Board
         </Dialog.Title>
         <form onSubmit={handleSubmit(onSubmit)}>
