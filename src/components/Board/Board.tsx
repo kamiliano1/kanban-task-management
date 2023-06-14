@@ -6,6 +6,9 @@ import { settingsModalState } from "../../atoms/settingsModalAtom";
 import BoardColumn from "./BoardColumn";
 import { BoardType, ColumnType, SubtasksType, TaskType } from "./BoardType";
 
+import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
+
 import { modalState } from "@/src/atoms/modalAtom";
 import {
   DndContext,
@@ -311,8 +314,42 @@ const Board: React.FC<BoardProps> = () => {
       }
     pt-6 pr-6 ${
       settingState.isSidebarOpen && "pl-[clamp(285px,_23vw,_300px)]"
-    }`}
-    >
+    }`}>
+      <SkeletonTheme
+        baseColor="hsl(235 12% 19%)"
+        highlightColor="#444"
+        borderRadius={0.5}>
+        <div>
+          <Skeleton height={23} width={200} className="mt-5" />
+          <Skeleton
+            height={43}
+            width={240}
+            count={3}
+            className="mt-5"
+            borderRadius={"0px 30px 30px 0px"}
+          />
+        </div>
+      </SkeletonTheme>
+      {/* 
+      <SkeletonTheme
+        baseColor="hsl(235 12% 19%)"
+        highlightColor="#444"
+        borderRadius={0.5}>
+        <div className="flex flex-col">
+          <div>
+            <Skeleton
+              height={15}
+              width={15}
+              circle={true}
+              className="mr-3"
+              inline={true}
+            />
+            <Skeleton height={8} width={50} />
+          </div>
+          <Skeleton height={80} width={280} count={5} className="mt-5" />
+        </div>
+      </SkeletonTheme> */}
+      <h1>aaa</h1>
       <button onClick={getUserData}>getUserData</button>
       {boardState.length ? (
         <>
@@ -323,12 +360,10 @@ const Board: React.FC<BoardProps> = () => {
                 onDragStart={handleDragStart}
                 onDragOver={handleDragOver}
                 onDragEnd={handleDragDrop}
-                sensors={sensors}
-              >
+                sensors={sensors}>
                 <SortableContext
                   items={columnsListId}
-                  strategy={horizontalListSortingStrategy}
-                >
+                  strategy={horizontalListSortingStrategy}>
                   {activatedColumns}
                   <AddColumn />
                 </SortableContext>

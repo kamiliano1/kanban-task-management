@@ -3,6 +3,7 @@ import { atom } from "recoil";
 export interface SettingsState {
   darkMode: boolean;
   isSidebarOpen: boolean;
+  isLoaded: boolean;
   activeBoard: string;
   activateColumn: number;
   activateTask: number;
@@ -12,6 +13,7 @@ export interface SettingsState {
 const defaultSettingsModalState: SettingsState = {
   darkMode: true,
   isSidebarOpen: true,
+  isLoaded: false,
   activeBoard: "",
   activateColumn: 0,
   activateTask: 0,
