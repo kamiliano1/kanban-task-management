@@ -69,14 +69,13 @@ const Board: React.FC<BoardProps> = () => {
       const bookmarkData = userData.data();
 
       if (bookmarkData) {
-        console.log(bookmarkData.board);
-        setBoardState(bookmarkData.board);
+        setBoardState(bookmarkData.board || []);
       }
     } catch (error: any) {
       console.log("getBookmarkError", error.message);
     }
   };
-  const [activeDragTask, setActiveTaskDrag] = useState<TaskType | null>();
+  const [activeDragTask, setActiveDragTask] = useState<TaskType | null>();
   useEffect(() => {
     if (loading) {
       fetch("data/data.json")
@@ -149,16 +148,13 @@ const Board: React.FC<BoardProps> = () => {
       ))
     : [];
 
-  useEffect(() => {
-    console.log("tablica zmieniona");
-  }, [boardState]);
   const handleDragStart = (e: DragStartEvent) => {
     const { active } = e;
     const activeTaskId = active.id;
     const activeTaskColumn: number = Number(
       active.data?.current?.sortable.containerId
     );
-    setActiveTaskDrag(
+    setActiveDragTask(
       activatedBoard.columns
         .find((cols) => cols.id === activeTaskColumn)
         ?.tasks.find((task) => task.id === activeTaskId)
@@ -295,7 +291,7 @@ const Board: React.FC<BoardProps> = () => {
       return { ...prev, columns: boardColumns };
     });
 
-    setActiveTaskDrag(null);
+    setActiveDragTask(null);
   };
   useEffect(() => {
     const updateBoardState = setTimeout(() => {
@@ -317,9 +313,8 @@ const Board: React.FC<BoardProps> = () => {
       }
     pt-6 pr-6 ${
       settingState.isSidebarOpen && "pl-[clamp(285px,_23vw,_300px)]"
-    }`}
-    >
-      <SkeletonTheme
+    }`}>
+      {/* <SkeletonTheme
         baseColor="hsl(235 12% 19%)"
         highlightColor="#444"
         borderRadius={0.5}
@@ -334,7 +329,7 @@ const Board: React.FC<BoardProps> = () => {
             borderRadius={"0px 30px 30px 0px"}
           />
         </div>
-      </SkeletonTheme>
+      </SkeletonTheme> */}
       {/* 
       <SkeletonTheme
         baseColor="hsl(235 12% 19%)"
@@ -354,7 +349,7 @@ const Board: React.FC<BoardProps> = () => {
           <Skeleton height={80} width={280} count={5} className="mt-5" />
         </div>
       </SkeletonTheme> */}
-      <h1>aaa</h1>
+
       <button onClick={getUserData}>getUserData</button>
       {boardState.length ? (
         <>
@@ -365,12 +360,10 @@ const Board: React.FC<BoardProps> = () => {
                 onDragStart={handleDragStart}
                 onDragOver={handleDragOver}
                 onDragEnd={handleDragDrop}
-                sensors={sensors}
-              >
+                sensors={sensors}>
                 <SortableContext
                   items={columnsListId}
-                  strategy={horizontalListSortingStrategy}
-                >
+                  strategy={horizontalListSortingStrategy}>
                   {activatedColumns}
                   <AddColumn />
                 </SortableContext>

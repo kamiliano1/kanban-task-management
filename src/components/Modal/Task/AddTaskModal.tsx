@@ -11,6 +11,9 @@ import ButtonPrimarySmall from "../../Layout/Input/Button/ButtonPrimarySmall";
 import ButtonSecondary from "../../Layout/Input/Button/ButtonSecondary";
 import DropMenu from "../../Layout/Input/DropMenu";
 import AddSubTaskInput from "./AddSubTaskInput";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { auth, firestore } from "@/src/firebase/clientApp";
+import { doc, updateDoc } from "firebase/firestore";
 const nanoid = customAlphabet("1234567890", 15);
 type AddTaskModalProps = { darkMode: boolean };
 interface BoardInputs {
@@ -20,6 +23,7 @@ interface BoardInputs {
   status: string;
 }
 const AddTaskModal: React.FC<AddTaskModalProps> = ({ darkMode }) => {
+  const [user] = useAuthState(auth);
   const [modalsState, setModalsState] = useRecoilState(modalState);
   const [boardState, setBoardState] = useRecoilState(boardsState);
   const [settingState, setSettingState] = useRecoilState(settingsModalState);
@@ -56,7 +60,7 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ darkMode }) => {
       },
     ],
   });
-  const onSubmit: SubmitHandler<BoardInputs> = (data) => {
+  const onSubmit: SubmitHandler<BoardInputs> = async (data) => {
     setValue("status", columnsName[0]);
 
     const subtasks = newTask.subtasks.map((items) => {
@@ -88,6 +92,12 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ darkMode }) => {
       return item;
     });
     setBoardState(updatedBoard);
+    if (user) {
+      const boardRef = doc(firestore, `users/${user?.uid}`);
+      await updateDoc(boardRef, {
+        board: updatedBoard,
+      });
+    }
     setModalsState((prev) => ({ ...prev, open: false }));
   };
   useEffect(() => {

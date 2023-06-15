@@ -12,6 +12,7 @@ import { useRecoilState } from "recoil";
 import { modalState } from "@/src/atoms/modalAtom";
 import { User } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
+import { boardsState } from "@/src/atoms/boardsAtom";
 type RegisterModalProps = { darkMode: boolean };
 type createUserInputs = {
   email: string;
@@ -20,6 +21,7 @@ type createUserInputs = {
 };
 const RegisterModal: React.FC<RegisterModalProps> = ({ darkMode }) => {
   const [modalsState, setModalsState] = useRecoilState(modalState);
+  const [boardState, setBoardState] = useRecoilState(boardsState);
   const {
     register,
     handleSubmit,
@@ -58,8 +60,9 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ darkMode }) => {
     if (userCredentials) {
       createUserDocument(userCredentials.user);
       setModalsState((prev) => ({ ...prev, open: false }));
+      setBoardState([]);
     }
-  }, [setModalsState, userCredentials]);
+  }, [setBoardState, setModalsState, userCredentials]);
 
   return (
     <Dialog.Portal>
@@ -69,11 +72,11 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ darkMode }) => {
    darkMode ? "bg-darkGrey" : "bg-white"
  }
   p-[25px] shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px]
-  focus:outline-none`}
-      >
+  focus:outline-none`}>
         <Dialog.Title
-          className={` ${darkMode ? "text-white" : "text-black"} text-800 pb-4`}
-        >
+          className={` ${
+            darkMode ? "text-white" : "text-black"
+          } text-800 pb-4`}>
           Register
         </Dialog.Title>
 
@@ -174,8 +177,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ darkMode }) => {
             className="ml-3 text-lightPurple hover:text-purple cursor-pointer"
             onClick={() =>
               setModalsState((prev) => ({ ...prev, view: "login" }))
-            }
-          >
+            }>
             Login
           </span>
         </p>

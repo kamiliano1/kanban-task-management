@@ -11,6 +11,9 @@ import ButtonPrimarySmall from "../../Layout/Input/Button/ButtonPrimarySmall";
 import ButtonSecondary from "../../Layout/Input/Button/ButtonSecondary";
 import DropMenu from "../../Layout/Input/DropMenu";
 import AddSubTaskInput from "./AddSubTaskInput";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { auth, firestore } from "@/src/firebase/clientApp";
+import { doc, updateDoc } from "firebase/firestore";
 
 const nanoid = customAlphabet("1234567890", 15);
 type EditTaskModalProps = {
@@ -23,6 +26,7 @@ interface BoardInputs {
   status: string;
 }
 const EditTaskModal: React.FC<EditTaskModalProps> = ({ darkMode }) => {
+  const [user] = useAuthState(auth);
   const [modalsState, setModalsState] = useRecoilState(modalState);
   const [targetColumnId, setTargetColumnId] = useState<number>();
 
@@ -56,7 +60,6 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ darkMode }) => {
         ?.columns.find((task) => task.id === settingState.activateColumn)?.name
     );
   }, [boardState, settingState.activateColumn, settingState.activeBoard]);
-  const aktualizacja = () => {};
   useEffect(() => {
     if (isUpdatedTask) {
       setSettingState((prev) => ({
@@ -163,7 +166,6 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ darkMode }) => {
           let targetColumn = columns.find(
             (cols) => cols.name === watch("status")
           );
-          // console.log(targetColumn);
 
           let activatedColumn = columns.find(
             (cols) => cols.id === settingState.activateColumn
@@ -195,7 +197,6 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ darkMode }) => {
             return cols;
           });
           return { ...board, columns: columns };
-          // return board;
         }
         return board;
       });
@@ -240,7 +241,7 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ darkMode }) => {
       subtasks: updatedColumns as SubtasksType[],
     }));
   };
-  const onSubmit: SubmitHandler<BoardInputs> = (data) => {
+  const onSubmit: SubmitHandler<BoardInputs> = async (data) => {
     setIsUpdatedTask(true);
     updateStatus();
     const updatedSubtasks = currentTask?.subtasks.map((subtask) => {
@@ -253,27 +254,52 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ darkMode }) => {
       id: currentTask?.id as number,
       subtasks: updatedSubtasks as SubtasksType[],
     };
+    const updatedBoard = boardState.map((board) => {
+      if (board.name === settingState.activeBoard) {
+        const activatedColumns = board.columns.map((col) => {
+          if (col.name === getValues("status")) {
+            const updatedTask = col.tasks.map((task) => {
+              if (task.id === editedTask?.id) {
+              }
+              return task.id === editedTask?.id ? editedTask : task;
+            });
+            return { ...col, tasks: updatedTask };
+          }
+          return col;
+        });
+        return { ...board, columns: activatedColumns };
+      }
+      return board;
+    });
+    console.log(updatedBoard);
 
-    setBoardState((prev) =>
-      prev.map((board) => {
-        if (board.name === settingState.activeBoard) {
-          const activatedColumns = board.columns.map((col) => {
-            if (col.name === getValues("status")) {
-              console.log(col.tasks, "task");
-              const updatedTask = col.tasks.map((task) => {
-                if (task.id === editedTask?.id) {
-                }
-                return task.id === editedTask?.id ? editedTask : task;
-              });
-              return { ...col, tasks: updatedTask };
-            }
-            return col;
-          });
-          return { ...board, columns: activatedColumns };
-        }
-        return board;
-      })
-    );
+    // setBoardState((prev) =>
+    //   prev.map((board) => {
+    //     if (board.name === settingState.activeBoard) {
+    //       const activatedColumns = board.columns.map((col) => {
+    //         if (col.name === getValues("status")) {
+    //           console.log(col.tasks, "task");
+    //           const updatedTask = col.tasks.map((task) => {
+    //             if (task.id === editedTask?.id) {
+    //             }
+    //             return task.id === editedTask?.id ? editedTask : task;
+    //           });
+    //           return { ...col, tasks: updatedTask };
+    //         }
+    //         return col;
+    //       });
+    //       return { ...board, columns: activatedColumns };
+    //     }
+    //     return board;
+    //   })
+    // );
+    setBoardState(updatedBoard);
+    if (user) {
+      const boardRef = doc(firestore, `users/${user?.uid}`);
+      await updateDoc(boardRef, {
+        board: updatedBoard,
+      });
+    }
   };
 
   const subTasks = currentTask?.subtasks.map((item, number) => (

@@ -10,6 +10,9 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { useRecoilState } from "recoil";
 import { boardsState } from "../../../atoms/boardsAtom";
 import { BoardType, ColumnType } from "../../Board/BoardType";
+import { auth, firestore } from "@/src/firebase/clientApp";
+import { doc, updateDoc } from "firebase/firestore";
+import { useAuthState } from "react-firebase-hooks/auth";
 const nanoid = customAlphabet("1234567890", 15);
 type EditBoardModalProps = { darkMode: boolean };
 interface BoardInputs {
@@ -18,6 +21,7 @@ interface BoardInputs {
 }
 
 const EditBoardModal: React.FC<EditBoardModalProps> = ({ darkMode }) => {
+  const [user] = useAuthState(auth);
   const [modalsState, setModalsState] = useRecoilState(modalState);
   const [boardState, setBoardState] = useRecoilState(boardsState);
   const [settingState, setSettingState] = useRecoilState(settingsModalState);
@@ -39,7 +43,7 @@ const EditBoardModal: React.FC<EditBoardModalProps> = ({ darkMode }) => {
     id: parseInt(nanoid()),
     columns: [],
   });
-  const onSubmit: SubmitHandler<BoardInputs> = (data) => {
+  const onSubmit: SubmitHandler<BoardInputs> = async (data) => {
     const otherBoards = boardState.filter((item) => item.name != newBoard.name);
     if (
       otherBoards.find(
@@ -62,8 +66,18 @@ const EditBoardModal: React.FC<EditBoardModalProps> = ({ darkMode }) => {
     setBoardState((prev) =>
       prev.map((item) => (item.id === newBoard.id ? readyBoard : item))
     );
+
     setModalsState((prev) => ({ ...prev, open: false }));
     setSettingState((prev) => ({ ...prev, activeBoard: data.name }));
+    if (user) {
+      const updatedBoard = boardState.map((board) =>
+        board.id === newBoard.id ? readyBoard : board
+      );
+      const boardRef = doc(firestore, `users/${user?.uid}`);
+      await updateDoc(boardRef, {
+        board: updatedBoard,
+      });
+    }
   };
 
   useEffect(() => {

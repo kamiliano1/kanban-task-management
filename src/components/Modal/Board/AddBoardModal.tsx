@@ -18,6 +18,7 @@ import {
   doc,
   serverTimestamp,
   setDoc,
+  updateDoc,
 } from "firebase/firestore";
 import { auth, firestore, storage } from "@/src/firebase/clientApp";
 import { useCollectionData } from "react-firebase-hooks/firestore";
@@ -73,18 +74,26 @@ const AddBoardModal: React.FC<AddBoardModalProps> = ({ darkMode }) => {
       id: newBoard.id,
       columns: columns,
     };
-    const boardRef = doc(firestore, `users/${user?.uid}/boards/${newBoard.id}`);
-    console.log(columns);
+    // const boardRef = doc(firestore, `users/${user?.uid}/boards/${newBoard.id}`);
 
-    await setDoc(boardRef, {
-      name: data.name,
-      id: newBoard.id,
-      createAt: serverTimestamp() as Timestamp,
-    });
+    // await setDoc(boardRef, {
+    //   name: data.name,
+    //   id: newBoard.id,
+    //   createAt: serverTimestamp() as Timestamp,
+    // });
+
     setBoardState((prev) => [...prev, readyBoard]);
+
     setModalsState((prev) => ({ ...prev, open: false }));
     setSettingState((prev) => ({ ...prev, activeBoard: data.name }));
+    if (user) {
+      const boardRef = doc(firestore, `users/${user?.uid}`);
+      await updateDoc(boardRef, {
+        board: [...boardState, readyBoard],
+      });
+    }
   };
+
   const addColumn = () => {
     const columnId = parseInt(nanoid());
     setNewBoard((prev) => ({
@@ -122,11 +131,11 @@ const AddBoardModal: React.FC<AddBoardModalProps> = ({ darkMode }) => {
        darkMode ? "bg-darkGrey" : "bg-white"
      }
       p-[25px] shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px]
-      focus:outline-none`}
-      >
+      focus:outline-none`}>
         <Dialog.Title
-          className={` ${darkMode ? "text-white" : "text-black"} text-800 pb-4`}
-        >
+          className={` ${
+            darkMode ? "text-white" : "text-black"
+          } text-800 pb-4`}>
           Add New Board
         </Dialog.Title>
         <form onSubmit={handleSubmit(onSubmit)}>
