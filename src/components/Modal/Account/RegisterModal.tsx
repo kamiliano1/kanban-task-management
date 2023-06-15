@@ -72,11 +72,11 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ darkMode }) => {
    darkMode ? "bg-darkGrey" : "bg-white"
  }
   p-[25px] shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px]
-  focus:outline-none`}>
+  focus:outline-none`}
+      >
         <Dialog.Title
-          className={` ${
-            darkMode ? "text-white" : "text-black"
-          } text-800 pb-4`}>
+          className={` ${darkMode ? "text-white" : "text-black"} text-800 pb-4`}
+        >
           Register
         </Dialog.Title>
 
@@ -177,7 +177,8 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ darkMode }) => {
             className="ml-3 text-lightPurple hover:text-purple cursor-pointer"
             onClick={() =>
               setModalsState((prev) => ({ ...prev, view: "login" }))
-            }>
+            }
+          >
             Login
           </span>
         </p>

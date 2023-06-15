@@ -17,7 +17,7 @@ import BoardDropDownMenu from "./BoardDropDownMenu";
 type NavbarProps = {};
 
 const Navbar: React.FC<NavbarProps> = () => {
-  const [windowWidth, setWindowWidth] = useState<number>(0);
+  const [windowWidth, setWindowWidth] = useState<number>(800);
   const [activeLogo, setActiveLogo] = useState(logoLight);
   const [isDisabled, setIsDisabled] = useState<boolean>(true);
   const [boardState, setBoardState] = useRecoilState(boardsState);

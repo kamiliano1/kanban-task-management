@@ -1,15 +1,22 @@
 import React, { useEffect, useState } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { useSignInWithEmailAndPassword } from "react-firebase-hooks/auth";
-import { auth } from "@/src/firebase/clientApp";
+import {
+  useAuthState,
+  useSignInWithEmailAndPassword,
+} from "react-firebase-hooks/auth";
+import { auth, firestore } from "@/src/firebase/clientApp";
 import ButtonPrimarySmall from "../../Layout/Input/Button/ButtonPrimarySmall";
 import { useRecoilState } from "recoil";
 import { modalState } from "@/src/atoms/modalAtom";
+import { doc, getDoc } from "firebase/firestore";
+import { boardsState } from "@/src/atoms/boardsAtom";
 type LoginModalProps = { darkMode: boolean };
 
 const LoginModal: React.FC<LoginModalProps> = ({ darkMode }) => {
   const [modalsState, setModalsState] = useRecoilState(modalState);
+  const [user] = useAuthState(auth);
+  const [boardState, setBoardState] = useRecoilState(boardsState);
   type loginUserInputs = {
     email: string;
     password: string;
@@ -26,8 +33,26 @@ const LoginModal: React.FC<LoginModalProps> = ({ darkMode }) => {
     signInWithEmailAndPassword(data.email, data.password);
   };
   useEffect(() => {
-    if (userName) setModalsState((prev) => ({ ...prev, open: false }));
-  }, [setModalsState, userName]);
+    console.log("llll");
+
+    const getUserData = async () => {
+      try {
+        const userDataRef = doc(firestore, "users", user!.uid);
+        const userData = await getDoc(userDataRef);
+        const bookmarkData = userData.data();
+
+        if (bookmarkData) {
+          setBoardState(bookmarkData.board || []);
+        }
+      } catch (error: any) {
+        console.log("getBookmarkError", error.message);
+      }
+    };
+    if (userName) {
+      setModalsState((prev) => ({ ...prev, open: false }));
+      // getUserData();
+    }
+  }, [setBoardState, setModalsState, user, userName]);
   return (
     <Dialog.Portal>
       <Dialog.Content

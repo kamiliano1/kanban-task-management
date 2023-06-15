@@ -1,30 +1,31 @@
+import {
+  closestCenter,
+  DndContext,
+  DragEndEvent,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
 import React, { useEffect, useState } from "react";
+import { useRecoilState } from "recoil";
+import { settingsModalState } from "../../atoms/settingsModalAtom";
+import ButtonAddBoard from "../Layout/Input/Button/ButtonAddBoard";
 import ButtonPrimaryBoards from "../Layout/Input/Button/ButtonPrimaryBoards";
 import ThemeSwitcher from "../Layout/Input/ThemeSwitcher";
 import HideSidebarButton from "./HideSidebarButton";
-import { settingsModalState } from "../../atoms/settingsModalAtom";
-import { useRecoilState, useRecoilValue } from "recoil";
-import ButtonAddBoard from "../Layout/Input/Button/ButtonAddBoard";
-import { AiOutlineUser } from "react-icons/ai";
-import {
-  DndContext,
-  closestCenter,
-  DragEndEvent,
-  useSensors,
-  useSensor,
-  PointerSensor,
-} from "@dnd-kit/core";
 
+import { auth, firestore } from "@/src/firebase/clientApp";
 import {
   arrayMove,
   SortableContext,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { BoardsAtom, boardsState } from "../../atoms/boardsAtom";
-import LoginButton from "./LoginButton";
+import { doc, updateDoc } from "firebase/firestore";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { auth } from "@/src/firebase/clientApp";
+import { boardsState } from "../../atoms/boardsAtom";
+import LoginButton from "./LoginButton";
 import LogoutButton from "./LogoutButton";
+import BoardsSkeleton from "./BoardsSkeleton";
 
 type SidebarProps = {};
 
@@ -59,14 +60,22 @@ const Sidebar: React.FC<SidebarProps> = () => {
   useEffect(() => {
     setBoardsList(boardState.map((board) => board.name));
   }, [boardState]);
-  const handleDragDrop = (e: DragEndEvent) => {
-    setBoardState((board) => {
-      const activeBoard = board.findIndex(
-        (board) => board.name === e.active.id
-      );
-      const targetBoard = board.findIndex((board) => board.name === e.over?.id);
-      return arrayMove(board, activeBoard, targetBoard);
-    });
+  const handleDragDrop = async (e: DragEndEvent) => {
+    if (e.active.id === e.over?.id) return;
+    const activeBoard = boardState.findIndex(
+      (board) => board.name === e.active.id
+    );
+    const targetBoard = boardState.findIndex(
+      (board) => board.name === e.over?.id
+    );
+    const updatedBoard = arrayMove(boardState, activeBoard, targetBoard);
+    setBoardState(updatedBoard);
+    if (user) {
+      const boardRef = doc(firestore, `users/${user?.uid}`);
+      await updateDoc(boardRef, {
+        board: updatedBoard,
+      });
+    }
   };
 
   return (
@@ -83,26 +92,34 @@ ${
           : "bg-white border-linesLight"
       }`}
     >
-      <div className="flex flex-col z-[5] pr-6 h-[calc(100vh_-_120px)] ">
-        <h2
-          className="text-mediumGrey text-400 tracking-[2.4px] 
+      <div className="flex flex-col z-[5] pr-6 h-[calc(100vh_-_120px)]">
+        {settingState.isLoaded ? (
+          <>
+            {" "}
+            <h2
+              className="text-mediumGrey text-400 tracking-[2.4px] 
       sm:px-6 py-4 lg:pl-8"
-        >
-          ALL BOARDS ({boardState?.length})
-        </h2>
-        <DndContext
-          collisionDetection={closestCenter}
-          onDragEnd={handleDragDrop}
-          sensors={sensors}
-        >
-          <SortableContext
-            items={boardsList}
-            strategy={verticalListSortingStrategy}
-          >
-            {boardList}
-          </SortableContext>
-        </DndContext>
-        <ButtonAddBoard />
+            >
+              ALL BOARDS ({boardState?.length})
+            </h2>
+            <DndContext
+              collisionDetection={closestCenter}
+              onDragEnd={handleDragDrop}
+              sensors={sensors}
+            >
+              <SortableContext
+                items={boardsList}
+                strategy={verticalListSortingStrategy}
+              >
+                {boardList}
+              </SortableContext>
+            </DndContext>
+            <ButtonAddBoard />
+          </>
+        ) : (
+          <BoardsSkeleton darkMode={settingState.darkMode} />
+        )}
+
         <ThemeSwitcher />
         {user ? <LogoutButton /> : <LoginButton />}
         <HideSidebarButton />

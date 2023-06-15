@@ -33,23 +33,24 @@ import ColumnElement from "./ColumnElement";
 import NoBoardSection from "./NoBoardSection";
 import NoColumnSection from "./NoColumnSection";
 import { auth, firestore } from "@/src/firebase/clientApp";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { useAuthState } from "react-firebase-hooks/auth";
+import ColumnsSkeleton from "./ColumnsSkeleton";
 type BoardProps = {};
 
 const Board: React.FC<BoardProps> = () => {
   const nanoid = customAlphabet("1234567890", 15);
-  const settingState = useRecoilValue(settingsModalState);
+  const [settingState, setSettingsState] = useRecoilState(settingsModalState);
   const [modalsState, setModalsState] = useRecoilState(modalState);
   const [boardState, setBoardState] = useRecoilState(boardsState);
   const [newBoardState, setNewBoardState] = useState<BoardType[]>(boardState);
   const [loading, setLoading] = useState<boolean>(true);
   const [isColumnMoved, setIsColumnMoved] = useState(false);
-  const [user] = useAuthState(auth);
+  // const [user] = useAuthState(auth);
+  const [user, firebaseLoading, error] = useAuthState(auth);
   const [activatedBoard, setActivatedBoard] = useState<BoardType>(
     boardState[0]
   );
-
   const [columnsListId, setColumnsListId] = useState<string[]>(["addColumn"]);
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -58,66 +59,76 @@ const Board: React.FC<BoardProps> = () => {
       },
     })
   );
-  // const { setNodeRef } = useDroppable({
-  //   id: "addColumn",
-  // });
 
-  const getUserData = async () => {
-    try {
-      const userDataRef = doc(firestore, "users", user!.uid);
-      const userData = await getDoc(userDataRef);
-      const bookmarkData = userData.data();
-
-      if (bookmarkData) {
-        setBoardState(bookmarkData.board || []);
-      }
-    } catch (error: any) {
-      console.log("getBookmarkError", error.message);
-    }
-  };
   const [activeDragTask, setActiveDragTask] = useState<TaskType | null>();
   useEffect(() => {
-    if (loading) {
-      fetch("data/data.json")
-        .then((res) => res.json())
-        .then((data) => {
-          setBoardState(data.boards);
-          setBoardState((prev) =>
-            prev.map((item) => {
-              let subTask: SubtasksType;
-              let letTask: TaskType;
-              let letColumn: ColumnType;
-              let letBoard: BoardType;
-              letBoard = { ...item, columns: [] };
-              item.columns.map((cols) => {
-                letColumn = { ...cols, id: parseInt(nanoid()), tasks: [] };
-                cols.tasks.map((task) => {
-                  letTask = { ...task, id: parseInt(nanoid()), subtasks: [] };
-                  task.subtasks.map((subtask) => {
-                    subTask = { ...subtask, id: parseInt(nanoid()) };
-                    letTask = {
-                      ...letTask,
-                      subtasks: [...letTask.subtasks, subTask],
+    const getUserData = async () => {
+      try {
+        const userDataRef = doc(firestore, "users", user!.uid);
+        const userData = await getDoc(userDataRef);
+        const bookmarkData = userData.data();
+
+        if (bookmarkData) {
+          setBoardState(bookmarkData.board || []);
+        }
+      } catch (error: any) {
+        console.log("getBookmarkError", error.message);
+      }
+    };
+    if (!firebaseLoading) {
+      if (user) {
+        // getUserData();
+        setLoading(false);
+        return;
+      }
+      if (loading) {
+        fetch("data/data.json")
+          .then((res) => res.json())
+          .then((data) => {
+            setBoardState(data.boards);
+            setBoardState((prev) =>
+              prev.map((item) => {
+                let subTask: SubtasksType;
+                let letTask: TaskType;
+                let letColumn: ColumnType;
+                let letBoard: BoardType;
+                letBoard = { ...item, columns: [] };
+                item.columns.map((cols) => {
+                  letColumn = { ...cols, id: parseInt(nanoid()), tasks: [] };
+                  cols.tasks.map((task) => {
+                    letTask = { ...task, id: parseInt(nanoid()), subtasks: [] };
+                    task.subtasks.map((subtask) => {
+                      subTask = { ...subtask, id: parseInt(nanoid()) };
+                      letTask = {
+                        ...letTask,
+                        subtasks: [...letTask.subtasks, subTask],
+                      };
+                    });
+                    letColumn = {
+                      ...letColumn,
+                      tasks: [...letColumn.tasks, letTask],
                     };
                   });
-                  letColumn = {
-                    ...letColumn,
-                    tasks: [...letColumn.tasks, letTask],
+                  letBoard = {
+                    ...letBoard,
+                    columns: [...letBoard.columns, letColumn],
                   };
                 });
-                letBoard = {
-                  ...letBoard,
-                  columns: [...letBoard.columns, letColumn],
-                };
-              });
-              return letBoard;
-            })
-          );
-        });
-      setLoading(false);
+                return letBoard;
+              })
+            );
+          });
+        setLoading(false);
+      }
     }
-  }, [loading, nanoid, setBoardState]);
+  }, [firebaseLoading, loading, nanoid, setBoardState, user]);
 
+  useEffect(() => {
+    if (!settingState.isLoaded)
+      setTimeout(() => {
+        setSettingsState((prev) => ({ ...prev, isLoaded: true }));
+      }, 300);
+  }, [setBoardState, setSettingsState, settingState.isLoaded]);
   const darkMode = settingState.darkMode;
   const activeBoard = settingState.activeBoard;
   useEffect(() => {
@@ -272,13 +283,6 @@ const Board: React.FC<BoardProps> = () => {
 
     setActivatedBoard((prev) => {
       let boardColumns = prev.columns;
-      // if (
-      //   activatedBoard.columns.find((col) => {
-      //     console.log(col.id, active.id);
-
-      //     return col.id === active.id;
-      //   })
-      // )
       boardColumns = prev.columns.map((cols) => {
         if (cols.id === activeColumn?.id) {
           return {
@@ -294,99 +298,82 @@ const Board: React.FC<BoardProps> = () => {
     setActiveDragTask(null);
   };
   useEffect(() => {
-    const updateBoardState = setTimeout(() => {
-      setBoardState((prev) =>
-        prev.map((board) =>
-          board.name === settingState.activeBoard ? activatedBoard : board
-        )
+    const updateBoardState = setTimeout(async () => {
+      const updatedBoard = boardState.map((board) =>
+        board.name === settingState.activeBoard ? activatedBoard : board
       );
+      setBoardState(updatedBoard);
+      if (user) {
+        const boardRef = doc(firestore, `users/${user?.uid}`);
+        await updateDoc(boardRef, {
+          board: updatedBoard,
+        });
+      }
     }, 1000);
     updateBoardState;
     return () => clearTimeout(updateBoardState);
-  }, [activatedBoard, setBoardState, settingState.activeBoard]);
+  }, [
+    activatedBoard,
+    boardState,
+    setBoardState,
+    settingState.activeBoard,
+    user,
+  ]);
+
   return (
     <div
       className={`${
         darkMode ? "bg-veryDarkGrey" : "bg-white"
-      } w-full flex z-[-300] overflow-x-auto h-[calc(100vh_-_clamp(64.75px,_10vw,_97px))] ${
-        !activatedColumns.length && "justify-center"
-      }
+      } w-full flex z-[-300] overflow-x-auto h-[calc(100vh_-_clamp(64.75px,_10vw,_97px))] 
     pt-6 pr-6 ${
       settingState.isSidebarOpen && "pl-[clamp(285px,_23vw,_300px)]"
-    }`}>
-      {/* <SkeletonTheme
-        baseColor="hsl(235 12% 19%)"
-        highlightColor="#444"
-        borderRadius={0.5}
-      >
-        <div>
-          <Skeleton height={23} width={200} className="mt-5" />
-          <Skeleton
-            height={43}
-            width={240}
-            count={3}
-            className="mt-5"
-            borderRadius={"0px 30px 30px 0px"}
-          />
-        </div>
-      </SkeletonTheme> */}
-      {/* 
-      <SkeletonTheme
-        baseColor="hsl(235 12% 19%)"
-        highlightColor="#444"
-        borderRadius={0.5}>
-        <div className="flex flex-col">
-          <div>
-            <Skeleton
-              height={15}
-              width={15}
-              circle={true}
-              className="mr-3"
-              inline={true}
-            />
-            <Skeleton height={8} width={50} />
-          </div>
-          <Skeleton height={80} width={280} count={5} className="mt-5" />
-        </div>
-      </SkeletonTheme> */}
-
-      <button onClick={getUserData}>getUserData</button>
-      {boardState.length ? (
+    }`}
+    >
+      {" "}
+      {settingState.isLoaded ? (
         <>
-          {activatedColumns.length ? (
+          {boardState.length ? (
             <>
-              <DndContext
-                collisionDetection={closestCenter}
-                onDragStart={handleDragStart}
-                onDragOver={handleDragOver}
-                onDragEnd={handleDragDrop}
-                sensors={sensors}>
-                <SortableContext
-                  items={columnsListId}
-                  strategy={horizontalListSortingStrategy}>
-                  {activatedColumns}
-                  <AddColumn />
-                </SortableContext>
-                {!isColumnMoved && (
-                  <DragOverlay>
-                    {activeDragTask ? (
-                      <ColumnElement
-                        taskName={activeDragTask.title}
-                        subTasks={activeDragTask.subtasks}
-                        taskId={activeDragTask.id}
-                        columnId={activeDragTask.id}
-                      />
-                    ) : null}
-                  </DragOverlay>
-                )}
-              </DndContext>
+              {activatedColumns.length ? (
+                <>
+                  <DndContext
+                    collisionDetection={closestCenter}
+                    onDragStart={handleDragStart}
+                    onDragOver={handleDragOver}
+                    onDragEnd={handleDragDrop}
+                    sensors={sensors}
+                  >
+                    <SortableContext
+                      items={columnsListId}
+                      strategy={horizontalListSortingStrategy}
+                    >
+                      {activatedColumns}
+                      <AddColumn />
+                    </SortableContext>
+                    {!isColumnMoved && (
+                      <DragOverlay>
+                        {activeDragTask ? (
+                          <ColumnElement
+                            taskName={activeDragTask.title}
+                            subTasks={activeDragTask.subtasks}
+                            taskId={activeDragTask.id}
+                            columnId={activeDragTask.id}
+                          />
+                        ) : null}
+                      </DragOverlay>
+                    )}
+                  </DndContext>
+                </>
+              ) : (
+                <NoColumnSection />
+              )}
             </>
           ) : (
-            <NoColumnSection />
+            <NoBoardSection />
           )}
         </>
       ) : (
-        <NoBoardSection />
+        <ColumnsSkeleton darkMode={darkMode} />
       )}
     </div>
   );

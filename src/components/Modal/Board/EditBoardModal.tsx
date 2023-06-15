@@ -43,7 +43,7 @@ const EditBoardModal: React.FC<EditBoardModalProps> = ({ darkMode }) => {
     id: parseInt(nanoid()),
     columns: [],
   });
-  const onSubmit: SubmitHandler<BoardInputs> = async (data) => {
+  const onSubmit: SubmitHandler<BoardInputs> = (data) => {
     const otherBoards = boardState.filter((item) => item.name != newBoard.name);
     if (
       otherBoards.find(
@@ -69,15 +69,15 @@ const EditBoardModal: React.FC<EditBoardModalProps> = ({ darkMode }) => {
 
     setModalsState((prev) => ({ ...prev, open: false }));
     setSettingState((prev) => ({ ...prev, activeBoard: data.name }));
-    if (user) {
-      const updatedBoard = boardState.map((board) =>
-        board.id === newBoard.id ? readyBoard : board
-      );
-      const boardRef = doc(firestore, `users/${user?.uid}`);
-      await updateDoc(boardRef, {
-        board: updatedBoard,
-      });
-    }
+    // if (user) {
+    //   const updatedBoard = boardState.map((board) =>
+    //     board.id === newBoard.id ? readyBoard : board
+    //   );
+    //   const boardRef = doc(firestore, `users/${user?.uid}`);
+    //   await updateDoc(boardRef, {
+    //     board: updatedBoard,
+    //   });
+    // }
   };
 
   useEffect(() => {
@@ -126,11 +126,11 @@ const EditBoardModal: React.FC<EditBoardModalProps> = ({ darkMode }) => {
    darkMode ? "bg-darkGrey" : "bg-white"
  }
   p-[25px] shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px]
-  focus:outline-none`}>
+  focus:outline-none`}
+      >
         <Dialog.Title
-          className={` ${
-            darkMode ? "text-white" : "text-black"
-          } text-800 pb-4`}>
+          className={` ${darkMode ? "text-white" : "text-black"} text-800 pb-4`}
+        >
           Edit Board
         </Dialog.Title>
         <form onSubmit={handleSubmit(onSubmit)}>

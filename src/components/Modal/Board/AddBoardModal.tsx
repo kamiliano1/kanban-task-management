@@ -69,27 +69,19 @@ const AddBoardModal: React.FC<AddBoardModalProps> = ({ darkMode }) => {
     const columns = newBoard.columns.map((items) => {
       return { ...items, name: data.columns[items.id].name };
     });
-    const readyBoard: BoardType = {
+    const updatedBoard: BoardType = {
       name: data.name,
       id: newBoard.id,
       columns: columns,
     };
-    // const boardRef = doc(firestore, `users/${user?.uid}/boards/${newBoard.id}`);
-
-    // await setDoc(boardRef, {
-    //   name: data.name,
-    //   id: newBoard.id,
-    //   createAt: serverTimestamp() as Timestamp,
-    // });
-
-    setBoardState((prev) => [...prev, readyBoard]);
+    setBoardState((prev) => [...prev, updatedBoard]);
 
     setModalsState((prev) => ({ ...prev, open: false }));
     setSettingState((prev) => ({ ...prev, activeBoard: data.name }));
     if (user) {
       const boardRef = doc(firestore, `users/${user?.uid}`);
       await updateDoc(boardRef, {
-        board: [...boardState, readyBoard],
+        board: [...boardState, updatedBoard],
       });
     }
   };
@@ -131,11 +123,11 @@ const AddBoardModal: React.FC<AddBoardModalProps> = ({ darkMode }) => {
        darkMode ? "bg-darkGrey" : "bg-white"
      }
       p-[25px] shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px]
-      focus:outline-none`}>
+      focus:outline-none`}
+      >
         <Dialog.Title
-          className={` ${
-            darkMode ? "text-white" : "text-black"
-          } text-800 pb-4`}>
+          className={` ${darkMode ? "text-white" : "text-black"} text-800 pb-4`}
+        >
           Add New Board
         </Dialog.Title>
         <form onSubmit={handleSubmit(onSubmit)}>
