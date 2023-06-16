@@ -33,8 +33,6 @@ const LoginModal: React.FC<LoginModalProps> = ({ darkMode }) => {
     signInWithEmailAndPassword(data.email, data.password);
   };
   useEffect(() => {
-    console.log("llll");
-
     const getUserData = async () => {
       try {
         const userDataRef = doc(firestore, "users", user!.uid);
@@ -61,11 +59,11 @@ const LoginModal: React.FC<LoginModalProps> = ({ darkMode }) => {
      darkMode ? "bg-darkGrey" : "bg-white"
    }
     p-[25px] shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px]
-    focus:outline-none`}
-      >
+    focus:outline-none`}>
         <Dialog.Title
-          className={` ${darkMode ? "text-white" : "text-black"} text-800 pb-4`}
-        >
+          className={` ${
+            darkMode ? "text-white" : "text-black"
+          } text-800 pb-4`}>
           Login
         </Dialog.Title>
 
@@ -138,8 +136,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ darkMode }) => {
             className="ml-3 text-lightPurple hover:text-purple cursor-pointer"
             onClick={() =>
               setModalsState((prev) => ({ ...prev, view: "register" }))
-            }
-          >
+            }>
             Sign Up
           </span>
         </p>

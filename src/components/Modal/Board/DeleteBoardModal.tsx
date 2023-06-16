@@ -6,26 +6,40 @@ import { modalState } from "../../../atoms/modalAtom";
 import { settingsModalState } from "../../../atoms/settingsModalAtom";
 import ButtonDestructive from "../../Layout/Input/Button/ButtonDestructive";
 import ButtonSecondary from "../../Layout/Input/Button/ButtonSecondary";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { auth, firestore } from "@/src/firebase/clientApp";
+import { doc, updateDoc } from "firebase/firestore";
 
 type DeleteBoardModalProps = { darkMode: boolean };
 
 const DeleteBoardModal: React.FC<DeleteBoardModalProps> = ({ darkMode }) => {
+  const [user] = useAuthState(auth);
   const [settingState, setSettingState] = useRecoilState(settingsModalState);
   const [modalStates, setModalStates] = useRecoilState(modalState);
   const [boardState, setBoardState] = useRecoilState(boardsState);
 
-  const deleteBoard = () => {
+  const deleteBoard = async () => {
     const remainingBoards = boardState.filter((item) => {
       return item.name !== settingState.activeBoard;
     });
-    setBoardState((prev) =>
-      prev.filter((item) => item.name !== settingState.activeBoard)
+    // setBoardState((prev) =>
+    //   prev.filter((item) => item.name !== settingState.activeBoard)
+    // );
+    const updatedBoard = boardState.filter(
+      (board) => board.name !== settingState.activeBoard
     );
+    setBoardState(updatedBoard);
     setModalStates((prev) => ({ ...prev, open: false }));
     setSettingState((prev) => ({
       ...prev,
       activeBoard: remainingBoards.length ? remainingBoards[0].name : "",
     }));
+    if (user) {
+      const boardRef = doc(firestore, `users/${user?.uid}`);
+      await updateDoc(boardRef, {
+        board: updatedBoard,
+      });
+    }
   };
   return (
     <Dialog.Portal>
@@ -36,8 +50,7 @@ const DeleteBoardModal: React.FC<DeleteBoardModalProps> = ({ darkMode }) => {
          darkMode ? "bg-darkGrey" : "bg-white"
        }
         p-[25px] shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px]
-        focus:outline-none`}
-      >
+        focus:outline-none`}>
         <Dialog.Title className="text-red text-800 pb-6">
           Delete this board?
         </Dialog.Title>

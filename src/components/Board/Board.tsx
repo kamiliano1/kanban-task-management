@@ -62,6 +62,7 @@ const Board: React.FC<BoardProps> = () => {
 
   const [activeDragTask, setActiveDragTask] = useState<TaskType | null>();
   useEffect(() => {
+    const activeBoard = settingState.activeBoard;
     const getUserData = async () => {
       try {
         const userDataRef = doc(firestore, "users", user!.uid);
@@ -70,6 +71,9 @@ const Board: React.FC<BoardProps> = () => {
 
         if (bookmarkData) {
           setBoardState(bookmarkData.board || []);
+          setActivatedBoard(
+            boardState.filter((board) => board.name === activeBoard)[0]
+          );
         }
       } catch (error: any) {
         console.log("getBookmarkError", error.message);
@@ -77,7 +81,7 @@ const Board: React.FC<BoardProps> = () => {
     };
     if (!firebaseLoading) {
       if (user) {
-        // getUserData();
+        getUserData();
         setLoading(false);
         return;
       }
@@ -121,7 +125,15 @@ const Board: React.FC<BoardProps> = () => {
         setLoading(false);
       }
     }
-  }, [firebaseLoading, loading, nanoid, setBoardState, user]);
+  }, [
+    boardState,
+    firebaseLoading,
+    loading,
+    nanoid,
+    setBoardState,
+    settingState.activeBoard,
+    user,
+  ]);
 
   useEffect(() => {
     if (!settingState.isLoaded)
@@ -327,8 +339,7 @@ const Board: React.FC<BoardProps> = () => {
       } w-full flex z-[-300] overflow-x-auto h-[calc(100vh_-_clamp(64.75px,_10vw,_97px))] 
     pt-6 pr-6 ${
       settingState.isSidebarOpen && "pl-[clamp(285px,_23vw,_300px)]"
-    }`}
-    >
+    }`}>
       {" "}
       {settingState.isLoaded ? (
         <>
@@ -341,12 +352,10 @@ const Board: React.FC<BoardProps> = () => {
                     onDragStart={handleDragStart}
                     onDragOver={handleDragOver}
                     onDragEnd={handleDragDrop}
-                    sensors={sensors}
-                  >
+                    sensors={sensors}>
                     <SortableContext
                       items={columnsListId}
-                      strategy={horizontalListSortingStrategy}
-                    >
+                      strategy={horizontalListSortingStrategy}>
                       {activatedColumns}
                       <AddColumn />
                     </SortableContext>
