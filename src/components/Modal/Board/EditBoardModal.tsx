@@ -89,6 +89,7 @@ const EditBoardModal: React.FC<EditBoardModalProps> = ({ darkMode }) => {
       setLoading(false);
     }
   }, [boardState, loading, settingState.activeBoard]);
+
   const addColumn = () => {
     const columnId = parseInt(nanoid());
     setNewBoard((prev) => ({
@@ -104,14 +105,19 @@ const EditBoardModal: React.FC<EditBoardModalProps> = ({ darkMode }) => {
   };
 
   useEffect(() => {
-    setValue("name", newBoard.name);
-    newBoard.columns.map((item) => {
-      setValue(`columns.${item.id}.name`, item.name);
-    });
-  }, [newBoard.columns, newBoard.name, setValue]);
+    if (modalsState.open) {
+      setValue("name", newBoard.name);
+      newBoard.columns.map((item) => {
+        if (item.name) setValue(`columns.${item.id}.name`, item.name);
+      });
+    }
+  }, [newBoard, newBoard.columns, newBoard.name, setValue, modalsState]);
   useEffect(() => {
     setErrorBoardName("");
-  }, [modalsState, reset]);
+    if (!modalsState.open) {
+      reset({ name: newBoard.name, columns: [] });
+    }
+  }, [modalsState, newBoard.columns, newBoard.name, reset, watch]);
   const columns = newBoard.columns.map((item) => (
     <AddElementInput
       key={item.id}

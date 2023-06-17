@@ -38,6 +38,7 @@ const AddElementInput: React.FC<AddElementInputProps> = ({
          : "text-black placeholder:text-black"
      }`}
         {...register(`columns.${column.id}.name`, {
+          required: true,
           onChange: (e) => {
             setCurrentValue(e.target.value);
           },

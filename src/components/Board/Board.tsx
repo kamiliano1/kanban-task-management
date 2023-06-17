@@ -79,13 +79,13 @@ const Board: React.FC<BoardProps> = () => {
         console.log("getBookmarkError", error.message);
       }
     };
-    if (!firebaseLoading) {
-      if (user) {
-        getUserData();
-        setLoading(false);
-        return;
-      }
-      if (loading) {
+    if (loading) {
+      if (!firebaseLoading) {
+        if (user) {
+          getUserData();
+          setLoading(false);
+          return;
+        }
         fetch("data/data.json")
           .then((res) => res.json())
           .then((data) => {
@@ -139,7 +139,7 @@ const Board: React.FC<BoardProps> = () => {
     if (!settingState.isLoaded)
       setTimeout(() => {
         setSettingsState((prev) => ({ ...prev, isLoaded: true }));
-      }, 300);
+      }, 600);
   }, [setBoardState, setSettingsState, settingState.isLoaded]);
   const darkMode = settingState.darkMode;
   const activeBoard = settingState.activeBoard;
@@ -336,8 +336,8 @@ const Board: React.FC<BoardProps> = () => {
     <div
       className={`${
         darkMode ? "bg-veryDarkGrey" : "bg-white"
-      } w-full flex z-[-300] overflow-x-auto h-[calc(100vh_-_clamp(64.75px,_10vw,_97px))] 
-    pt-6 pr-6 ${
+      } w-full flex z-[-300] overflow-x-auto min-h-[calc(100vh_-_clamp(64.75px,_10vw,_97px))] 
+    pt-6 pr-6 pb-2 ${
       settingState.isSidebarOpen && "pl-[clamp(285px,_23vw,_300px)]"
     }`}>
       {" "}

@@ -10,10 +10,8 @@ import SidebarOpenButton from "../components/Sidebar/SidebarOpenButton";
 import Board from "../components/Board/Board";
 
 export default function Home() {
-  // const [settingState, setSettingState] = useRecoilState(settingsModalState);
   return (
     <main className="">
-      {/* <RegisterModal /> */}
       <Navbar />
       <Modal />
       <SidebarOpenButton />
