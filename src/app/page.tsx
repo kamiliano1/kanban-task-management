@@ -4,7 +4,7 @@ import RegisterModal from "../components/Modal/Account/RegisterModal";
 import Navbar from "../components/Navbar/Navbar";
 import Modal from "../components/Modal/Modal";
 // import { settingsModalState } from "../atoms/settingsModalAtom";
-import { useRecoilState } from "recoil";
+import { RecoilRoot, useRecoilState } from "recoil";
 import ButtonPrimaryBoards from "../components/Layout/Input/Button/ButtonPrimaryBoards";
 import SidebarOpenButton from "../components/Sidebar/SidebarOpenButton";
 import Board from "../components/Board/Board";
@@ -12,10 +12,12 @@ import Board from "../components/Board/Board";
 export default function Home() {
   return (
     <main className="">
-      <Navbar />
-      <Modal />
-      <SidebarOpenButton />
-      <Board />
+      <RecoilRoot>
+        <Navbar />
+        <Modal />
+        <SidebarOpenButton />
+        <Board />
+      </RecoilRoot>
     </main>
   );
 }

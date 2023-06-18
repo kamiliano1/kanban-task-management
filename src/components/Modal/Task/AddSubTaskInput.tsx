@@ -57,7 +57,7 @@ const AddSubTaskInput: React.FC<AddSubTaskInputProps> = ({
         placeholder={placeholder}
       />
       {errors.subtasks?.[subtasks.id] && (
-        <span className="absolute text-red text-500 left-[65%] top-[.6rem]">
+        <span className="absolute text-red text-500 left-[50%] sm:left-[65%] top-[.6rem]">
           Can`t be empty
         </span>
       )}

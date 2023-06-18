@@ -58,6 +58,7 @@ const EditBoardModal: React.FC<EditBoardModalProps> = ({ darkMode }) => {
     const columns = newBoard.columns.map((items) => {
       return { ...items, name: data.columns[items.id].name };
     });
+
     const readyBoard: BoardType = {
       name: data.name,
       id: newBoard.id,
@@ -65,7 +66,7 @@ const EditBoardModal: React.FC<EditBoardModalProps> = ({ darkMode }) => {
     };
 
     setBoardState((prev) =>
-      prev.map((item) => (item.id === newBoard.id ? readyBoard : item))
+      prev.map((item) => (item.id === readyBoard.id ? readyBoard : item))
     );
 
     setModalsState((prev) => ({ ...prev, open: false }));
@@ -86,12 +87,15 @@ const EditBoardModal: React.FC<EditBoardModalProps> = ({ darkMode }) => {
       setNewBoard(
         boardState.filter((item) => item.name === settingState.activeBoard)[0]
       );
+
       setLoading(false);
     }
   }, [boardState, loading, settingState.activeBoard]);
 
   const addColumn = () => {
     const columnId = parseInt(nanoid());
+    console.log(columnId);
+
     setNewBoard((prev) => ({
       ...prev,
       columns: [...prev.columns, { name: "", id: columnId, tasks: [] }],
@@ -114,10 +118,14 @@ const EditBoardModal: React.FC<EditBoardModalProps> = ({ darkMode }) => {
   }, [newBoard, newBoard.columns, newBoard.name, setValue, modalsState]);
   useEffect(() => {
     setErrorBoardName("");
+
     if (!modalsState.open) {
       reset({ name: newBoard.name, columns: [] });
     }
   }, [modalsState, newBoard.columns, newBoard.name, reset, watch]);
+  useEffect(() => {
+    setLoading(true);
+  }, [modalsState]);
   const columns = newBoard.columns.map((item) => (
     <AddElementInput
       key={item.id}
@@ -136,15 +144,14 @@ const EditBoardModal: React.FC<EditBoardModalProps> = ({ darkMode }) => {
    darkMode ? "bg-darkGrey" : "bg-white"
  }
   p-[25px] shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px]
-  focus:outline-none`}>
+  focus:outline-none`}
+      >
         <Dialog.Title
-          className={` ${
-            darkMode ? "text-white" : "text-black"
-          } text-800 pb-4`}>
+          className={` ${darkMode ? "text-white" : "text-black"} text-800 pb-4`}
+        >
           Edit Board
         </Dialog.Title>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="flex items-baseline justify-between "></div>
           <h3 className="text-400 pb-2">Board Name</h3>
           <div className="relative ">
             <input

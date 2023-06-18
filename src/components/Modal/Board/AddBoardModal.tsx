@@ -115,6 +115,9 @@ const AddBoardModal: React.FC<AddBoardModalProps> = ({ darkMode }) => {
       register={register}
     />
   ));
+  useEffect(() => {
+    console.log(watch("name"));
+  }, [watch]);
   return (
     <Dialog.Portal>
       <Dialog.Content
@@ -123,17 +126,17 @@ const AddBoardModal: React.FC<AddBoardModalProps> = ({ darkMode }) => {
        darkMode ? "bg-darkGrey" : "bg-white"
      }
       p-[25px] shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px]
-      focus:outline-none`}>
+      focus:outline-none`}
+      >
         <Dialog.Title
-          className={` ${
-            darkMode ? "text-white" : "text-black"
-          } text-800 pb-4`}>
+          className={` ${darkMode ? "text-white" : "text-black"} text-800 pb-4`}
+        >
           Add New Board
         </Dialog.Title>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="flex items-baseline justify-between "></div>
           <h3 className="text-400 pb-2">Board Name</h3>
-          <div className="relative ">
+          <div className="relative">
             <input
               placeholder="e.g. Web Design"
               className={`text-500 placeholder:text-black
@@ -150,15 +153,18 @@ const AddBoardModal: React.FC<AddBoardModalProps> = ({ darkMode }) => {
               }`}
               {...register("name", {
                 required: true,
+                onChange() {
+                  setErrorBoardName("");
+                },
               })}
             />
             {errors.name && (
-              <span className="absolute text-red text-500 left-[70%] top-[.6rem]">
+              <span className="absolute text-red text-500 left-[60%] sm:left-[70%] top-[.6rem]">
                 Can`t be empty
               </span>
             )}
             {errorBoardName && (
-              <span className="absolute text-red text-500 left-[65%] top-[.6rem]">
+              <span className="absolute text-red text-500 left-[55%] sm:left-[65%] top-[.6rem]">
                 {errorBoardName}
               </span>
             )}
