@@ -11,7 +11,7 @@ const ButtonDestructive: React.FC<ButtonDestructiveProps> = ({
 }) => {
   return (
     <button
-      className="bg-red py-2 rounded-3xl text-500 w-full hover:bg-lightRed"
+      className="bg-red py-2 text-white rounded-3xl text-500 w-full hover:bg-lightRed"
       onClick={buttonAction}
     >
       {buttonLabel}

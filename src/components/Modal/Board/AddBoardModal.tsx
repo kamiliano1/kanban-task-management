@@ -135,7 +135,13 @@ const AddBoardModal: React.FC<AddBoardModalProps> = ({ darkMode }) => {
         </Dialog.Title>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="flex items-baseline justify-between "></div>
-          <h3 className="text-400 pb-2">Board Name</h3>
+          <h3
+            className={`text-400 pb-2 ${
+              darkMode ? "text-white" : "text-black"
+            }`}
+          >
+            Board Name
+          </h3>
           <div className="relative">
             <input
               placeholder="e.g. Web Design"
@@ -158,6 +164,7 @@ const AddBoardModal: React.FC<AddBoardModalProps> = ({ darkMode }) => {
                 },
               })}
             />
+
             {errors.name && (
               <span className="absolute text-red text-500 left-[60%] sm:left-[70%] top-[.6rem]">
                 Can`t be empty
@@ -169,7 +176,13 @@ const AddBoardModal: React.FC<AddBoardModalProps> = ({ darkMode }) => {
               </span>
             )}
           </div>
-          <h3 className="text-400 pb-2 mt-6">Boards Columns</h3>
+          <h3
+            className={`text-400 pb-2 mt-6 ${
+              darkMode ? "text-white" : "text-black"
+            }`}
+          >
+            Boards Columns
+          </h3>
           {columns}
           <ButtonSecondary
             darkMode={darkMode}

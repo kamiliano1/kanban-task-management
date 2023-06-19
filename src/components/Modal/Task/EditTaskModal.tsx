@@ -322,15 +322,21 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ darkMode }) => {
        darkMode ? "bg-darkGrey" : "bg-white"
      }
       p-[25px] shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px]
-      focus:outline-none`}>
+      focus:outline-none`}
+      >
         <Dialog.Title
-          className={` ${
-            darkMode ? "text-white" : "text-black"
-          } text-800 pb-4`}>
+          className={` ${darkMode ? "text-white" : "text-black"} text-800 pb-4`}
+        >
           Edit Task
         </Dialog.Title>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <p className="text-400 pb-2">Title</p>
+          <p
+            className={`text-400 pb-2 ${
+              darkMode ? "text-white" : "text-black"
+            }`}
+          >
+            Title
+          </p>
           <div className="relative">
             <input
               placeholder="e.g. Take coffee break"
@@ -355,7 +361,13 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ darkMode }) => {
                 Can`t be empty
               </span>
             )}
-            <p className="text-400 pb-2">Description</p>
+            <p
+              className={`text-400 pb-2 ${
+                darkMode ? "text-white" : "text-black"
+              }`}
+            >
+              Description
+            </p>
             <textarea
               className={`text-500 placeholder:text-black w-full h-[112px]
                         FormLabel placeholder:opacity-25 px-4 py-2 rounded border-[1px] 
@@ -370,8 +382,13 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ darkMode }) => {
                 required: false,
               })}
             />
-            <p className="text-400 pb-2">Subtasks</p>
-            {activateColumn}
+            <p
+              className={`text-400 pb-2 ${
+                darkMode ? "text-white" : "text-black"
+              }`}
+            >
+              Subtasks
+            </p>
           </div>
           {subTasks}
           <ButtonSecondary
@@ -380,7 +397,13 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ darkMode }) => {
             cssClasses="mb-6"
             buttonAction={addSubTask}
           />
-          <p className="text-400 pb-2">Status</p>
+          <p
+            className={`text-400 pb-2 ${
+              darkMode ? "text-white" : "text-black"
+            }`}
+          >
+            Status
+          </p>
           <Controller
             control={control}
             name="status"

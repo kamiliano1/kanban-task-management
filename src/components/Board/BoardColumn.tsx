@@ -40,7 +40,6 @@ const BoardColumn: React.FC<BoardColumnProps> = ({
   }, [tasks]);
 
   const { setNodeRef } = useDroppable({ id: columnId.toString() });
-  const [isColumnMoved, setIsColumnMoved] = useState(false);
   const {
     attributes,
     listeners,
@@ -77,21 +76,18 @@ const BoardColumn: React.FC<BoardColumnProps> = ({
 
   return (
     <div
-      className="pl-6"
-      ref={setNodeRefSortable}
-      style={style}
-      {...attributes}
+      className="pl-6 touch-none self-start"
+      // ref={setNodeRefSortable}
+      // style={style}
+      // {...attributes}
     >
       <SortableContext
         id={columnId.toString()}
         items={taskListId}
         strategy={verticalListSortingStrategy}
       >
-        <div
-          className="flex items-center pb-6 w-[280px]"
-          // ref={isColumnMoved ? undefined : setNodeRef}
-          ref={setNodeRef}
-        >
+        <div className="flex items-center pb-6 w-[280px]" ref={setNodeRef}>
+          {/* <div className="flex items-center pb-6 w-[280px] " ref={setNodeRef}> */}
           <span
             className={`${dotColor} w-[15px] aspect-square rounded-full mr-3`}
           ></span>
@@ -99,19 +95,10 @@ const BoardColumn: React.FC<BoardColumnProps> = ({
             {columnName} ({taskQty})
           </h2>
 
-          <TfiHandDrag
-            onMouseEnter={() => {
-              setIsColumnMoved(true);
-            }}
-            onMouseDown={() => {
-              setIsColumnMoved(true);
-            }}
-            onMouseUp={() => {
-              setIsColumnMoved(false);
-            }}
+          {/* <TfiHandDrag
             {...listeners}
-            className=" ml-auto text-[1.5rem] text-mediumGrey"
-          />
+            className="ml-auto text-[1.5rem] text-mediumGrey"
+          /> */}
         </div>
         {columnElements}
       </SortableContext>

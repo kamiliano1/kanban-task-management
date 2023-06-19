@@ -26,6 +26,7 @@ import { boardsState } from "../../atoms/boardsAtom";
 import LoginButton from "./LoginButton";
 import LogoutButton from "./LogoutButton";
 import BoardsSkeleton from "./BoardsSkeleton";
+import DropMenu from "../Layout/Input/DropMenu";
 
 type SidebarProps = {};
 

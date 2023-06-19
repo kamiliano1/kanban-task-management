@@ -12,7 +12,19 @@ import TaskDropDownMenu from "./TaskDropDownMenu";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth, firestore } from "@/src/firebase/clientApp";
 import { doc, updateDoc } from "firebase/firestore";
-
+import {
+  arrayMove,
+  SortableContext,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import {
+  closestCenter,
+  DndContext,
+  DragEndEvent,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
 type ViewTaskModalProps = { darkMode: boolean };
 interface BoardInputs {
   title: string;
@@ -35,6 +47,7 @@ const ViewTaskModal: React.FC<ViewTaskModalProps> = ({ darkMode }) => {
   const [isUpdatedTask, setIsUpdatedTask] = useState<boolean>(false);
   const { control, reset, watch } = useForm<BoardInputs>();
   const [taskTimmer, setTaskTimer] = useState<number>(0);
+  const [tasksList, setTasksList] = useState<number[]>([]);
   useEffect(() => {
     setActivatedColumn(
       boardState
@@ -110,50 +123,19 @@ const ViewTaskModal: React.FC<ViewTaskModalProps> = ({ darkMode }) => {
     setBoardState(updatedBoard);
 
     if (user) {
-      // const updateSubTask = setTimeout(() => {
-      //   // console.log("zmiana stanu");
-
-      //   setTaskTimer(1);
-      // }, 500);
-
-      // if (taskTimmer === 1) {
-      //   console.log("zmiana");
-      //   clearTimeout(updateSubTask);
       const boardRef = doc(firestore, `users/${user?.uid}`);
       await updateDoc(boardRef, {
         board: updatedBoard,
       });
-      // }
     }
-    // setBoardState((prev) => {
-    //   return prev.map((board) => {
-    //     if (board.name === settingState.activeBoard) {
-    //       let columns = board.columns;
-    //       const activatedColumn = columns.find(
-    //         (col) => col.id === settingState.activateColumn
-    //       );
-    //       let tasks = activatedColumn?.tasks;
-    //       const activatedTask = tasks?.find(
-    //         (task) => task.id === settingState.activateTask
-    //       );
-    //       const updatedTask = {
-    //         ...(activatedTask as TaskType),
-    //         subtasks: updatedSubtask as SubtasksType[],
-    //       };
-    //       tasks = tasks?.map((task) =>
-    //         task.id === settingState.activateTask ? updatedTask : task
-    //       );
-    //       columns = columns.map((col) =>
-    //         col.id === settingState.activateColumn
-    //           ? { ...col, tasks: tasks as TaskType[] }
-    //           : col
-    //       );
-    //       return { ...board, columns: columns };
-    //     }
-    //     return board;
-    //   });
-    // });
   };
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    })
+  );
   const updateStatus = async () => {
     setIsUpdatedTask(true);
     const updatedBoard = boardState.map((board) => {
@@ -162,7 +144,6 @@ const ViewTaskModal: React.FC<ViewTaskModalProps> = ({ darkMode }) => {
         let targetColumn = columns.find(
           (cols) => cols.name === watch("status")[0]
         );
-
         let activatedColumn = columns.find(
           (cols) => cols.id === settingState.activateColumn
         );
@@ -200,48 +181,6 @@ const ViewTaskModal: React.FC<ViewTaskModalProps> = ({ darkMode }) => {
         board: updatedBoard,
       });
     }
-    // setBoardState((prev) => {
-    //   return prev.map((board) => {
-    //     if (board.name === settingState.activeBoard) {
-    //       let columns = board.columns;
-    //       let targetColumn = columns.find(
-    //         (cols) => cols.name === watch("status")[0]
-    //       );
-
-    //       let activatedColumn = columns.find(
-    //         (cols) => cols.id === settingState.activateColumn
-    //       );
-    //       let targetTasks = targetColumn?.tasks;
-    //       let activatedTasks = activatedColumn?.tasks;
-    //       let taskToMove = activatedTasks?.find(
-    //         (task) => task.id === settingState.activateTask
-    //       );
-    //       taskToMove = {
-    //         ...(taskToMove as TaskType),
-    //         status: watch("status")[0],
-    //       };
-    //       targetTasks = [
-    //         ...(targetTasks as TaskType[]),
-    //         taskToMove as TaskType,
-    //       ];
-    //       activatedTasks = activatedTasks?.filter(
-    //         (task) => task.id !== taskToMove?.id
-    //       );
-    //       setTargetColumnId(targetColumn?.id);
-    //       setTargetTaskId(taskToMove.id);
-    //       if (activatedColumn?.name === targetColumn?.name) return board;
-    //       columns = columns.map((cols) => {
-    //         if (cols.name === watch("status")[0])
-    //           return { ...cols, tasks: targetTasks as TaskType[] };
-    //         if (cols.id === settingState.activateColumn)
-    //           return { ...cols, tasks: activatedTasks as TaskType[] };
-    //         return cols;
-    //       });
-    //       return { ...board, columns: columns };
-    //     }
-    //     return board;
-    //   });
-    // });
   };
   useEffect(() => {
     if (isUpdatedTask) {
@@ -259,6 +198,14 @@ const ViewTaskModal: React.FC<ViewTaskModalProps> = ({ darkMode }) => {
     targetColumnId,
     targetTaskId,
   ]);
+
+  useEffect(() => {
+    // setTasksList(currentTask?.subtasks?.map((subtask) => subtask.title));
+    if (currentTask?.subtasks.length)
+      setTasksList(currentTask?.subtasks?.map((sub) => sub.id));
+    // console.log(tasksList);
+  }, [currentTask?.subtasks]);
+
   const checkBox = currentTask?.subtasks.map((item) => (
     <Checkbox
       key={item.id}
@@ -269,6 +216,58 @@ const ViewTaskModal: React.FC<ViewTaskModalProps> = ({ darkMode }) => {
       toggleSubtask={toggleSubtask}
     />
   ));
+
+  const handleDragDrop = async (e: DragEndEvent) => {
+    if (e.active.id === e.over?.id) return;
+    const updatedBoard = boardState.map((board) => {
+      if (board.name === settingState.activeBoard) {
+        let columns = board.columns;
+        const activatedColumn = columns.find(
+          (col) => col.id === settingState.activateColumn
+        );
+        let tasks = activatedColumn?.tasks;
+        const activatedTask = tasks?.find(
+          (task) => task.id === settingState.activateTask
+        );
+
+        const currentSubtask = currentTask?.subtasks as SubtasksType[];
+        const activateSubtask = currentTask?.subtasks?.findIndex(
+          (subtask) => subtask.id === e.active.id
+        ) as number;
+        const targetSubtask = currentTask?.subtasks?.findIndex(
+          (subtask) => subtask.id === e.over?.id
+        ) as number;
+        const updatedSubtask = arrayMove(
+          currentSubtask,
+          activateSubtask,
+          targetSubtask
+        );
+
+        const updatedTask = {
+          ...(activatedTask as TaskType),
+          subtasks: updatedSubtask as SubtasksType[],
+        };
+        tasks = tasks?.map((task) =>
+          task.id === settingState.activateTask ? updatedTask : task
+        );
+        columns = columns.map((col) =>
+          col.id === settingState.activateColumn
+            ? { ...col, tasks: tasks as TaskType[] }
+            : col
+        );
+        return { ...board, columns: columns };
+      }
+      return board;
+    });
+
+    setBoardState(updatedBoard);
+    if (user) {
+      const boardRef = doc(firestore, `users/${user?.uid}`);
+      await updateDoc(boardRef, {
+        board: updatedBoard,
+      });
+    }
+  };
   return (
     <Dialog.Portal>
       <Dialog.Overlay
@@ -283,9 +282,11 @@ const ViewTaskModal: React.FC<ViewTaskModalProps> = ({ darkMode }) => {
          }
           p-[25px] 
           shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px]
-          focus:outline-none`}>
+          focus:outline-none`}
+      >
         <Dialog.Title
-          className={` ${darkMode ? "text-white" : "text-black"} text-800`}>
+          className={` ${darkMode ? "text-white" : "text-black"} text-800`}
+        >
           <div className="flex items-center justify-between">
             <p> {currentTask?.title}</p>
             <TaskDropDownMenu />
@@ -297,14 +298,27 @@ const ViewTaskModal: React.FC<ViewTaskModalProps> = ({ darkMode }) => {
         <Dialog.Description
           className={` pb-4 text-500 ${
             darkMode ? "text-white" : "text-mediumGrey"
-          }`}>
+          }`}
+        >
           Subtasks ({completedTask} of {currentTask?.subtasks.length})
         </Dialog.Description>
-        {checkBox}
+        <DndContext
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragDrop}
+          sensors={sensors}
+        >
+          <SortableContext
+            items={tasksList}
+            // strategy={verticalListSortingStrategy}
+          >
+            {checkBox}
+          </SortableContext>
+        </DndContext>
         <p
           className={` text-400 pt-4 pb-2 ${
             darkMode ? "text-white" : "text-mediumGrey"
-          }`}>
+          }`}
+        >
           Current Status
         </p>
         <Controller

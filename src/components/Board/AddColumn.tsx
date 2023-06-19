@@ -11,7 +11,7 @@ const AddColumn: React.FC<AddColumnProps> = () => {
   const darkMode = settingState.darkMode;
   return (
     <div
-      className={`flex justify-center items-center ml-6 w-[278px] mt-[2.4375rem] rounded-md mb-[2rem]
+      className={`flex justify-center items-center ml-6 min-w-[278px] mt-[2.4375rem] rounded-md mb-[2rem]
     ${
       darkMode
         ? "bg-[linear-gradient(180deg,_rgba(43,_44,_55,_0.25)_0%,_rgba(43,_44,_55,_0.125)_100%)] "

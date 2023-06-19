@@ -20,7 +20,7 @@ const ButtonPrimarySmall: React.FC<ButtonPrimarySmallProps> = ({
         disabled={isDisabled}
         type="submit"
         onClick={buttonAction}
-        className={`bg-purple rounded-3xl text-500 py-2 sm:py-[.95rem]
+        className={`bg-purple rounded-3xl text-500 text-white py-2
       ${!isDisabled && "hover:bg-lightPurple"} disabled:opacity-25 inline-block
      w-full`}
       >

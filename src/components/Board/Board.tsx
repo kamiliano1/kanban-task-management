@@ -36,6 +36,7 @@ import { auth, firestore } from "@/src/firebase/clientApp";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { useAuthState } from "react-firebase-hooks/auth";
 import ColumnsSkeleton from "./ColumnsSkeleton";
+import DropMenu from "../Layout/Input/DropMenu";
 type BoardProps = {};
 
 const Board: React.FC<BoardProps> = () => {
@@ -336,12 +337,11 @@ const Board: React.FC<BoardProps> = () => {
     <div
       className={`${
         darkMode ? "bg-veryDarkGrey" : "bg-white"
-      } w-full flex z-[-300] overflow-x-auto min-h-[calc(100vh_-_clamp(64.75px,_10vw,_97px))] 
-    pt-6 pr-6 pb-2 ${
-      settingState.isSidebarOpen && "pl-[clamp(285px,_23vw,_300px)]"
-    }`}
+      } w-full flex overflow-x-auto min-h-[calc(100vh_-_clamp(64.75px,_10vw,_97px))]
+      pt-6 pr-6 pb-2 ${
+        settingState.isSidebarOpen && "pl-[clamp(285px,_23vw,_300px)]"
+      }`}
     >
-      {" "}
       {settingState.isLoaded ? (
         <>
           {boardState.length ? (
@@ -355,13 +355,13 @@ const Board: React.FC<BoardProps> = () => {
                     onDragEnd={handleDragDrop}
                     sensors={sensors}
                   >
-                    <SortableContext
+                    {/* <SortableContext
                       items={columnsListId}
                       strategy={horizontalListSortingStrategy}
-                    >
-                      {activatedColumns}
-                      <AddColumn />
-                    </SortableContext>
+                    > */}
+                    {activatedColumns}
+                    <AddColumn />
+                    {/* </SortableContext> */}
                     {!isColumnMoved && (
                       <DragOverlay>
                         {activeDragTask ? (

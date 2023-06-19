@@ -34,10 +34,8 @@ const ButtonPrimaryBoards: React.FC<ButtonPrimaryBoardsProps> = ({
       {...listeners}
       onClick={switchBoard}
       className={`${
-        activeBoard === buttonLabel
-          ? "bg-purple text-wwhite"
-          : "text-mediumGrey"
-      }  flex items-center py-3 px-5 lg:pl-8 rounded-[0px_100px_100px_0px] text-700
+        activeBoard === buttonLabel ? "bg-purple text-white" : "text-mediumGrey"
+      } touch-none flex items-center py-3 px-5 lg:pl-8 rounded-[0px_100px_100px_0px] text-700
        ${
          darkMode ? "hover:bg-white" : "hover:bg-purple hover:bg-opacity-10"
        } hover:text-purple disabled:opacity-25`}

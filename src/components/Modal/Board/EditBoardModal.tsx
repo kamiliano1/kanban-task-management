@@ -152,7 +152,13 @@ const EditBoardModal: React.FC<EditBoardModalProps> = ({ darkMode }) => {
           Edit Board
         </Dialog.Title>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <h3 className="text-400 pb-2">Board Name</h3>
+          <h3
+            className={`text-400 pb-2 ${
+              darkMode ? "text-white" : "text-black"
+            }`}
+          >
+            Board Name
+          </h3>
           <div className="relative ">
             <input
               placeholder="e.g. Web Design"
@@ -183,7 +189,13 @@ const EditBoardModal: React.FC<EditBoardModalProps> = ({ darkMode }) => {
               </span>
             )}
           </div>
-          <h3 className="text-400 pb-2 mt-6">Boards Columns</h3>
+          <h3
+            className={`text-400 pb-2 mt-6 ${
+              darkMode ? "text-white" : "text-black"
+            }`}
+          >
+            Boards Columns
+          </h3>
           {columns}
           <ButtonSecondary
             darkMode={darkMode}

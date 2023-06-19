@@ -182,8 +182,11 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ darkMode }) => {
         >
           Add New Task
         </Dialog.Title>
+
         <form onSubmit={handleSubmit(onSubmit)}>
-          <p className="text-400 pb-2">Title</p>
+          <p className={`${darkMode ? "text-white" : "text-black"} pb-2`}>
+            Title
+          </p>
           <div className="relative">
             <input
               placeholder="e.g. Take coffee break"
@@ -208,7 +211,9 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ darkMode }) => {
                 Can`t be empty
               </span>
             )}
-            <p className="text-400 pb-2">Description</p>
+            <p className={`${darkMode ? "text-white" : "text-black"} pb-2`}>
+              Description
+            </p>
             <textarea
               className={`text-500 placeholder:text-black w-full h-[112px]
                         FormLabel placeholder:opacity-25 px-4 py-2 rounded border-[1px] 
@@ -223,7 +228,9 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ darkMode }) => {
                 required: false,
               })}
             />
-            <p className="text-400 pb-2">Subtasks</p>
+            <p className={`${darkMode ? "text-white" : "text-black"} pb-2`}>
+              Subtasks
+            </p>
           </div>
 
           {subTasks}
@@ -233,7 +240,9 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ darkMode }) => {
             cssClasses="mb-6"
             buttonAction={addSubTask}
           />
-          <p className="text-400 pb-2">Status</p>
+          <p className={`${darkMode ? "text-white" : "text-black"} pb-2`}>
+            Status
+          </p>
 
           <Controller
             control={control}
