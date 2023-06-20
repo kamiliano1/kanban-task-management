@@ -13,6 +13,19 @@ import { BoardType, ColumnType } from "../../Board/BoardType";
 import { auth, firestore } from "@/src/firebase/clientApp";
 import { doc, updateDoc } from "firebase/firestore";
 import { useAuthState } from "react-firebase-hooks/auth";
+import {
+  DndContext,
+  DragEndEvent,
+  PointerSensor,
+  closestCenter,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  arrayMove,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
 const nanoid = customAlphabet("1234567890", 15);
 type EditBoardModalProps = { darkMode: boolean };
 interface BoardInputs {
@@ -27,6 +40,7 @@ const EditBoardModal: React.FC<EditBoardModalProps> = ({ darkMode }) => {
   const [settingState, setSettingState] = useRecoilState(settingsModalState);
   const [errorBoardName, setErrorBoardName] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
+  const [columnsListId, setColumnsListId] = useState<number[]>([]);
   const firstNameRef = useRef<HTMLInputElement | null>(null);
   const {
     register,
@@ -107,7 +121,9 @@ const EditBoardModal: React.FC<EditBoardModalProps> = ({ darkMode }) => {
     );
     setNewBoard((prev) => ({ ...prev, columns: updatedColumns }));
   };
-
+  useEffect(() => {
+    setColumnsListId(newBoard?.columns?.map((col) => col.id));
+  }, [newBoard]);
   useEffect(() => {
     if (modalsState.open) {
       setValue("name", newBoard.name);
@@ -118,7 +134,6 @@ const EditBoardModal: React.FC<EditBoardModalProps> = ({ darkMode }) => {
   }, [newBoard, newBoard.columns, newBoard.name, setValue, modalsState]);
   useEffect(() => {
     setErrorBoardName("");
-
     if (!modalsState.open) {
       reset({ name: newBoard.name, columns: [] });
     }
@@ -136,6 +151,25 @@ const EditBoardModal: React.FC<EditBoardModalProps> = ({ darkMode }) => {
       register={register}
     />
   ));
+  const handleDragDrop = async (e: DragEndEvent) => {
+    if (e.active.id === e.over?.id) return;
+    setNewBoard((prev) => {
+      let columns = prev.columns;
+      const activatedColumn = columns.findIndex(
+        (cols) => cols.id === e.active.id
+      );
+      const targetColumn = columns.findIndex((cols) => cols.id === e.over?.id);
+      const updatedColumns = arrayMove(columns, activatedColumn, targetColumn);
+      return { ...prev, columns: updatedColumns };
+    });
+  };
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    })
+  );
   return (
     <Dialog.Portal>
       <Dialog.Content
@@ -196,7 +230,18 @@ const EditBoardModal: React.FC<EditBoardModalProps> = ({ darkMode }) => {
           >
             Boards Columns
           </h3>
-          {columns}
+          <DndContext
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragDrop}
+            sensors={sensors}
+          >
+            <SortableContext
+              items={columnsListId}
+              strategy={verticalListSortingStrategy}
+            >
+              {columns}
+            </SortableContext>
+          </DndContext>
           <ButtonSecondary
             darkMode={darkMode}
             buttonLabel="+ Add New Column"

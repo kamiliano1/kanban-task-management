@@ -14,6 +14,19 @@ import AddSubTaskInput from "./AddSubTaskInput";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth, firestore } from "@/src/firebase/clientApp";
 import { doc, updateDoc } from "firebase/firestore";
+import {
+  DndContext,
+  DragEndEvent,
+  PointerSensor,
+  closestCenter,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  arrayMove,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
 
 const nanoid = customAlphabet("1234567890", 15);
 type EditTaskModalProps = {
@@ -41,6 +54,7 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ darkMode }) => {
   const [currentTask, setCurrentTask] = useState<TaskType>();
   const firstNameRef = useRef<HTMLInputElement | null>(null);
   const [temporaryBoard, setTemporaryBoard] = useState(boardState);
+  const [tasksList, setTasksList] = useState<number[]>([]);
   const {
     register,
     handleSubmit,
@@ -113,6 +127,10 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ darkMode }) => {
     settingState.activateTask,
     settingState.activeBoard,
   ]);
+  useEffect(() => {
+    if (currentTask?.subtasks.length)
+      setTasksList(currentTask?.subtasks?.map((sub) => sub.id));
+  }, [currentTask?.subtasks]);
 
   const updateStatus = () => {
     setIsUpdatedTask(true);
@@ -302,6 +320,65 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ darkMode }) => {
     }
   };
 
+  const handleDragDrop = async (e: DragEndEvent) => {
+    if (e.active.id === e.over?.id) return;
+
+    const updatedBoard = boardState.map((board) => {
+      if (board.name === settingState.activeBoard) {
+        let columns = board.columns;
+        const activatedColumn = columns.find(
+          (col) => col.id === settingState.activateColumn
+        );
+        let tasks = activatedColumn?.tasks;
+        const activatedTask = tasks?.find(
+          (task) => task.id === settingState.activateTask
+        );
+
+        const currentSubtask = currentTask?.subtasks as SubtasksType[];
+        const activateSubtask = currentTask?.subtasks?.findIndex(
+          (subtask) => subtask.id === e.active.id
+        ) as number;
+        const targetSubtask = currentTask?.subtasks?.findIndex(
+          (subtask) => subtask.id === e.over?.id
+        ) as number;
+        const updatedSubtask = arrayMove(
+          currentSubtask,
+          activateSubtask,
+          targetSubtask
+        );
+        const updatedTask = {
+          ...(activatedTask as TaskType),
+          subtasks: updatedSubtask as SubtasksType[],
+        };
+        setCurrentTask(updatedTask);
+        tasks = tasks?.map((task) =>
+          task.id === settingState.activateTask ? updatedTask : task
+        );
+        columns = columns.map((col) =>
+          col.id === settingState.activateColumn
+            ? { ...col, tasks: tasks as TaskType[] }
+            : col
+        );
+        return { ...board, columns: columns };
+      }
+      return board;
+    });
+    setBoardState(updatedBoard);
+    if (user) {
+      const boardRef = doc(firestore, `users/${user?.uid}`);
+      await updateDoc(boardRef, {
+        board: updatedBoard,
+      });
+    }
+  };
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    })
+  );
   const subTasks = currentTask?.subtasks.map((item, number) => (
     <AddSubTaskInput
       key={item.id}
@@ -390,7 +467,19 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ darkMode }) => {
               Subtasks
             </p>
           </div>
-          {subTasks}
+          <DndContext
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragDrop}
+            sensors={sensors}
+          >
+            <SortableContext
+              items={tasksList}
+              strategy={verticalListSortingStrategy}
+            >
+              {subTasks}
+            </SortableContext>
+          </DndContext>
+
           <ButtonSecondary
             darkMode={darkMode}
             buttonLabel="+ Add New Subtask"

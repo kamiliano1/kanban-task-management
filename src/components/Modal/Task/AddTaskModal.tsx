@@ -14,6 +14,19 @@ import AddSubTaskInput from "./AddSubTaskInput";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth, firestore } from "@/src/firebase/clientApp";
 import { doc, updateDoc } from "firebase/firestore";
+import {
+  DndContext,
+  DragEndEvent,
+  PointerSensor,
+  closestCenter,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  arrayMove,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
 const nanoid = customAlphabet("1234567890", 15);
 type AddTaskModalProps = { darkMode: boolean };
 interface BoardInputs {
@@ -29,6 +42,7 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ darkMode }) => {
   const [settingState, setSettingState] = useRecoilState(settingsModalState);
   const [errorBoardName, setErrorBoardName] = useState<string>("");
   const [columnsName, setColumnsName] = useState<string[]>([]);
+  const [tasksList, setTasksList] = useState<number[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const firstNameRef = useRef<HTMLInputElement | null>(null);
   const {
@@ -42,7 +56,8 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ darkMode }) => {
     control,
     formState: { errors },
   } = useForm<BoardInputs>();
-  const [newTask, setNewTask] = useState<TaskType>({
+  // currentTask, setCurrentTask
+  const [currentTask, setCurrentTask] = useState<TaskType>({
     title: "",
     status: "",
     description: "",
@@ -63,7 +78,7 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ darkMode }) => {
   const onSubmit: SubmitHandler<BoardInputs> = async (data) => {
     setValue("status", columnsName[0]);
 
-    const subtasks = newTask.subtasks.map((items) => {
+    const subtasks = currentTask.subtasks.map((items) => {
       return {
         ...items,
         title: data.subtasks[items.id].title,
@@ -74,7 +89,7 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ darkMode }) => {
       title: data.title,
       status: data.status,
       description: data.description,
-      id: newTask.id,
+      id: currentTask.id,
       subtasks: subtasks,
     };
 
@@ -105,7 +120,7 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ darkMode }) => {
   }, [columnsName, setValue]);
   const addSubTask = () => {
     const subTaskId = parseInt(nanoid());
-    setNewTask((prev) => ({
+    setCurrentTask((prev) => ({
       ...prev,
       subtasks: [
         ...prev.subtasks,
@@ -126,14 +141,17 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ darkMode }) => {
     }
   }, [boardState, columnsName, loading, settingState.activeBoard]);
   const deleteSubTask = (subTaskId: number) => {
-    const updatedColumns = newTask.subtasks.filter(
+    const updatedColumns = currentTask.subtasks.filter(
       (item) => item.id !== subTaskId
     );
-    setNewTask((prev) => ({ ...prev, subtasks: updatedColumns }));
+    setCurrentTask((prev) => ({ ...prev, subtasks: updatedColumns }));
   };
-
   useEffect(() => {
-    setNewTask({
+    if (currentTask?.subtasks.length)
+      setTasksList(currentTask?.subtasks?.map((sub) => sub.id));
+  }, [currentTask?.subtasks]);
+  useEffect(() => {
+    setCurrentTask({
       title: "",
       status: "",
       description: "",
@@ -155,7 +173,7 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ darkMode }) => {
     setErrorBoardName("");
     setLoading(true);
   }, [modalsState, reset]);
-  const subTasks = newTask.subtasks.map((item, number) => (
+  const subTasks = currentTask.subtasks.map((item, number) => (
     <AddSubTaskInput
       key={item.id}
       darkMode={darkMode}
@@ -166,7 +184,64 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ darkMode }) => {
       number={number}
     />
   ));
+  const handleDragDrop = async (e: DragEndEvent) => {
+    if (e.active.id === e.over?.id) return;
 
+    const updatedBoard = boardState.map((board) => {
+      if (board.name === settingState.activeBoard) {
+        let columns = board.columns;
+        const activatedColumn = columns.find(
+          (col) => col.id === settingState.activateColumn
+        );
+        let tasks = activatedColumn?.tasks;
+        const activatedTask = tasks?.find(
+          (task) => task.id === settingState.activateTask
+        );
+
+        const currentSubtask = currentTask?.subtasks as SubtasksType[];
+        const activateSubtask = currentTask?.subtasks?.findIndex(
+          (subtask) => subtask.id === e.active.id
+        ) as number;
+        const targetSubtask = currentTask?.subtasks?.findIndex(
+          (subtask) => subtask.id === e.over?.id
+        ) as number;
+        const updatedSubtask = arrayMove(
+          currentSubtask,
+          activateSubtask,
+          targetSubtask
+        );
+        const updatedTask = {
+          ...(activatedTask as TaskType),
+          subtasks: updatedSubtask as SubtasksType[],
+        };
+        setCurrentTask(updatedTask);
+        tasks = tasks?.map((task) =>
+          task.id === settingState.activateTask ? updatedTask : task
+        );
+        columns = columns.map((col) =>
+          col.id === settingState.activateColumn
+            ? { ...col, tasks: tasks as TaskType[] }
+            : col
+        );
+        return { ...board, columns: columns };
+      }
+      return board;
+    });
+    setBoardState(updatedBoard);
+    if (user) {
+      const boardRef = doc(firestore, `users/${user?.uid}`);
+      await updateDoc(boardRef, {
+        board: updatedBoard,
+      });
+    }
+  };
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    })
+  );
   return (
     <Dialog.Portal>
       <Dialog.Content
@@ -233,7 +308,18 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ darkMode }) => {
             </p>
           </div>
 
-          {subTasks}
+          <DndContext
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragDrop}
+            sensors={sensors}
+          >
+            <SortableContext
+              items={tasksList}
+              strategy={verticalListSortingStrategy}
+            >
+              {subTasks}
+            </SortableContext>
+          </DndContext>
           <ButtonSecondary
             darkMode={darkMode}
             buttonLabel="+ Add New Subtask"

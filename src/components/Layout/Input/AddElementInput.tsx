@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import { FieldErrors, UseFormRegister } from "react-hook-form";
 import { ImCross } from "react-icons/im";
 import { ColumnType } from "../../Board/BoardType";
+import { CSS } from "@dnd-kit/utilities";
+import { useSortable } from "@dnd-kit/sortable";
+import { RxDragHandleHorizontal } from "react-icons/rx";
 interface IFormInputs {
   name: string;
   columns: ColumnType[];
@@ -20,9 +23,26 @@ const AddElementInput: React.FC<AddElementInputProps> = ({
   errors,
   register,
 }) => {
+  const { attributes, listeners, setNodeRef, transform, transition } =
+    useSortable({ id: column.id });
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
   const [currentValue, setCurrentValue] = useState<string>("");
   return (
-    <div className="flex items-center mb-3 relative">
+    <div
+      className="flex items-center mb-3 relative"
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+    >
+      <RxDragHandleHorizontal
+        {...listeners}
+        className={` text-[2rem] mr-2 ${
+          darkMode ? "text-white" : "text-black"
+        }`}
+      />
       <input
         className={`text-500 placeholder:text-black w-full
     FormLabel placeholder:opacity-25 px-4 py-2 rounded border-[1px]

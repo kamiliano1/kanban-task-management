@@ -23,6 +23,19 @@ import {
 import { auth, firestore, storage } from "@/src/firebase/clientApp";
 import { useCollectionData } from "react-firebase-hooks/firestore";
 import { useAuthState } from "react-firebase-hooks/auth";
+import {
+  DndContext,
+  DragEndEvent,
+  PointerSensor,
+  closestCenter,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  arrayMove,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
 const nanoid = customAlphabet("1234567890", 15);
 type AddBoardModalProps = {
   darkMode: boolean;
@@ -38,6 +51,7 @@ const AddBoardModal: React.FC<AddBoardModalProps> = ({ darkMode }) => {
   const [settingState, setSettingState] = useRecoilState(settingsModalState);
   const [errorBoardName, setErrorBoardName] = useState<string>("");
   const firstNameRef = useRef<HTMLInputElement | null>(null);
+  const [columnsListId, setColumnsListId] = useState<number[]>([]);
 
   // const [docs, loading, error, snapshot] = useCollectionData(collectionRef);
   // console.log(docs);
@@ -115,9 +129,30 @@ const AddBoardModal: React.FC<AddBoardModalProps> = ({ darkMode }) => {
       register={register}
     />
   ));
+
   useEffect(() => {
-    console.log(watch("name"));
-  }, [watch]);
+    setColumnsListId(newBoard?.columns?.map((col) => col.id));
+  }, [newBoard]);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    })
+  );
+  const handleDragDrop = async (e: DragEndEvent) => {
+    if (e.active.id === e.over?.id) return;
+    setNewBoard((prev) => {
+      let columns = prev.columns;
+      const activatedColumn = columns.findIndex(
+        (cols) => cols.id === e.active.id
+      );
+      const targetColumn = columns.findIndex((cols) => cols.id === e.over?.id);
+      const updatedColumns = arrayMove(columns, activatedColumn, targetColumn);
+      return { ...prev, columns: updatedColumns };
+    });
+  };
   return (
     <Dialog.Portal>
       <Dialog.Content
@@ -183,7 +218,19 @@ const AddBoardModal: React.FC<AddBoardModalProps> = ({ darkMode }) => {
           >
             Boards Columns
           </h3>
-          {columns}
+          <DndContext
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragDrop}
+            sensors={sensors}
+          >
+            <SortableContext
+              items={columnsListId}
+              strategy={verticalListSortingStrategy}
+            >
+              {columns}
+            </SortableContext>
+          </DndContext>
+
           <ButtonSecondary
             darkMode={darkMode}
             buttonLabel="+ Add New Column"

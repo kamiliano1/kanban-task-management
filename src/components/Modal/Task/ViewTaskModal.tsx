@@ -200,10 +200,8 @@ const ViewTaskModal: React.FC<ViewTaskModalProps> = ({ darkMode }) => {
   ]);
 
   useEffect(() => {
-    // setTasksList(currentTask?.subtasks?.map((subtask) => subtask.title));
     if (currentTask?.subtasks.length)
       setTasksList(currentTask?.subtasks?.map((sub) => sub.id));
-    // console.log(tasksList);
   }, [currentTask?.subtasks]);
 
   const checkBox = currentTask?.subtasks.map((item) => (
@@ -259,7 +257,6 @@ const ViewTaskModal: React.FC<ViewTaskModalProps> = ({ darkMode }) => {
       }
       return board;
     });
-
     setBoardState(updatedBoard);
     if (user) {
       const boardRef = doc(firestore, `users/${user?.uid}`);
@@ -309,7 +306,7 @@ const ViewTaskModal: React.FC<ViewTaskModalProps> = ({ darkMode }) => {
         >
           <SortableContext
             items={tasksList}
-            // strategy={verticalListSortingStrategy}
+            strategy={verticalListSortingStrategy}
           >
             {checkBox}
           </SortableContext>
