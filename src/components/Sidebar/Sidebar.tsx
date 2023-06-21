@@ -54,7 +54,7 @@ const Sidebar: React.FC<SidebarProps> = () => {
   }, [boardState, loading, setSettingState]);
 
   const boardList = boardState?.map((item) => (
-    <ButtonPrimaryBoards key={item.name} buttonLabel={item.name} />
+    <ButtonPrimaryBoards key={item.id} buttonLabel={item.name} />
   ));
   const [boardsList, setBoardsList] = useState<string[]>([]);
 

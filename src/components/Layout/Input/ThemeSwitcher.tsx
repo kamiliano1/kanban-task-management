@@ -3,12 +3,25 @@ import React from "react";
 import { BsFillSunFill, BsMoonStarsFill } from "react-icons/bs";
 import { useRecoilState } from "recoil";
 import { settingsModalState } from "../../../atoms/settingsModalAtom";
+import { auth, firestore } from "@/src/firebase/clientApp";
+import { doc, updateDoc } from "firebase/firestore";
+import { useAuthState } from "react-firebase-hooks/auth";
 
 type ThemeSwitcherProps = {};
 
 const ThemeSwitcher: React.FC<ThemeSwitcherProps> = () => {
-  const [settingState, setSettingsState] = useRecoilState(settingsModalState);
+  const [settingState, setSettingState] = useRecoilState(settingsModalState);
   const darkMode = settingState.darkMode;
+  const [user] = useAuthState(auth);
+  const toggleDarkMode = async (checked: boolean) => {
+    setSettingState((prev) => ({ ...prev, darkMode: checked }));
+    if (user) {
+      const boardRef = doc(firestore, `users/${user?.uid}`);
+      await updateDoc(boardRef, {
+        isDarkMode: checked,
+      });
+    }
+  };
   return (
     <div
       className={`flex items-center gap-x-6 bg-veryDarkGrey sm:mt-auto
@@ -21,9 +34,7 @@ const ThemeSwitcher: React.FC<ThemeSwitcherProps> = () => {
       <Switch.Root
         checked={settingState.darkMode}
         className={`w-[40px] h-[20px] bg-purple rounded-xl`}
-        onCheckedChange={(checked) =>
-          setSettingsState((prev) => ({ ...prev, darkMode: checked }))
-        }
+        onCheckedChange={(checked) => toggleDarkMode(checked)}
       >
         <Switch.Thumb
           className="block w-[14px] h-[14px] bg-white rounded-full 

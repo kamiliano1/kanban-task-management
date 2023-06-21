@@ -5,6 +5,9 @@ import React, { useState } from "react";
 import { MdOutlineSpaceDashboard } from "react-icons/md";
 import { useRecoilState } from "recoil";
 import { settingsModalState } from "../../../../atoms/settingsModalAtom";
+import { auth, firestore } from "@/src/firebase/clientApp";
+import { doc, updateDoc } from "firebase/firestore";
+import { useAuthState } from "react-firebase-hooks/auth";
 type ButtonPrimaryBoardsProps = { buttonLabel: string };
 
 const ButtonPrimaryBoards: React.FC<ButtonPrimaryBoardsProps> = ({
@@ -14,12 +17,19 @@ const ButtonPrimaryBoards: React.FC<ButtonPrimaryBoardsProps> = ({
   const [boardMobileModalStates, setBoardMobileModalStates] = useRecoilState(
     boardMobileModalState
   );
+  const [user] = useAuthState(auth);
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: buttonLabel });
   const activeBoard = settingState.activeBoard;
   const darkMode = settingState.darkMode;
-  const switchBoard = () => {
+  const switchBoard = async () => {
     setSettingState((prev) => ({ ...prev, activeBoard: buttonLabel }));
+    if (user) {
+      const boardRef = doc(firestore, `users/${user?.uid}`);
+      await updateDoc(boardRef, {
+        activeBoard: buttonLabel,
+      });
+    }
     if (boardMobileModalStates.open) setBoardMobileModalStates({ open: false });
   };
   const style = {

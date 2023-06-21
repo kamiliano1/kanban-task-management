@@ -11,9 +11,11 @@ import { useRecoilState } from "recoil";
 import { modalState } from "@/src/atoms/modalAtom";
 import { doc, getDoc } from "firebase/firestore";
 import { boardsState } from "@/src/atoms/boardsAtom";
+import { settingsModalState } from "@/src/atoms/settingsModalAtom";
 type LoginModalProps = { darkMode: boolean };
 
 const LoginModal: React.FC<LoginModalProps> = ({ darkMode }) => {
+  const [settingState, setSettingsState] = useRecoilState(settingsModalState);
   const [modalsState, setModalsState] = useRecoilState(modalState);
   const [user] = useAuthState(auth);
   const [boardState, setBoardState] = useRecoilState(boardsState);
@@ -38,9 +40,14 @@ const LoginModal: React.FC<LoginModalProps> = ({ darkMode }) => {
         const userDataRef = doc(firestore, "users", user!.uid);
         const userData = await getDoc(userDataRef);
         const bookmarkData = userData.data();
-
         if (bookmarkData) {
           setBoardState(bookmarkData.board || []);
+          setSettingsState((prev) => ({
+            ...prev,
+            darkMode: bookmarkData.isDarkMode,
+            isSidebarOpen: bookmarkData.isSidebarOpen,
+            activeBoard: bookmarkData.activeBoard,
+          }));
         }
       } catch (error: any) {
         console.log("getBookmarkError", error.message);
@@ -48,9 +55,10 @@ const LoginModal: React.FC<LoginModalProps> = ({ darkMode }) => {
     };
     if (userName) {
       setModalsState((prev) => ({ ...prev, open: false }));
-      // getUserData();
+
+      getUserData();
     }
-  }, [setBoardState, setModalsState, user, userName]);
+  }, [setBoardState, setModalsState, setSettingsState, user, userName]);
   return (
     <Dialog.Portal>
       <Dialog.Content
@@ -59,11 +67,11 @@ const LoginModal: React.FC<LoginModalProps> = ({ darkMode }) => {
      darkMode ? "bg-darkGrey" : "bg-white"
    }
     p-[25px] shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px]
-    focus:outline-none`}>
+    focus:outline-none`}
+      >
         <Dialog.Title
-          className={` ${
-            darkMode ? "text-white" : "text-black"
-          } text-800 pb-4`}>
+          className={` ${darkMode ? "text-white" : "text-black"} text-800 pb-4`}
+        >
           Login
         </Dialog.Title>
 
@@ -136,7 +144,8 @@ const LoginModal: React.FC<LoginModalProps> = ({ darkMode }) => {
             className="ml-3 text-lightPurple hover:text-purple cursor-pointer"
             onClick={() =>
               setModalsState((prev) => ({ ...prev, view: "register" }))
-            }>
+            }
+          >
             Sign Up
           </span>
         </p>

@@ -308,7 +308,9 @@ const ViewTaskModal: React.FC<ViewTaskModalProps> = ({ darkMode }) => {
             items={tasksList}
             strategy={verticalListSortingStrategy}
           >
-            {checkBox}
+            <div className="overflow-auto scrollbar overflow-x-clip pr-1 max-h-[200px] mb-4">
+              {checkBox}
+            </div>
           </SortableContext>
         </DndContext>
         <p

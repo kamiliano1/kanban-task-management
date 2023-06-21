@@ -317,7 +317,9 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ darkMode }) => {
               items={tasksList}
               strategy={verticalListSortingStrategy}
             >
-              {subTasks}
+              <div className="overflow-auto scrollbar overflow-x-clip pr-1 max-h-[200px] mb-4">
+                {subTasks}
+              </div>
             </SortableContext>
           </DndContext>
           <ButtonSecondary

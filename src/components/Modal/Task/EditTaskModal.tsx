@@ -289,28 +289,7 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ darkMode }) => {
       }
       return board;
     });
-    console.log(updatedBoard);
 
-    // setBoardState((prev) =>
-    //   prev.map((board) => {
-    //     if (board.name === settingState.activeBoard) {
-    //       const activatedColumns = board.columns.map((col) => {
-    //         if (col.name === getValues("status")) {
-    //           console.log(col.tasks, "task");
-    //           const updatedTask = col.tasks.map((task) => {
-    //             if (task.id === editedTask?.id) {
-    //             }
-    //             return task.id === editedTask?.id ? editedTask : task;
-    //           });
-    //           return { ...col, tasks: updatedTask };
-    //         }
-    //         return col;
-    //       });
-    //       return { ...board, columns: activatedColumns };
-    //     }
-    //     return board;
-    //   })
-    // );
     setBoardState(updatedBoard);
     if (user) {
       const boardRef = doc(firestore, `users/${user?.uid}`);
@@ -476,7 +455,9 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ darkMode }) => {
               items={tasksList}
               strategy={verticalListSortingStrategy}
             >
-              {subTasks}
+              <div className="overflow-auto scrollbar overflow-x-clip pr-1 max-h-[200px] mb-4">
+                {subTasks}
+              </div>
             </SortableContext>
           </DndContext>
 

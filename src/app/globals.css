@@ -37,3 +37,21 @@ body {
   width: var(--radix-select-trigger-width);
   max-height: var(--radix-select-content-available-height);
 }
+
+@layer utilities {
+  .scrollbar::-webkit-scrollbar {
+    width: 12px;
+    height: 70px;
+  }
+
+  .scrollbar::-webkit-scrollbar-track {
+    border-radius: 100vh;
+    background: #3e3f4e;
+  }
+
+  .scrollbar::-webkit-scrollbar-thumb {
+    background: transparent;
+    border-radius: 100vh;
+    border: 1px solid #f6f7ed;
+  }
+}

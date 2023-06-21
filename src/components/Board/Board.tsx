@@ -63,6 +63,8 @@ const Board: React.FC<BoardProps> = () => {
 
   const [activeDragTask, setActiveDragTask] = useState<TaskType | null>();
   useEffect(() => {
+    // console.log("board 1");
+
     const activeBoard = settingState.activeBoard;
     const getUserData = async () => {
       try {
@@ -72,6 +74,11 @@ const Board: React.FC<BoardProps> = () => {
 
         if (bookmarkData) {
           setBoardState(bookmarkData.board || []);
+          // setSettingsState((prev) => ({
+          //   ...prev,
+          //   darkMode: bookmarkData.isDarkMode,
+          //   isSidebarOpen: bookmarkData.isSidebarOpen,
+          // }));
           setActivatedBoard(
             boardState.filter((board) => board.name === activeBoard)[0]
           );
@@ -145,9 +152,11 @@ const Board: React.FC<BoardProps> = () => {
   const darkMode = settingState.darkMode;
   const activeBoard = settingState.activeBoard;
   useEffect(() => {
+    // console.log("board 3");
     setNewBoardState(boardState);
   }, [boardState]);
   useEffect(() => {
+    // console.log("board 4");
     setActivatedBoard(
       boardState.filter((board) => board.name === activeBoard)[0]
     );
@@ -311,6 +320,7 @@ const Board: React.FC<BoardProps> = () => {
     setActiveDragTask(null);
   };
   useEffect(() => {
+    // console.log("board 7");
     const updateBoardState = setTimeout(async () => {
       const updatedBoard = boardState.map((board) =>
         board.name === settingState.activeBoard ? activatedBoard : board
@@ -322,7 +332,7 @@ const Board: React.FC<BoardProps> = () => {
           board: updatedBoard,
         });
       }
-    }, 1000);
+    }, 400);
     updateBoardState;
     return () => clearTimeout(updateBoardState);
   }, [

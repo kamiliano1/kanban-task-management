@@ -20,7 +20,9 @@ const LoginButton: React.FC<LoginButtonProps> = () => {
       }
       className={`text-mediumGrey py-3 cursor-pointer flex items-center gap-x-4 sm:px-6
     lg:pl-8 rounded-[0px_100px_100px_0px] hover:text-purple ${
-      darkMode ? "hover:bg-white" : "hover:bg-purple hover:bg-opacity-10"
+      darkMode
+        ? "sm:hover:bg-white"
+        : "sm:hover:bg-purple sm:hover:bg-opacity-10"
     } `}
     >
       <AiOutlineUser />

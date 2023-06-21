@@ -137,7 +137,7 @@ const EditBoardModal: React.FC<EditBoardModalProps> = ({ darkMode }) => {
     if (!modalsState.open) {
       reset({ name: newBoard.name, columns: [] });
     }
-  }, [modalsState, newBoard.columns, newBoard.name, reset, watch]);
+  }, [modalsState, newBoard?.columns, newBoard.name, reset, watch]);
   useEffect(() => {
     setLoading(true);
   }, [modalsState]);
@@ -239,7 +239,9 @@ const EditBoardModal: React.FC<EditBoardModalProps> = ({ darkMode }) => {
               items={columnsListId}
               strategy={verticalListSortingStrategy}
             >
-              {columns}
+              <div className="overflow-auto scrollbar overflow-x-clip pr-1 max-h-[200px] mb-4">
+                {columns}
+              </div>
             </SortableContext>
           </DndContext>
           <ButtonSecondary

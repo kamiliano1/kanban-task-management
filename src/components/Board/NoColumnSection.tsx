@@ -7,7 +7,7 @@ type NoColumnSectionProps = {};
 const NoColumnSection: React.FC<NoColumnSectionProps> = () => {
   const [modalsState, setModalsState] = useRecoilState(modalState);
   return (
-    <div className="flex flex-col items-center justify-center">
+    <div className="flex flex-col items-center justify-center mx-auto">
       <p className="text-800 text-mediumGrey pb-6 text-center px-4">
         This board is empty. Create a new column to get started.
       </p>

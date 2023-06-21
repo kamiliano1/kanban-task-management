@@ -33,7 +33,7 @@ const AllBoardsMobileModal: React.FC<AllBoardsMobileModalProps> = ({
     }
   }, [boardState, loading, setSettingState]);
   const boardList = boardState.map((item) => (
-    <ButtonPrimaryBoards key={item.name} buttonLabel={item.name} />
+    <ButtonPrimaryBoards key={item.id} buttonLabel={item.name} />
   ));
   return (
     <Dialog.Root
@@ -45,11 +45,7 @@ const AllBoardsMobileModal: React.FC<AllBoardsMobileModalProps> = ({
       }}
     >
       <Dialog.Portal>
-        <Dialog.Overlay
-          className="
-        bg-black opacity-50 fixed inset-0
-        "
-        />
+        <Dialog.Overlay className="bg-black opacity-50 fixed inset-0" />
         <Dialog.Content
           className={`${
             darkMode ? "bg-darkGrey" : "bg-white"
@@ -68,7 +64,7 @@ const AllBoardsMobileModal: React.FC<AllBoardsMobileModalProps> = ({
             <ButtonAddBoard />
           </div>
           <ThemeSwitcher />
-          <div className="px-5">
+          <div className="px-5 mb-3">
             {user ? <LogoutButton /> : <LoginButton />}
           </div>
         </Dialog.Content>

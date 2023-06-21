@@ -65,7 +65,7 @@ const AddElementInput: React.FC<AddElementInputProps> = ({
         })}
       />
       {errors.columns?.[column.id] && (
-        <span className="absolute text-red text-500 left-[65%] top-[.6rem]">
+        <span className="absolute text-red text-500 left-[50%] sm:left-[65%] top-[.6rem]">
           Can`t be empty
         </span>
       )}

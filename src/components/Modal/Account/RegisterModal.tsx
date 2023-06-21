@@ -13,6 +13,7 @@ import { modalState } from "@/src/atoms/modalAtom";
 import { User } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { boardsState } from "@/src/atoms/boardsAtom";
+import { settingsModalState } from "@/src/atoms/settingsModalAtom";
 type RegisterModalProps = { darkMode: boolean };
 type createUserInputs = {
   email: string;
@@ -22,6 +23,7 @@ type createUserInputs = {
 const RegisterModal: React.FC<RegisterModalProps> = ({ darkMode }) => {
   const [modalsState, setModalsState] = useRecoilState(modalState);
   const [boardState, setBoardState] = useRecoilState(boardsState);
+  const [settingState, setSettingsState] = useRecoilState(settingsModalState);
   const {
     register,
     handleSubmit,
@@ -54,7 +56,15 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ darkMode }) => {
       const userDocRef = doc(firestore, "users", user.uid);
       await setDoc(
         userDocRef,
-        JSON.parse(JSON.stringify({ ...user, board: [] }))
+        JSON.parse(
+          JSON.stringify({
+            ...user,
+            board: [],
+            isSidebarOpen: settingState.isSidebarOpen,
+            isDarkMode: settingState.darkMode,
+            // activatedBoard:""
+          })
+        )
       );
     };
     if (userCredentials) {
@@ -62,7 +72,13 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ darkMode }) => {
       setModalsState((prev) => ({ ...prev, open: false }));
       setBoardState([]);
     }
-  }, [setBoardState, setModalsState, userCredentials]);
+  }, [
+    setBoardState,
+    setModalsState,
+    settingState.darkMode,
+    settingState.isSidebarOpen,
+    userCredentials,
+  ]);
 
   return (
     <Dialog.Portal>

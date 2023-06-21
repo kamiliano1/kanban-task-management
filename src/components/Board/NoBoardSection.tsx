@@ -8,7 +8,7 @@ type NoBoardSectionProps = {};
 const NoBoardSection: React.FC<NoBoardSectionProps> = () => {
   const [modalsState, setModalsState] = useRecoilState(modalState);
   return (
-    <div className="flex flex-col items-center justify-center">
+    <div className="flex flex-col items-center justify-center mx-auto">
       <p className="text-800 text-mediumGrey pb-6 text-center px-4">
         You don`t have any board. Create a new board to get started.
       </p>
