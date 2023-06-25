@@ -97,6 +97,7 @@ const EditBoardModal: React.FC<EditBoardModalProps> = ({ darkMode }) => {
   };
 
   useEffect(() => {
+    // console.log("editBoard1");
     if (loading) {
       setNewBoard(
         boardState.filter((item) => item.name === settingState.activeBoard)[0]

@@ -46,8 +46,9 @@ const Board: React.FC<BoardProps> = () => {
   const [boardState, setBoardState] = useRecoilState(boardsState);
   const [newBoardState, setNewBoardState] = useState<BoardType[]>(boardState);
   const [loading, setLoading] = useState<boolean>(true);
-  const [isColumnMoved, setIsColumnMoved] = useState(false);
+  // const [isColumnMoved, setIsColumnMoved] = useState(false);
   // const [user] = useAuthState(auth);
+  const [isElementMoved, setIsElementMoved] = useState<boolean>(false);
   const [user, firebaseLoading, error] = useAuthState(auth);
   const [activatedBoard, setActivatedBoard] = useState<BoardType>(
     boardState[0]
@@ -64,7 +65,7 @@ const Board: React.FC<BoardProps> = () => {
   const [activeDragTask, setActiveDragTask] = useState<TaskType | null>();
   useEffect(() => {
     // console.log("board 1");
-
+    // console.log(boardState);
     const activeBoard = settingState.activeBoard;
     const getUserData = async () => {
       try {
@@ -97,38 +98,38 @@ const Board: React.FC<BoardProps> = () => {
         fetch("data/data.json")
           .then((res) => res.json())
           .then((data) => {
-            setBoardState(data.boards);
-            setBoardState((prev) =>
-              prev.map((item) => {
-                let subTask: SubtasksType;
-                let letTask: TaskType;
-                let letColumn: ColumnType;
-                let letBoard: BoardType;
-                letBoard = { ...item, id: parseInt(nanoid()), columns: [] };
-                item.columns.map((cols) => {
-                  letColumn = { ...cols, id: parseInt(nanoid()), tasks: [] };
-                  cols.tasks.map((task) => {
-                    letTask = { ...task, id: parseInt(nanoid()), subtasks: [] };
-                    task.subtasks.map((subtask) => {
-                      subTask = { ...subtask, id: parseInt(nanoid()) };
-                      letTask = {
-                        ...letTask,
-                        subtasks: [...letTask.subtasks, subTask],
-                      };
-                    });
-                    letColumn = {
-                      ...letColumn,
-                      tasks: [...letColumn.tasks, letTask],
-                    };
-                  });
-                  letBoard = {
-                    ...letBoard,
-                    columns: [...letBoard.columns, letColumn],
-                  };
-                });
-                return letBoard;
-              })
-            );
+            setBoardState(data);
+            // setBoardState((prev) =>
+            //   prev.map((item) => {
+            //     let subTask: SubtasksType;
+            //     let letTask: TaskType;
+            //     let letColumn: ColumnType;
+            //     let letBoard: BoardType;
+            //     letBoard = { ...item, id: parseInt(nanoid()), columns: [] };
+            //     item.columns.map((cols) => {
+            //       letColumn = { ...cols, id: parseInt(nanoid()), tasks: [] };
+            //       cols.tasks.map((task) => {
+            //         letTask = { ...task, id: parseInt(nanoid()), subtasks: [] };
+            //         task.subtasks.map((subtask) => {
+            //           subTask = { ...subtask, id: parseInt(nanoid()) };
+            //           letTask = {
+            //             ...letTask,
+            //             subtasks: [...letTask.subtasks, subTask],
+            //           };
+            //         });
+            //         letColumn = {
+            //           ...letColumn,
+            //           tasks: [...letColumn.tasks, letTask],
+            //         };
+            //       });
+            //       letBoard = {
+            //         ...letBoard,
+            //         columns: [...letBoard.columns, letColumn],
+            //       };
+            //     });
+            //     return letBoard;
+            //   })
+            // );
           });
         setLoading(false);
       }
@@ -137,7 +138,6 @@ const Board: React.FC<BoardProps> = () => {
     boardState,
     firebaseLoading,
     loading,
-    nanoid,
     setBoardState,
     settingState.activeBoard,
     user,
@@ -152,7 +152,7 @@ const Board: React.FC<BoardProps> = () => {
   const darkMode = settingState.darkMode;
   const activeBoard = settingState.activeBoard;
   useEffect(() => {
-    // console.log("board 3");
+    console.log("board 3");
     setNewBoardState(boardState);
   }, [boardState]);
   useEffect(() => {
@@ -182,6 +182,7 @@ const Board: React.FC<BoardProps> = () => {
     : [];
 
   const handleDragStart = (e: DragStartEvent) => {
+    setIsElementMoved(true);
     const { active } = e;
     const activeTaskId = active.id;
     const activeTaskColumn: number = Number(
@@ -257,7 +258,7 @@ const Board: React.FC<BoardProps> = () => {
       });
       return { ...prev, columns: boardColumns };
     });
-    if (isColumnMoved) setIsColumnMoved(false);
+    setIsElementMoved(false);
   };
 
   const handleDragDrop = (e: DragEndEvent) => {
@@ -265,7 +266,6 @@ const Board: React.FC<BoardProps> = () => {
     const activeId = active.id;
     const overId = over?.id;
     if (activatedBoard.columns.find((col) => col.name === active.id)) {
-      setIsColumnMoved(true);
       setActivatedBoard((prev) => {
         const activeColumn = activatedBoard.columns.findIndex(
           (col) => col.name === activeId
@@ -319,29 +319,40 @@ const Board: React.FC<BoardProps> = () => {
 
     setActiveDragTask(null);
   };
+  const updateBoard = () => {
+    const updatedBoard = boardState.map((board) =>
+      board.name === settingState.activeBoard ? activatedBoard : board
+    );
+    setBoardState(updatedBoard);
+  };
   useEffect(() => {
-    // console.log("board 7");
-    const updateBoardState = setTimeout(async () => {
-      const updatedBoard = boardState.map((board) =>
-        board.name === settingState.activeBoard ? activatedBoard : board
-      );
-      setBoardState(updatedBoard);
-      if (user) {
-        const boardRef = doc(firestore, `users/${user?.uid}`);
-        await updateDoc(boardRef, {
-          board: updatedBoard,
-        });
-      }
-    }, 400);
-    updateBoardState;
-    return () => clearTimeout(updateBoardState);
-  }, [
-    activatedBoard,
-    boardState,
-    setBoardState,
-    settingState.activeBoard,
-    user,
-  ]);
+    if (isElementMoved) {
+      updateBoard();
+    }
+  }, [activatedBoard, isElementMoved]);
+  // useEffect(() => {
+  //   // console.log("board 7");
+  //   const updateBoardState = setTimeout(async () => {
+  //     const updatedBoard = boardState.map((board) =>
+  //       board.name === settingState.activeBoard ? activatedBoard : board
+  //     );
+  //     // setBoardState(updatedBoard);
+  //     if (user) {
+  //       const boardRef = doc(firestore, `users/${user?.uid}`);
+  //       await updateDoc(boardRef, {
+  //         board: updatedBoard,
+  //       });
+  //     }
+  //   }, 400);
+  //   updateBoardState;
+  //   return () => clearTimeout(updateBoardState);
+  // }, [
+  //   activatedBoard,
+  //   boardState,
+  //   setBoardState,
+  //   settingState.activeBoard,
+  //   user,
+  // ]);
 
   return (
     <div
@@ -372,7 +383,7 @@ const Board: React.FC<BoardProps> = () => {
                     {activatedColumns}
                     <AddColumn />
                     {/* </SortableContext> */}
-                    {!isColumnMoved && (
+                    {
                       <DragOverlay>
                         {activeDragTask ? (
                           <ColumnElement
@@ -383,7 +394,7 @@ const Board: React.FC<BoardProps> = () => {
                           />
                         ) : null}
                       </DragOverlay>
-                    )}
+                    }
                   </DndContext>
                 </>
               ) : (
