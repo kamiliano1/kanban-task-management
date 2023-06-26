@@ -64,8 +64,6 @@ const Board: React.FC<BoardProps> = () => {
 
   const [activeDragTask, setActiveDragTask] = useState<TaskType | null>();
   useEffect(() => {
-    // console.log("board 1");
-    // console.log(boardState);
     const activeBoard = settingState.activeBoard;
     const getUserData = async () => {
       try {
@@ -75,11 +73,6 @@ const Board: React.FC<BoardProps> = () => {
 
         if (bookmarkData) {
           setBoardState(bookmarkData.board || []);
-          // setSettingsState((prev) => ({
-          //   ...prev,
-          //   darkMode: bookmarkData.isDarkMode,
-          //   isSidebarOpen: bookmarkData.isSidebarOpen,
-          // }));
           setActivatedBoard(
             boardState.filter((board) => board.name === activeBoard)[0]
           );
@@ -99,37 +92,6 @@ const Board: React.FC<BoardProps> = () => {
           .then((res) => res.json())
           .then((data) => {
             setBoardState(data);
-            // setBoardState((prev) =>
-            //   prev.map((item) => {
-            //     let subTask: SubtasksType;
-            //     let letTask: TaskType;
-            //     let letColumn: ColumnType;
-            //     let letBoard: BoardType;
-            //     letBoard = { ...item, id: parseInt(nanoid()), columns: [] };
-            //     item.columns.map((cols) => {
-            //       letColumn = { ...cols, id: parseInt(nanoid()), tasks: [] };
-            //       cols.tasks.map((task) => {
-            //         letTask = { ...task, id: parseInt(nanoid()), subtasks: [] };
-            //         task.subtasks.map((subtask) => {
-            //           subTask = { ...subtask, id: parseInt(nanoid()) };
-            //           letTask = {
-            //             ...letTask,
-            //             subtasks: [...letTask.subtasks, subTask],
-            //           };
-            //         });
-            //         letColumn = {
-            //           ...letColumn,
-            //           tasks: [...letColumn.tasks, letTask],
-            //         };
-            //       });
-            //       letBoard = {
-            //         ...letBoard,
-            //         columns: [...letBoard.columns, letColumn],
-            //       };
-            //     });
-            //     return letBoard;
-            //   })
-            // );
           });
         setLoading(false);
       }
@@ -152,22 +114,17 @@ const Board: React.FC<BoardProps> = () => {
   const darkMode = settingState.darkMode;
   const activeBoard = settingState.activeBoard;
   useEffect(() => {
-    console.log("board 3");
-    setNewBoardState(boardState);
-  }, [boardState]);
-  useEffect(() => {
-    // console.log("board 4");
     setActivatedBoard(
       boardState.filter((board) => board.name === activeBoard)[0]
     );
   }, [activeBoard, boardState, settingState]);
-  useEffect(() => {
-    if (activatedBoard) {
-      setColumnsListId(activatedBoard.columns.map((column) => column.name));
+  // useEffect(() => {
+  //   if (activatedBoard) {
+  //     setColumnsListId(activatedBoard.columns.map((column) => column.name));
 
-      setColumnsListId((prev) => [...prev, "addColumn"]);
-    }
-  }, [activatedBoard]);
+  //     setColumnsListId((prev) => [...prev, "addColumn"]);
+  //   }
+  // }, [activatedBoard]);
   const activatedColumns = activatedBoard
     ? activatedBoard.columns.map((item, number) => (
         <BoardColumn
@@ -182,7 +139,6 @@ const Board: React.FC<BoardProps> = () => {
     : [];
 
   const handleDragStart = (e: DragStartEvent) => {
-    setIsElementMoved(true);
     const { active } = e;
     const activeTaskId = active.id;
     const activeTaskColumn: number = Number(
@@ -258,7 +214,6 @@ const Board: React.FC<BoardProps> = () => {
       });
       return { ...prev, columns: boardColumns };
     });
-    setIsElementMoved(false);
   };
 
   const handleDragDrop = (e: DragEndEvent) => {
@@ -319,40 +274,24 @@ const Board: React.FC<BoardProps> = () => {
 
     setActiveDragTask(null);
   };
-  const updateBoard = () => {
-    const updatedBoard = boardState.map((board) =>
-      board.name === settingState.activeBoard ? activatedBoard : board
-    );
-    setBoardState(updatedBoard);
-  };
+
   useEffect(() => {
-    if (isElementMoved) {
-      updateBoard();
-    }
-  }, [activatedBoard, isElementMoved]);
-  // useEffect(() => {
-  //   // console.log("board 7");
-  //   const updateBoardState = setTimeout(async () => {
-  //     const updatedBoard = boardState.map((board) =>
-  //       board.name === settingState.activeBoard ? activatedBoard : board
-  //     );
-  //     // setBoardState(updatedBoard);
-  //     if (user) {
-  //       const boardRef = doc(firestore, `users/${user?.uid}`);
-  //       await updateDoc(boardRef, {
-  //         board: updatedBoard,
-  //       });
-  //     }
-  //   }, 400);
-  //   updateBoardState;
-  //   return () => clearTimeout(updateBoardState);
-  // }, [
-  //   activatedBoard,
-  //   boardState,
-  //   setBoardState,
-  //   settingState.activeBoard,
-  //   user,
-  // ]);
+    const updateBoardState = setTimeout(async () => {
+      const updatedBoard = boardState.map((board) =>
+        board.name === settingState.activeBoard ? activatedBoard : board
+      );
+      setBoardState(updatedBoard);
+      if (user) {
+        const boardRef = doc(firestore, `users/${user?.uid}`);
+        await updateDoc(boardRef, {
+          board: updatedBoard,
+        });
+      }
+    }, 400);
+    updateBoardState;
+    return () => clearTimeout(updateBoardState);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activatedBoard]);
 
   return (
     <div
