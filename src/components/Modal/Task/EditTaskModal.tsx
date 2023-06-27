@@ -52,16 +52,11 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ darkMode }) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [activateColumn, setActivatedColumn] = useState<string | undefined>("");
   const [currentTask, setCurrentTask] = useState<TaskType>();
-  const firstNameRef = useRef<HTMLInputElement | null>(null);
-  const [temporaryBoard, setTemporaryBoard] = useState(boardState);
   const [tasksList, setTasksList] = useState<number[]>([]);
   const {
     register,
     handleSubmit,
     watch,
-    setFocus,
-    reset,
-    setError,
     setValue,
     getValues,
     control,
@@ -134,49 +129,6 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ darkMode }) => {
 
   const updateStatus = () => {
     setIsUpdatedTask(true);
-
-    setTemporaryBoard(
-      boardState.map((board) => {
-        if (board.name === settingState.activeBoard) {
-          let columns = board.columns;
-          let targetColumn = columns.find(
-            (cols) => cols.name === watch("status")
-          );
-          let activatedColumn = columns.find(
-            (cols) => cols.id === settingState.activateColumn
-          );
-          let targetTasks = targetColumn?.tasks;
-          let activatedTasks = activatedColumn?.tasks;
-          let taskToMove = activatedTasks?.find(
-            (task) => task.id === settingState.activateTask
-          );
-          taskToMove = {
-            ...(taskToMove as TaskType),
-            status: watch("status"),
-          };
-          targetTasks = [
-            ...(targetTasks as TaskType[]),
-            taskToMove as TaskType,
-          ];
-          activatedTasks = activatedTasks?.filter(
-            (task) => task.id !== taskToMove?.id
-          );
-          setTargetColumnId(targetColumn?.id);
-          setTargetTaskId(taskToMove.id);
-          if (activatedColumn?.name === targetColumn?.name) return board;
-          columns = columns.map((cols) => {
-            if (cols.name === watch("status"))
-              return { ...cols, tasks: targetTasks as TaskType[] };
-            if (cols.id === settingState.activateColumn)
-              return { ...cols, tasks: activatedTasks as TaskType[] };
-            return cols;
-          });
-          return { ...board, columns: columns };
-        }
-        return board;
-      })
-    );
-
     setBoardState((prev) => {
       return prev.map((board) => {
         if (board.name === settingState.activeBoard) {
@@ -342,13 +294,6 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ darkMode }) => {
       }
       return board;
     });
-    setBoardState(updatedBoard);
-    if (user) {
-      const boardRef = doc(firestore, `users/${user?.uid}`);
-      await updateDoc(boardRef, {
-        board: updatedBoard,
-      });
-    }
   };
 
   const sensors = useSensors(

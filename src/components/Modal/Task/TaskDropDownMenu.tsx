@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
+import { modalState } from "@/src/atoms/modalAtom";
+import { settingsModalState } from "@/src/atoms/settingsModalAtom";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
+import React from "react";
 import { BiDotsVerticalRounded } from "react-icons/bi";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { modalState } from "@/src/atoms/modalAtom";
 type TaskDropDownMenuProps = {};
-import { settingsModalState } from "@/src/atoms/settingsModalAtom";
 const TaskDropDownMenu: React.FC<TaskDropDownMenuProps> = () => {
   const [modalsState, setModalsState] = useRecoilState(modalState);
   const settingState = useRecoilValue(settingsModalState);

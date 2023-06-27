@@ -13,7 +13,6 @@ import ButtonAddBoard from "../Layout/Input/Button/ButtonAddBoard";
 import ButtonPrimaryBoards from "../Layout/Input/Button/ButtonPrimaryBoards";
 import ThemeSwitcher from "../Layout/Input/ThemeSwitcher";
 import HideSidebarButton from "./HideSidebarButton";
-
 import { auth, firestore } from "@/src/firebase/clientApp";
 import {
   arrayMove,
@@ -23,10 +22,9 @@ import {
 import { doc, updateDoc } from "firebase/firestore";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { boardsState } from "../../atoms/boardsAtom";
+import BoardsSkeleton from "./BoardsSkeleton";
 import LoginButton from "./LoginButton";
 import LogoutButton from "./LogoutButton";
-import BoardsSkeleton from "./BoardsSkeleton";
-import DropMenu from "../Layout/Input/DropMenu";
 
 type SidebarProps = {};
 

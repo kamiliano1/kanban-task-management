@@ -2,7 +2,7 @@ import { modalState } from "@/src/atoms/modalAtom";
 import * as Dialog from "@radix-ui/react-dialog";
 import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { boardsState } from "../../../atoms/boardsAtom";
 import { settingsModalState } from "../../../atoms/settingsModalAtom";
 import { BoardType, SubtasksType, TaskType } from "../../Board/BoardType";
@@ -34,7 +34,7 @@ interface BoardInputs {
 }
 const ViewTaskModal: React.FC<ViewTaskModalProps> = ({ darkMode }) => {
   const [user] = useAuthState(auth);
-  const [modalsState, setModalsState] = useRecoilState(modalState);
+  const modalsState = useRecoilValue(modalState);
   const [settingState, setSettingState] = useRecoilState(settingsModalState);
   const [loading, setLoading] = useState<boolean>(true);
   const [boardState, setBoardState] = useRecoilState(boardsState);
@@ -46,7 +46,6 @@ const ViewTaskModal: React.FC<ViewTaskModalProps> = ({ darkMode }) => {
   const [activateColumn, setActivatedColumn] = useState<string | undefined>("");
   const [isUpdatedTask, setIsUpdatedTask] = useState<boolean>(false);
   const { control, reset, watch } = useForm<BoardInputs>();
-  const [taskTimmer, setTaskTimer] = useState<number>(0);
   const [tasksList, setTasksList] = useState<number[]>([]);
   useEffect(() => {
     setActivatedColumn(
@@ -89,7 +88,6 @@ const ViewTaskModal: React.FC<ViewTaskModalProps> = ({ darkMode }) => {
   }, [activateColumn, modalsState, reset]);
 
   const toggleSubtask = async (subTaskId: number) => {
-    setTaskTimer(0);
     const updatedSubtask = currentTask?.subtasks.map((item) =>
       item.id === subTaskId ? { ...item, isCompleted: !item.isCompleted } : item
     );

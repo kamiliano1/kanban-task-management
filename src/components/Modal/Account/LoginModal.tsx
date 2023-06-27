@@ -1,17 +1,17 @@
-import React, { useEffect, useState } from "react";
+import { boardsState } from "@/src/atoms/boardsAtom";
+import { modalState } from "@/src/atoms/modalAtom";
+import { settingsModalState } from "@/src/atoms/settingsModalAtom";
+import { auth, firestore } from "@/src/firebase/clientApp";
 import * as Dialog from "@radix-ui/react-dialog";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { doc, getDoc } from "firebase/firestore";
+import React, { useEffect } from "react";
 import {
   useAuthState,
   useSignInWithEmailAndPassword,
 } from "react-firebase-hooks/auth";
-import { auth, firestore } from "@/src/firebase/clientApp";
-import ButtonPrimarySmall from "../../Layout/Input/Button/ButtonPrimarySmall";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { useRecoilState } from "recoil";
-import { modalState } from "@/src/atoms/modalAtom";
-import { doc, getDoc } from "firebase/firestore";
-import { boardsState } from "@/src/atoms/boardsAtom";
-import { settingsModalState } from "@/src/atoms/settingsModalAtom";
+import ButtonPrimarySmall from "../../Layout/Input/Button/ButtonPrimarySmall";
 type LoginModalProps = { darkMode: boolean };
 
 const LoginModal: React.FC<LoginModalProps> = ({ darkMode }) => {
@@ -26,6 +26,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ darkMode }) => {
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<loginUserInputs>();
   const [signInWithEmailAndPassword, userName, loading, firebaseError] =
@@ -55,10 +56,10 @@ const LoginModal: React.FC<LoginModalProps> = ({ darkMode }) => {
     };
     if (userName) {
       setModalsState((prev) => ({ ...prev, open: false }));
-
+      reset({ email: "", password: "" });
       getUserData();
     }
-  }, [setBoardState, setModalsState, setSettingsState, user, userName]);
+  }, [reset, setBoardState, setModalsState, setSettingsState, user, userName]);
   return (
     <Dialog.Portal>
       <Dialog.Content

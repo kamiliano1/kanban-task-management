@@ -10,9 +10,6 @@ type DropMenuProps = {
   columnsName: string[];
 };
 
-// 'text-[13px] leading-none text-violet11 rounded-[3px] flex items-center h-[25px] pr-[35px] pl-[25px] relative select-none data-[disabled]:text-mauve8 data-[disabled]:pointer-events-none data-[highlighted]:outline-none data-[highlighted]:bg-violet9 data-[highlighted]:text-violet1',
-
-// eslint-disable-next-line react/display-name
 const DropMenu = forwardRef<HTMLButtonElement, DropMenuProps>(
   ({ value, onChange, darkMode, columnsName }, ref) => {
     const selectElements = columnsName.map((item) => (
@@ -67,5 +64,5 @@ const DropMenu = forwardRef<HTMLButtonElement, DropMenuProps>(
     );
   }
 );
-
+DropMenu.displayName = "DropMenu";
 export default DropMenu;

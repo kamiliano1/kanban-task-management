@@ -1,12 +1,12 @@
 import { modalState } from "@/src/atoms/modalAtom";
 import { settingsModalState } from "@/src/atoms/settingsModalAtom";
 import React from "react";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 
 type AddColumnProps = {};
 
 const AddColumn: React.FC<AddColumnProps> = () => {
-  const [settingState, setSettingsState] = useRecoilState(settingsModalState);
+  const settingState = useRecoilValue(settingsModalState);
   const [modalsState, setModalsState] = useRecoilState(modalState);
   const darkMode = settingState.darkMode;
   return (

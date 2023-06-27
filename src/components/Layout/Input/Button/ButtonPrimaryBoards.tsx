@@ -1,13 +1,13 @@
 import { boardMobileModalState } from "@/src/atoms/boardsMobileModalAtom";
+import { auth, firestore } from "@/src/firebase/clientApp";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import React, { useState } from "react";
+import { doc, updateDoc } from "firebase/firestore";
+import React from "react";
+import { useAuthState } from "react-firebase-hooks/auth";
 import { MdOutlineSpaceDashboard } from "react-icons/md";
 import { useRecoilState } from "recoil";
 import { settingsModalState } from "../../../../atoms/settingsModalAtom";
-import { auth, firestore } from "@/src/firebase/clientApp";
-import { doc, updateDoc } from "firebase/firestore";
-import { useAuthState } from "react-firebase-hooks/auth";
 type ButtonPrimaryBoardsProps = { buttonLabel: string };
 
 const ButtonPrimaryBoards: React.FC<ButtonPrimaryBoardsProps> = ({

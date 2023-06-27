@@ -1,14 +1,13 @@
-import React from "react";
-import { modalState } from "@/src/atoms/modalAtom";
-import { FaUser } from "react-icons/fa";
-import { useRecoilState } from "recoil";
-import { settingsModalState } from "../../atoms/settingsModalAtom";
-import { signOut } from "firebase/auth";
 import { auth } from "@/src/firebase/clientApp";
+import { signOut } from "firebase/auth";
+import React from "react";
+import { FaUser } from "react-icons/fa";
+import { useRecoilValue } from "recoil";
+import { settingsModalState } from "../../atoms/settingsModalAtom";
 type LogoutButtonProps = {};
 
 const LogoutButton: React.FC<LogoutButtonProps> = () => {
-  const [settingState, setSettingState] = useRecoilState(settingsModalState);
+  const settingState = useRecoilValue(settingsModalState);
   const darkMode = settingState.darkMode;
   const logout = async () => {
     await signOut(auth);

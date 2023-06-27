@@ -1,10 +1,9 @@
 "use client";
-import React from "react";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import * as CheckBox from "@radix-ui/react-checkbox";
 import { CheckIcon } from "@radix-ui/react-icons";
-import { useSortable } from "@dnd-kit/sortable";
-import style from "styled-jsx/style";
-import { CSS } from "@dnd-kit/utilities";
+import React from "react";
 import { RxDragHandleHorizontal } from "react-icons/rx";
 type CheckboxProps = {
   darkMode: boolean;

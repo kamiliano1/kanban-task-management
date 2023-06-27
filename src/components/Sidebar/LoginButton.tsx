@@ -1,12 +1,12 @@
 import { modalState } from "@/src/atoms/modalAtom";
 import React from "react";
 import { AiOutlineUser } from "react-icons/ai";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { settingsModalState } from "../../atoms/settingsModalAtom";
 type LoginButtonProps = {};
 
 const LoginButton: React.FC<LoginButtonProps> = () => {
-  const [settingState, setSettingState] = useRecoilState(settingsModalState);
+  const settingState = useRecoilValue(settingsModalState);
   const [modalsState, setModalsState] = useRecoilState(modalState);
   const darkMode = settingState.darkMode;
 

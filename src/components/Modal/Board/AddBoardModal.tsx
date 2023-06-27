@@ -1,28 +1,6 @@
-import * as Dialog from "@radix-ui/react-dialog";
-import React, { useEffect, useRef, useState } from "react";
-import AddElementInput from "../../Layout/Input/AddElementInput";
-import ButtonPrimarySmall from "../../Layout/Input/Button/ButtonPrimarySmall";
-import ButtonSecondary from "../../Layout/Input/Button/ButtonSecondary";
 import { modalState } from "@/src/atoms/modalAtom";
 import { settingsModalState } from "@/src/atoms/settingsModalAtom";
-import { customAlphabet } from "nanoid";
-import { SubmitHandler, useForm } from "react-hook-form";
-import { useRecoilState } from "recoil";
-import { boardsState } from "../../../atoms/boardsAtom";
-import { BoardType, ColumnType } from "../../Board/BoardType";
-import {
-  CollectionReference,
-  DocumentData,
-  Timestamp,
-  collection,
-  doc,
-  serverTimestamp,
-  setDoc,
-  updateDoc,
-} from "firebase/firestore";
-import { auth, firestore, storage } from "@/src/firebase/clientApp";
-import { useCollectionData } from "react-firebase-hooks/firestore";
-import { useAuthState } from "react-firebase-hooks/auth";
+import { auth, firestore } from "@/src/firebase/clientApp";
 import {
   DndContext,
   DragEndEvent,
@@ -36,6 +14,18 @@ import {
   arrayMove,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
+import * as Dialog from "@radix-ui/react-dialog";
+import { doc, updateDoc } from "firebase/firestore";
+import { customAlphabet } from "nanoid";
+import React, { useEffect, useRef, useState } from "react";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { useRecoilState } from "recoil";
+import { boardsState } from "../../../atoms/boardsAtom";
+import { BoardType, ColumnType } from "../../Board/BoardType";
+import AddElementInput from "../../Layout/Input/AddElementInput";
+import ButtonPrimarySmall from "../../Layout/Input/Button/ButtonPrimarySmall";
+import ButtonSecondary from "../../Layout/Input/Button/ButtonSecondary";
 const nanoid = customAlphabet("1234567890", 15);
 type AddBoardModalProps = {
   darkMode: boolean;
@@ -53,16 +43,13 @@ const AddBoardModal: React.FC<AddBoardModalProps> = ({ darkMode }) => {
   const firstNameRef = useRef<HTMLInputElement | null>(null);
   const [columnsListId, setColumnsListId] = useState<number[]>([]);
 
-  // const [docs, loading, error, snapshot] = useCollectionData(collectionRef);
-  // console.log(docs);
-
   const {
     register,
     handleSubmit,
     watch,
-    setFocus,
+
     reset,
-    setError,
+
     formState: { errors },
   } = useForm<BoardInputs>();
   const [newBoard, setNewBoard] = useState<BoardType>({

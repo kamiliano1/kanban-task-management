@@ -1,18 +1,15 @@
-import React, { useEffect, useState } from "react";
-import { TaskType } from "./BoardType";
-import ColumnElement from "./ColumnElement";
+import { boardsState } from "@/src/atoms/boardsAtom";
+import { useDroppable } from "@dnd-kit/core";
 import {
   SortableContext,
-  horizontalListSortingStrategy,
-  rectSwappingStrategy,
   useSortable,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { TfiHandDrag } from "react-icons/tfi";
+import React, { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
-import { boardsState } from "@/src/atoms/boardsAtom";
-import { useDroppable } from "@dnd-kit/core";
+import { TaskType } from "./BoardType";
+import ColumnElement from "./ColumnElement";
 type BoardColumnProps = {
   columnName: string;
   taskQty: number;
@@ -29,7 +26,6 @@ const BoardColumn: React.FC<BoardColumnProps> = ({
   columnNumber,
 }) => {
   type DotColor = "bg-[#49C4E5]" | "bg-[#8471F2]" | "bg-[#67E2AE]";
-  const [boardState, setBoardState] = useRecoilState(boardsState);
   const [dotColor, setDotColor] = useState<DotColor>("bg-[#67E2AE]");
   const [taskListId, setTaskListId] = useState<number[]>([]);
 
@@ -40,13 +36,7 @@ const BoardColumn: React.FC<BoardColumnProps> = ({
   }, [tasks]);
 
   const { setNodeRef } = useDroppable({ id: columnId.toString() });
-  const {
-    attributes,
-    listeners,
-    setNodeRef: setNodeRefSortable,
-    transform,
-    transition,
-  } = useSortable({ id: columnName });
+  const { transform, transition } = useSortable({ id: columnName });
   const columnElements = tasks?.map((item) => (
     <ColumnElement
       key={item.id}
@@ -56,10 +46,6 @@ const BoardColumn: React.FC<BoardColumnProps> = ({
       columnId={columnId}
     />
   ));
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-  };
 
   useEffect(() => {
     const purpleDotId = [1, 4, 7, 10, 13];
@@ -75,30 +61,19 @@ const BoardColumn: React.FC<BoardColumnProps> = ({
   }, [columnNumber]);
 
   return (
-    <div
-      className="pl-6 touch-none self-start"
-      // ref={setNodeRefSortable}
-      // style={style}
-      // {...attributes}
-    >
+    <div className="pl-6 touch-none self-start">
       <SortableContext
         id={columnId.toString()}
         items={taskListId}
         strategy={verticalListSortingStrategy}
       >
         <div className="flex items-center pb-6 w-[280px]" ref={setNodeRef}>
-          {/* <div className="flex items-center pb-6 w-[280px] " ref={setNodeRef}> */}
           <span
             className={`${dotColor} w-[15px] aspect-square rounded-full mr-3`}
           ></span>
           <h2 className="text-mediumGrey text-600">
             {columnName} ({taskQty})
           </h2>
-
-          {/* <TfiHandDrag
-            {...listeners}
-            className="ml-auto text-[1.5rem] text-mediumGrey"
-          /> */}
         </div>
         {columnElements}
       </SortableContext>

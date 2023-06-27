@@ -1,19 +1,16 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import {
-  useCreateUserWithEmailAndPassword,
-  useSignInWithEmailAndPassword,
-} from "react-firebase-hooks/auth";
-import { auth, firestore } from "../../../firebase/clientApp";
-import * as Dialog from "@radix-ui/react-dialog";
-import { SubmitHandler, useForm } from "react-hook-form";
-import ButtonPrimarySmall from "../../Layout/Input/Button/ButtonPrimarySmall";
-import { useRecoilState } from "recoil";
+import { boardsState } from "@/src/atoms/boardsAtom";
 import { modalState } from "@/src/atoms/modalAtom";
+import { settingsModalState } from "@/src/atoms/settingsModalAtom";
+import * as Dialog from "@radix-ui/react-dialog";
 import { User } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
-import { boardsState } from "@/src/atoms/boardsAtom";
-import { settingsModalState } from "@/src/atoms/settingsModalAtom";
+import React, { useEffect, useState } from "react";
+import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { useRecoilState } from "recoil";
+import { auth, firestore } from "../../../firebase/clientApp";
+import ButtonPrimarySmall from "../../Layout/Input/Button/ButtonPrimarySmall";
 type RegisterModalProps = { darkMode: boolean };
 type createUserInputs = {
   email: string;
@@ -48,9 +45,11 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ darkMode }) => {
     }
 
     createUserWithEmailAndPassword(data.email, data.password);
+  };
+  useEffect(() => {
     if (firebaseError?.message)
       setError("A user with that email already exists");
-  };
+  }, [firebaseError?.message]);
   useEffect(() => {
     const createUserDocument = async (user: User) => {
       const userDocRef = doc(firestore, "users", user.uid);
@@ -62,7 +61,6 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ darkMode }) => {
             board: [],
             isSidebarOpen: settingState.isSidebarOpen,
             isDarkMode: settingState.darkMode,
-            // activatedBoard:""
           })
         )
       );
@@ -179,11 +177,6 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ darkMode }) => {
               {error}
             </p>
           )}
-          {/* {firebaseError?.message && (
-            <p className={`text-500 ${darkMode ? "text-white" : "text-black"}`}>
-              A user with that email already exists
-            </p>
-          )} */}
           <ButtonPrimarySmall buttonLabel="Register" loading={loading} />
         </form>
 

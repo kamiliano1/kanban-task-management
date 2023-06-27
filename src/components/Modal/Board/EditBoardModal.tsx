@@ -41,14 +41,14 @@ const EditBoardModal: React.FC<EditBoardModalProps> = ({ darkMode }) => {
   const [errorBoardName, setErrorBoardName] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
   const [columnsListId, setColumnsListId] = useState<number[]>([]);
-  const firstNameRef = useRef<HTMLInputElement | null>(null);
+
   const {
     register,
     handleSubmit,
     watch,
-    setFocus,
+
     reset,
-    setError,
+
     setValue,
     formState: { errors },
   } = useForm<BoardInputs>();
@@ -97,7 +97,6 @@ const EditBoardModal: React.FC<EditBoardModalProps> = ({ darkMode }) => {
   };
 
   useEffect(() => {
-    // console.log("editBoard1");
     if (loading) {
       setNewBoard(
         boardState.filter((item) => item.name === settingState.activeBoard)[0]
@@ -109,8 +108,6 @@ const EditBoardModal: React.FC<EditBoardModalProps> = ({ darkMode }) => {
 
   const addColumn = () => {
     const columnId = parseInt(nanoid());
-    console.log(columnId);
-
     setNewBoard((prev) => ({
       ...prev,
       columns: [...prev.columns, { name: "", id: columnId, tasks: [] }],

@@ -1,6 +1,6 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import React from "react";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { boardsState } from "../../../atoms/boardsAtom";
 import { modalState } from "../../../atoms/modalAtom";
 import { settingsModalState } from "../../../atoms/settingsModalAtom";
@@ -15,7 +15,7 @@ type DeleteTaskModalProps = { darkMode: boolean };
 
 const DeleteTaskModal: React.FC<DeleteTaskModalProps> = ({ darkMode }) => {
   const [user] = useAuthState(auth);
-  const [settingState, setSettingState] = useRecoilState(settingsModalState);
+  const settingState = useRecoilValue(settingsModalState);
   const [modalStates, setModalStates] = useRecoilState(modalState);
   const [boardState, setBoardState] = useRecoilState(boardsState);
   const deleteTask = async () => {
@@ -40,29 +40,6 @@ const DeleteTaskModal: React.FC<DeleteTaskModalProps> = ({ darkMode }) => {
       }
       return board;
     });
-    // setBoardState((prev) => {
-    //   return prev.map((board) => {
-    //     if (board.name === settingState.activeBoard) {
-    //       let columns = board.columns;
-
-    //       let activatedColumn = columns.find(
-    //         (cols) => cols.id === settingState.activateColumn
-    //       );
-    //       let remainingTasks = activatedColumn?.tasks;
-
-    //       remainingTasks = remainingTasks?.filter(
-    //         (task) => task.id !== settingState.activateTask
-    //       );
-    //       columns = columns.map((cols) => {
-    //         if (cols.id === settingState.activateColumn)
-    //           return { ...cols, tasks: remainingTasks as TaskType[] };
-    //         return cols;
-    //       });
-    //       return { ...board, columns: columns };
-    //     }
-    //     return board;
-    //   });
-    // });
     setBoardState(updatedBoard);
     if (user) {
       const boardRef = doc(firestore, `users/${user?.uid}`);
@@ -81,7 +58,8 @@ const DeleteTaskModal: React.FC<DeleteTaskModalProps> = ({ darkMode }) => {
            darkMode ? "bg-darkGrey" : "bg-white"
          }
           p-[25px] shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px]
-          focus:outline-none`}>
+          focus:outline-none`}
+      >
         <Dialog.Title className="text-red text-800  pb-6">
           Delete this task?
         </Dialog.Title>

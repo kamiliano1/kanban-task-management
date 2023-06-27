@@ -44,19 +44,14 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ darkMode }) => {
   const [columnsName, setColumnsName] = useState<string[]>([]);
   const [tasksList, setTasksList] = useState<number[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const firstNameRef = useRef<HTMLInputElement | null>(null);
   const {
     register,
     handleSubmit,
-    watch,
-    setFocus,
     reset,
-    setError,
     setValue,
     control,
     formState: { errors },
   } = useForm<BoardInputs>();
-  // currentTask, setCurrentTask
   const [currentTask, setCurrentTask] = useState<TaskType>({
     title: "",
     status: "",

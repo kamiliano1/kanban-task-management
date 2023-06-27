@@ -40,20 +40,13 @@ import DropMenu from "../Layout/Input/DropMenu";
 type BoardProps = {};
 
 const Board: React.FC<BoardProps> = () => {
-  const nanoid = customAlphabet("1234567890", 15);
   const [settingState, setSettingsState] = useRecoilState(settingsModalState);
-  const [modalsState, setModalsState] = useRecoilState(modalState);
   const [boardState, setBoardState] = useRecoilState(boardsState);
-  const [newBoardState, setNewBoardState] = useState<BoardType[]>(boardState);
   const [loading, setLoading] = useState<boolean>(true);
-  // const [isColumnMoved, setIsColumnMoved] = useState(false);
-  // const [user] = useAuthState(auth);
-  const [isElementMoved, setIsElementMoved] = useState<boolean>(false);
   const [user, firebaseLoading, error] = useAuthState(auth);
   const [activatedBoard, setActivatedBoard] = useState<BoardType>(
     boardState[0]
   );
-  const [columnsListId, setColumnsListId] = useState<string[]>(["addColumn"]);
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
@@ -61,7 +54,6 @@ const Board: React.FC<BoardProps> = () => {
       },
     })
   );
-
   const [activeDragTask, setActiveDragTask] = useState<TaskType | null>();
   useEffect(() => {
     const activeBoard = settingState.activeBoard;
@@ -274,12 +266,11 @@ const Board: React.FC<BoardProps> = () => {
 
     setActiveDragTask(null);
   };
-
+  const updatedBoard = boardState.map((board) =>
+    board.name === settingState.activeBoard ? activatedBoard : board
+  );
   useEffect(() => {
     const updateBoardState = setTimeout(async () => {
-      const updatedBoard = boardState.map((board) =>
-        board.name === settingState.activeBoard ? activatedBoard : board
-      );
       setBoardState(updatedBoard);
       if (user) {
         const boardRef = doc(firestore, `users/${user?.uid}`);
@@ -290,8 +281,7 @@ const Board: React.FC<BoardProps> = () => {
     }, 400);
     updateBoardState;
     return () => clearTimeout(updateBoardState);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activatedBoard]);
+  }, [activatedBoard, setBoardState, updatedBoard, user]);
 
   return (
     <div
@@ -315,13 +305,8 @@ const Board: React.FC<BoardProps> = () => {
                     onDragEnd={handleDragDrop}
                     sensors={sensors}
                   >
-                    {/* <SortableContext
-                      items={columnsListId}
-                      strategy={horizontalListSortingStrategy}
-                    > */}
                     {activatedColumns}
                     <AddColumn />
-                    {/* </SortableContext> */}
                     {
                       <DragOverlay>
                         {activeDragTask ? (

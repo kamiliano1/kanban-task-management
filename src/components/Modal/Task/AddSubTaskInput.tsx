@@ -1,11 +1,10 @@
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import React, { useEffect, useState } from "react";
 import { FieldErrors, UseFormRegister } from "react-hook-form";
 import { ImCross } from "react-icons/im";
-import { SubtasksType } from "../../Board/BoardType";
-import { useSortable } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
-import style from "styled-jsx/style";
 import { RxDragHandleHorizontal } from "react-icons/rx";
+import { SubtasksType } from "../../Board/BoardType";
 interface TaskFormInputs {
   title: string;
   description: string;

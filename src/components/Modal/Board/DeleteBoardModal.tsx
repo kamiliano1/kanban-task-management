@@ -22,9 +22,6 @@ const DeleteBoardModal: React.FC<DeleteBoardModalProps> = ({ darkMode }) => {
     const remainingBoards = boardState.filter((item) => {
       return item.name !== settingState.activeBoard;
     });
-    // setBoardState((prev) =>
-    //   prev.filter((item) => item.name !== settingState.activeBoard)
-    // );
     const updatedBoard = boardState.filter(
       (board) => board.name !== settingState.activeBoard
     );
@@ -50,7 +47,8 @@ const DeleteBoardModal: React.FC<DeleteBoardModalProps> = ({ darkMode }) => {
          darkMode ? "bg-darkGrey" : "bg-white"
        }
         p-[25px] shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px]
-        focus:outline-none`}>
+        focus:outline-none`}
+      >
         <Dialog.Title className="text-red text-800 pb-6">
           Delete this board?
         </Dialog.Title>

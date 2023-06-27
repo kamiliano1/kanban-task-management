@@ -1,22 +1,17 @@
-import React from "react";
-import * as Dialog from "@radix-ui/react-dialog";
-import { useRecoilState, useRecoilValue } from "recoil";
 import { modalState } from "@/src/atoms/modalAtom";
-import { BiDotsVerticalRounded } from "react-icons/bi";
-import Checkbox from "../Layout/Input/Checkbox";
-import DropMenu from "../Layout/Input/DropMenu";
-import EditTaskModal from "./Task/EditTaskModal";
-import ViewTaskModal from "./Task/ViewTaskModal";
-import AllBoardsMobileModal from "./AllBoardsMobileModal";
 import { settingsModalState } from "@/src/atoms/settingsModalAtom";
-import { boardMobileModalState } from "../../atoms/boardsMobileModalAtom";
+import * as Dialog from "@radix-ui/react-dialog";
+import React from "react";
+import { useRecoilState, useRecoilValue } from "recoil";
+import LoginModal from "./Account/LoginModal";
+import RegisterModal from "./Account/RegisterModal";
 import AddBoardModal from "./Board/AddBoardModal";
 import DeleteBoardModal from "./Board/DeleteBoardModal";
 import EditBoardModal from "./Board/EditBoardModal";
 import AddTaskModal from "./Task/AddTaskModal";
 import DeleteTaskModal from "./Task/DeleteTaskModal";
-import LoginModal from "./Account/LoginModal";
-import RegisterModal from "./Account/RegisterModal";
+import EditTaskModal from "./Task/EditTaskModal";
+import ViewTaskModal from "./Task/ViewTaskModal";
 
 type ModalProps = {};
 
