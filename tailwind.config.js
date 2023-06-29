@@ -97,14 +97,8 @@ module.exports = {
           to: { opacity: 1 },
         },
         contentShow: {
-          from: {
-            opacity: 0,
-            transform: "translate(-50%, -48%) scale(0.96)",
-          },
-          to: {
-            opacity: 1,
-            transform: "translate(-50%, -50%) scale(1)",
-          },
+          from: { opacity: 0, transform: "translate(-50%, -48%) scale(0.96)" },
+          to: { opacity: 1, transform: "translate(-50%, -50%) scale(1)" },
         },
         boardMobileShow: {
           from: {
@@ -119,7 +113,7 @@ module.exports = {
             top: "70px",
           },
           to: {
-            top: "-320px",
+            top: "-520px",
           },
         },
         sliderOpen: {
@@ -130,27 +124,15 @@ module.exports = {
           from: { transform: "translateX(0)" },
           to: { transform: "translateX(-100%)" },
         },
-        boardPaddingOpen: {
-          from: { transform: "translateX(0)" },
-          to: { transform: "translateX(-100%)" },
-        },
-        boardPaddingClose: {
-          from: { paddingRight: "24px" },
-          to: { paddingRight: "clamp(285px,23vw,324px)" },
-        },
       },
       animation: {
         overlayShow: "overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1)",
-        contentShow: "contentShow 1000ms cubic-bezier(0.16, 1, 0.3, 1)",
-        boardMobileShow: "boardMobileShow 1000ms cubic-bezier(0.16, 1, 0.3, 1)",
+        contentShow: "contentShow 150ms cubic-bezier(0.16, 1, 0.3, 1)",
+        boardMobileShow: "boardMobileShow 500ms cubic-bezier(0.16, 1, 0.3, 1)",
         boardMobileHidden:
           "boardMobileHidden 1000ms cubic-bezier(0.16, 1, 0.3, 1)",
         sliderOpen: "sliderOpen 1000ms cubic-bezier(0.16, 1, 0.3, 1)",
         sliderClose: "sliderClose 1000ms cubic-bezier(0.16, 1, 0.3, 1)",
-        boardPaddingOpen:
-          "boardPaddingOpen 5000ms cubic-bezier(0.16, 1, 0.3, 1)",
-        boardPaddingClose:
-          "boardPaddingClose 5000ms cubic-bezier(0.16, 1, 0.3, 1)",
       },
     },
   },

@@ -42,7 +42,6 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ darkMode }) => {
   const [user] = useAuthState(auth);
   const [modalsState, setModalsState] = useRecoilState(modalState);
   const [targetColumnId, setTargetColumnId] = useState<number>();
-
   const [targetTaskId, setTargetTaskId] = useState<number>();
   const [isUpdatedTask, setIsUpdatedTask] = useState<boolean>(false);
   const [boardState, setBoardState] = useRecoilState(boardsState);
@@ -50,6 +49,7 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ darkMode }) => {
   const [errorBoardName, setErrorBoardName] = useState<string>("");
   const [columnsName, setColumnsName] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [newBoard, setNewBoard] = useState<BoardType[]>([]);
   const [activateColumn, setActivatedColumn] = useState<string | undefined>("");
   const [currentTask, setCurrentTask] = useState<TaskType>();
   const [tasksList, setTasksList] = useState<number[]>([]);
@@ -70,22 +70,6 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ darkMode }) => {
     );
   }, [boardState, settingState.activateColumn, settingState.activeBoard]);
   useEffect(() => {
-    if (isUpdatedTask) {
-      setSettingState((prev) => ({
-        ...prev,
-        activateColumn: targetColumnId as number,
-        activateTask: targetTaskId as number,
-      }));
-      setIsUpdatedTask(false);
-    }
-  }, [
-    isUpdatedTask,
-    modalsState.view,
-    setSettingState,
-    targetColumnId,
-    targetTaskId,
-  ]);
-  useEffect(() => {
     if (loading) {
       const currentBoard = boardState.find(
         (item) => item.name === settingState.activeBoard
@@ -100,9 +84,10 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ darkMode }) => {
             (item) => item.id === settingState.activateTask
           )
         );
+        setNewBoard(boardState);
         setValue("title", currentTask?.title as string);
         setValue("description", currentTask?.description as string);
-        setValue("status", currentTask?.status as string);
+        setValue("status", activateColumn as string);
         currentTask?.subtasks.map((subtask) => {
           setValue(`subtasks.${subtask.id}.title`, subtask.title);
         });
@@ -110,6 +95,7 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ darkMode }) => {
       if (currentTask) setLoading(false);
     }
   }, [
+    activateColumn,
     boardState,
     currentTask,
     currentTask?.description,
@@ -127,52 +113,6 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ darkMode }) => {
       setTasksList(currentTask?.subtasks?.map((sub) => sub.id));
   }, [currentTask?.subtasks]);
 
-  const updateStatus = () => {
-    setIsUpdatedTask(true);
-    setBoardState((prev) => {
-      return prev.map((board) => {
-        if (board.name === settingState.activeBoard) {
-          let columns = board.columns;
-          let targetColumn = columns.find(
-            (cols) => cols.name === watch("status")
-          );
-
-          let activatedColumn = columns.find(
-            (cols) => cols.id === settingState.activateColumn
-          );
-          let targetTasks = targetColumn?.tasks;
-          let activatedTasks = activatedColumn?.tasks;
-          let taskToMove = activatedTasks?.find(
-            (task) => task.id === settingState.activateTask
-          );
-          taskToMove = {
-            ...(taskToMove as TaskType),
-            status: watch("status"),
-          };
-          targetTasks = [
-            ...(targetTasks as TaskType[]),
-            taskToMove as TaskType,
-          ];
-          activatedTasks = activatedTasks?.filter(
-            (task) => task.id !== taskToMove?.id
-          );
-          setTargetColumnId(targetColumn?.id);
-          setTargetTaskId(taskToMove.id);
-          if (activatedColumn?.name === targetColumn?.name) return board;
-          columns = columns.map((cols) => {
-            if (cols.name === watch("status"))
-              return { ...cols, tasks: targetTasks as TaskType[] };
-            if (cols.id === settingState.activateColumn)
-              return { ...cols, tasks: activatedTasks as TaskType[] };
-            return cols;
-          });
-          return { ...board, columns: columns };
-        }
-        return board;
-      });
-    });
-  };
-
   useEffect(() => {
     if (isUpdatedTask) {
       setSettingState((prev) => ({
@@ -180,13 +120,12 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ darkMode }) => {
         activateColumn: targetColumnId as number,
         activateTask: targetTaskId as number,
       }));
-      setModalsState((prev) => ({ ...prev, view: "viewTask" }));
       setIsUpdatedTask(false);
     }
   }, [
     isUpdatedTask,
     modalsState.view,
-    setModalsState,
+    setBoardState,
     setSettingState,
     targetColumnId,
     targetTaskId,
@@ -212,8 +151,6 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ darkMode }) => {
     }));
   };
   const onSubmit: SubmitHandler<BoardInputs> = async (data) => {
-    setIsUpdatedTask(true);
-    updateStatus();
     const updatedSubtasks = currentTask?.subtasks.map((subtask) => {
       return { ...subtask, title: data.subtasks[subtask.id].title };
     });
@@ -224,13 +161,12 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ darkMode }) => {
       id: currentTask?.id as number,
       subtasks: updatedSubtasks as SubtasksType[],
     };
+
     const updatedBoard = boardState.map((board) => {
       if (board.name === settingState.activeBoard) {
         const activatedColumns = board.columns.map((col) => {
           if (col.name === getValues("status")) {
             const updatedTask = col.tasks.map((task) => {
-              if (task.id === editedTask?.id) {
-              }
               return task.id === editedTask?.id ? editedTask : task;
             });
             return { ...col, tasks: updatedTask };
@@ -241,19 +177,66 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ darkMode }) => {
       }
       return board;
     });
-
-    setBoardState(updatedBoard);
+    // console.log(editedTask);
+    setNewBoard(updatedBoard);
+    updateStatus(updatedBoard);
+    setTimeout(() => {
+      // setModalsState((prev) => ({ ...prev, view: "viewTask" }));
+    }, 10);
+  };
+  const updateStatus = async (updatedBoard: BoardType[]) => {
+    setIsUpdatedTask(true);
+    const updatedBoardd = updatedBoard.map((board) => {
+      if (board.name === settingState.activeBoard) {
+        let columns = board.columns;
+        let targetColumn = columns.find(
+          (cols) => cols.name === watch("status")
+        );
+        let activatedColumn = columns.find(
+          (cols) => cols.id === settingState.activateColumn
+        );
+        let targetTasks = targetColumn?.tasks;
+        let activatedTasks = activatedColumn?.tasks;
+        let taskToMove = activatedTasks?.find(
+          (task) => task.id === settingState.activateTask
+        );
+        taskToMove = {
+          ...(taskToMove as TaskType),
+          status: watch("status"),
+        };
+        targetTasks = [...(targetTasks as TaskType[]), taskToMove as TaskType];
+        activatedTasks = activatedTasks?.filter(
+          (task) => task.id !== taskToMove?.id
+        );
+        setTargetColumnId(targetColumn?.id);
+        setTargetTaskId(taskToMove.id);
+        if (activatedColumn?.name === targetColumn?.name) return board;
+        columns = columns.map((cols) => {
+          if (cols.name === watch("status"))
+            return { ...cols, tasks: targetTasks as TaskType[] };
+          if (cols.id === settingState.activateColumn)
+            return { ...cols, tasks: activatedTasks as TaskType[] };
+          return cols;
+        });
+        return { ...board, columns: columns };
+      }
+      return board;
+    });
+    setBoardState(updatedBoardd);
+    setNewBoard(updatedBoardd);
     if (user) {
       const boardRef = doc(firestore, `users/${user?.uid}`);
       await updateDoc(boardRef, {
-        board: updatedBoard,
+        board: updatedBoardd,
       });
     }
   };
 
+  useEffect(() => {
+    setBoardState(newBoard);
+  }, [loading, newBoard, setBoardState]);
   const handleDragDrop = async (e: DragEndEvent) => {
     if (e.active.id === e.over?.id) return;
-
     const updatedBoard = boardState.map((board) => {
       if (board.name === settingState.activeBoard) {
         let columns = board.columns;
@@ -294,6 +277,7 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ darkMode }) => {
       }
       return board;
     });
+    setBoardState(updatedBoard);
   };
 
   const sensors = useSensors(
@@ -314,34 +298,23 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ darkMode }) => {
       number={number}
     />
   ));
-
   return (
-    <Dialog.Portal>
-      <Dialog.Content
-        className={`data-[state=open]:animate-contentShow fixed top-[50%] left-[50%] max-h-[85vh] w-[90vw] max-w-[450px]
-     translate-x-[-50%] translate-y-[-50%] rounded-[6px] z-[30] ${
-       darkMode ? "bg-darkGrey" : "bg-white"
-     }
-      p-[25px] shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px]
-      focus:outline-none`}
+    <>
+      <Dialog.Title
+        className={` ${darkMode ? "text-white" : "text-black"} text-800 pb-4`}
       >
-        <Dialog.Title
-          className={` ${darkMode ? "text-white" : "text-black"} text-800 pb-4`}
+        Edit Task
+      </Dialog.Title>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <p
+          className={`text-400 pb-2 ${darkMode ? "text-white" : "text-black"}`}
         >
-          Edit Task
-        </Dialog.Title>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <p
-            className={`text-400 pb-2 ${
-              darkMode ? "text-white" : "text-black"
-            }`}
-          >
-            Title
-          </p>
-          <div className="relative">
-            <input
-              placeholder="e.g. Take coffee break"
-              className={`text-500 placeholder:text-black
+          Title
+        </p>
+        <div className="relative">
+          <input
+            placeholder="e.g. Take coffee break"
+            className={`text-500 placeholder:text-black
             FormLabel placeholder:opacity-25 px-4 py-2 rounded border-[1px] mb-5
              ${
                errors.title || errorBoardName
@@ -353,93 +326,90 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ darkMode }) => {
                   ? "text-white bg-[#2B2C37] placeholder:text-white"
                   : "text-black placeholder:text-black"
               }`}
-              {...register("title", {
-                required: true,
-              })}
-            />
-            {errors.title && (
-              <span className="absolute text-red text-500 left-[70%] top-[.6rem]">
-                Can`t be empty
-              </span>
-            )}
-            <p
-              className={`text-400 pb-2 ${
-                darkMode ? "text-white" : "text-black"
-              }`}
-            >
-              Description
-            </p>
-            <textarea
-              className={`text-500 placeholder:text-black w-full h-[112px]
+            {...register("title", {
+              required: true,
+            })}
+          />
+          {errors.title && (
+            <span className="absolute text-red text-500 left-[70%] top-[.6rem]">
+              Can`t be empty
+            </span>
+          )}
+          <p
+            className={`text-400 pb-2 ${
+              darkMode ? "text-white" : "text-black"
+            }`}
+          >
+            Description
+          </p>
+          <textarea
+            className={`text-500 placeholder:text-black w-full h-[112px]
                         FormLabel placeholder:opacity-25 px-4 py-2 rounded border-[1px] 
                          border-[rgba(130,_143,_163,_0.25)] mb-5 ${
                            darkMode
                              ? "text-white bg-[#2B2C37] placeholder:text-white"
                              : "text-black placeholder:text-black"
                          }`}
-              placeholder="e.g. It`s always good to take a break. This 15 minute break will 
+            placeholder="e.g. It`s always good to take a break. This 15 minute break will 
             recharge the batteries a little."
-              {...register("description", {
-                required: false,
-              })}
-            />
-            <p
-              className={`text-400 pb-2 ${
-                darkMode ? "text-white" : "text-black"
-              }`}
-            >
-              Subtasks
-            </p>
-          </div>
-          <DndContext
-            collisionDetection={closestCenter}
-            onDragEnd={handleDragDrop}
-            sensors={sensors}
-          >
-            <SortableContext
-              items={tasksList}
-              strategy={verticalListSortingStrategy}
-            >
-              <div className="overflow-auto scrollbar overflow-x-clip pr-1 max-h-[200px] mb-4">
-                {subTasks}
-              </div>
-            </SortableContext>
-          </DndContext>
-
-          <ButtonSecondary
-            darkMode={darkMode}
-            buttonLabel="+ Add New Subtask"
-            cssClasses="mb-6"
-            buttonAction={addSubTask}
+            {...register("description", {
+              required: false,
+            })}
           />
           <p
             className={`text-400 pb-2 ${
               darkMode ? "text-white" : "text-black"
             }`}
           >
-            Status
+            Subtasks
           </p>
-          <Controller
-            control={control}
-            name="status"
-            defaultValue={activateColumn}
-            render={({ field: { onChange, value, ref } }) => (
-              <DropMenu
-                darkMode={darkMode}
-                onChange={onChange}
-                value={value}
-                columnsName={columnsName}
-                ref={ref}
-              />
-            )}
-          />
-          <ButtonPrimarySmall
-            buttonLabel="Save Changes"
-            buttonAction={() => handleSubmit(onSubmit)}
-          />
-        </form>
-      </Dialog.Content>
-    </Dialog.Portal>
+        </div>
+        <DndContext
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragDrop}
+          sensors={sensors}
+        >
+          <SortableContext
+            items={tasksList}
+            strategy={verticalListSortingStrategy}
+          >
+            <div className="overflow-auto scrollbar overflow-x-clip pr-1 max-h-[200px] mb-4">
+              {subTasks}
+            </div>
+          </SortableContext>
+        </DndContext>
+
+        <ButtonSecondary
+          darkMode={darkMode}
+          buttonLabel="+ Add New Subtask"
+          cssClasses="mb-6"
+          buttonAction={addSubTask}
+        />
+        <p
+          className={`text-400 pb-2 ${darkMode ? "text-white" : "text-black"}`}
+        >
+          Status
+        </p>
+        <Controller
+          control={control}
+          name="status"
+          defaultValue={activateColumn}
+          render={({ field: { onChange, value, ref } }) => (
+            <DropMenu
+              darkMode={darkMode}
+              onChange={onChange}
+              value={value}
+              columnsName={columnsName}
+              ref={ref}
+            />
+          )}
+        />
+        <ButtonPrimarySmall
+          buttonLabel="Save Changes"
+          buttonAction={() => handleSubmit(onSubmit)}
+        />
+      </form>
+    </>
   );
 };
 export default EditTaskModal;

@@ -169,32 +169,22 @@ const EditBoardModal: React.FC<EditBoardModalProps> = ({ darkMode }) => {
     })
   );
   return (
-    <Dialog.Portal>
-      <Dialog.Content
-        className={`data-[state=open]:animate-contentShow fixed top-[50%] left-[50%] max-h-[85vh] w-[90vw] max-w-[450px]
- translate-x-[-50%] translate-y-[-50%] rounded-[6px] z-[30] ${
-   darkMode ? "bg-darkGrey" : "bg-white"
- }
-  p-[25px] shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px]
-  focus:outline-none`}
+    <>
+      <Dialog.Title
+        className={` ${darkMode ? "text-white" : "text-black"} text-800 pb-4`}
       >
-        <Dialog.Title
-          className={` ${darkMode ? "text-white" : "text-black"} text-800 pb-4`}
+        Edit Board
+      </Dialog.Title>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <h3
+          className={`text-400 pb-2 ${darkMode ? "text-white" : "text-black"}`}
         >
-          Edit Board
-        </Dialog.Title>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <h3
-            className={`text-400 pb-2 ${
-              darkMode ? "text-white" : "text-black"
-            }`}
-          >
-            Board Name
-          </h3>
-          <div className="relative ">
-            <input
-              placeholder="e.g. Web Design"
-              className={`text-500 placeholder:text-black
+          Board Name
+        </h3>
+        <div className="relative ">
+          <input
+            placeholder="e.g. Web Design"
+            className={`text-500 placeholder:text-black
         FormLabel placeholder:opacity-25 px-4 py-2 rounded border-[1px]
          ${
            errors.name || errorBoardName
@@ -206,55 +196,54 @@ const EditBoardModal: React.FC<EditBoardModalProps> = ({ darkMode }) => {
               ? "text-white bg-[#2B2C37] placeholder:text-white"
               : "text-black placeholder:text-black"
           }`}
-              {...register("name", {
-                required: true,
-              })}
-            />
-            {errors.name && (
-              <span className="absolute text-red text-500 left-[70%] top-[.6rem]">
-                Can`t be empty
-              </span>
-            )}
-            {errorBoardName && (
-              <span className="absolute text-red text-500 left-[65%] top-[.6rem]">
-                {errorBoardName}
-              </span>
-            )}
-          </div>
-          <h3
-            className={`text-400 pb-2 mt-6 ${
-              darkMode ? "text-white" : "text-black"
-            }`}
-          >
-            Boards Columns
-          </h3>
-          <DndContext
-            collisionDetection={closestCenter}
-            onDragEnd={handleDragDrop}
-            sensors={sensors}
-          >
-            <SortableContext
-              items={columnsListId}
-              strategy={verticalListSortingStrategy}
-            >
-              <div className="overflow-auto scrollbar overflow-x-clip pr-1 max-h-[200px] mb-4">
-                {columns}
-              </div>
-            </SortableContext>
-          </DndContext>
-          <ButtonSecondary
-            darkMode={darkMode}
-            buttonLabel="+ Add New Column"
-            cssClasses="mb-6"
-            buttonAction={addColumn}
+            {...register("name", {
+              required: true,
+            })}
           />
-          <ButtonPrimarySmall
-            buttonLabel="Save Changes"
-            buttonAction={() => handleSubmit(onSubmit)}
-          />
-        </form>
-      </Dialog.Content>
-    </Dialog.Portal>
+          {errors.name && (
+            <span className="absolute text-red text-500 left-[70%] top-[.6rem]">
+              Can`t be empty
+            </span>
+          )}
+          {errorBoardName && (
+            <span className="absolute text-red text-500 left-[65%] top-[.6rem]">
+              {errorBoardName}
+            </span>
+          )}
+        </div>
+        <h3
+          className={`text-400 pb-2 mt-6 ${
+            darkMode ? "text-white" : "text-black"
+          }`}
+        >
+          Boards Columns
+        </h3>
+        <DndContext
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragDrop}
+          sensors={sensors}
+        >
+          <SortableContext
+            items={columnsListId}
+            strategy={verticalListSortingStrategy}
+          >
+            <div className="overflow-auto scrollbar overflow-x-clip pr-1 max-h-[200px] mb-4">
+              {columns}
+            </div>
+          </SortableContext>
+        </DndContext>
+        <ButtonSecondary
+          darkMode={darkMode}
+          buttonLabel="+ Add New Column"
+          cssClasses="mb-6"
+          buttonAction={addColumn}
+        />
+        <ButtonPrimarySmall
+          buttonLabel="Save Changes"
+          buttonAction={() => handleSubmit(onSubmit)}
+        />
+      </form>
+    </>
   );
 };
 export default EditBoardModal;

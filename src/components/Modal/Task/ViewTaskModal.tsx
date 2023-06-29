@@ -264,80 +264,65 @@ const ViewTaskModal: React.FC<ViewTaskModalProps> = ({ darkMode }) => {
     }
   };
   return (
-    <Dialog.Portal>
-      <Dialog.Overlay
-        className="bg-blackA9 data-[state=open]:animate-overlayShow 
-      fixed inset-0"
-      />
-      <Dialog.Content
-        className={`data-[state=open]:animate-contentShow 
-        fixed top-[50%] left-[50%] max-h-[85vh] w-[90vw] max-w-[450px]
-         translate-x-[-50%] translate-y-[-50%] rounded-[6px] z-[30] ${
-           darkMode ? "bg-darkGrey" : "bg-white"
-         }
-          p-[25px] 
-          shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px]
-          focus:outline-none`}
+    <>
+      <Dialog.Title
+        className={` ${darkMode ? "text-white" : "text-black"} text-800`}
       >
-        <Dialog.Title
-          className={` ${darkMode ? "text-white" : "text-black"} text-800`}
+        <div className="flex items-center justify-between">
+          <p> {currentTask?.title}</p>
+          <TaskDropDownMenu />
+        </div>
+      </Dialog.Title>
+      <Dialog.Description className="text-mediumGrey my-[1.5rem] text-500">
+        {currentTask?.description}
+      </Dialog.Description>
+      <Dialog.Description
+        className={` pb-4 text-500 ${
+          darkMode ? "text-white" : "text-mediumGrey"
+        }`}
+      >
+        Subtasks ({completedTask} of {currentTask?.subtasks.length})
+      </Dialog.Description>
+      <DndContext
+        collisionDetection={closestCenter}
+        onDragEnd={handleDragDrop}
+        sensors={sensors}
+      >
+        <SortableContext
+          items={tasksList}
+          strategy={verticalListSortingStrategy}
         >
-          <div className="flex items-center justify-between">
-            <p> {currentTask?.title}</p>
-            <TaskDropDownMenu />
+          <div className="overflow-auto scrollbar overflow-x-clip pr-1 max-h-[200px] mb-4">
+            {checkBox}
           </div>
-        </Dialog.Title>
-        <Dialog.Description className="text-mediumGrey my-[1.5rem] text-500">
-          {currentTask?.description}
-        </Dialog.Description>
-        <Dialog.Description
-          className={` pb-4 text-500 ${
-            darkMode ? "text-white" : "text-mediumGrey"
-          }`}
-        >
-          Subtasks ({completedTask} of {currentTask?.subtasks.length})
-        </Dialog.Description>
-        <DndContext
-          collisionDetection={closestCenter}
-          onDragEnd={handleDragDrop}
-          sensors={sensors}
-        >
-          <SortableContext
-            items={tasksList}
-            strategy={verticalListSortingStrategy}
-          >
-            <div className="overflow-auto scrollbar overflow-x-clip pr-1 max-h-[200px] mb-4">
-              {checkBox}
-            </div>
-          </SortableContext>
-        </DndContext>
-        <p
-          className={` text-400 pt-4 pb-2 ${
-            darkMode ? "text-white" : "text-mediumGrey"
-          }`}
-        >
-          Current Status
-        </p>
-        <Controller
-          control={control}
-          name="status"
-          defaultValue={activateColumn}
-          render={({ field: { onChange, value, ref } }) => (
-            <DropMenu
-              darkMode={darkMode}
-              onChange={(...event: any[]) => {
-                onChange(event);
-                setActivatedColumn(event[0]);
-                updateStatus();
-              }}
-              value={activateColumn ? activateColumn : value}
-              columnsName={columnsName}
-              ref={ref}
-            />
-          )}
-        />
-      </Dialog.Content>
-    </Dialog.Portal>
+        </SortableContext>
+      </DndContext>
+      <p
+        className={` text-400 pt-4 pb-2 ${
+          darkMode ? "text-white" : "text-mediumGrey"
+        }`}
+      >
+        Current Status
+      </p>
+      <Controller
+        control={control}
+        name="status"
+        defaultValue={activateColumn}
+        render={({ field: { onChange, value, ref } }) => (
+          <DropMenu
+            darkMode={darkMode}
+            onChange={(...event: any[]) => {
+              onChange(event);
+              setActivatedColumn(event[0]);
+              updateStatus();
+            }}
+            value={activateColumn ? activateColumn : value}
+            columnsName={columnsName}
+            ref={ref}
+          />
+        )}
+      />
+    </>
   );
 };
 export default ViewTaskModal;

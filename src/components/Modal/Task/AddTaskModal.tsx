@@ -238,29 +238,21 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ darkMode }) => {
     })
   );
   return (
-    <Dialog.Portal>
-      <Dialog.Content
-        className={`data-[state=open]:animate-contentShow fixed top-[50%] left-[50%] max-h-[85vh] w-[90vw] max-w-[450px]
-     translate-x-[-50%] translate-y-[-50%] rounded-[6px] z-[30] ${
-       darkMode ? "bg-darkGrey" : "bg-white"
-     }
-      p-[25px] shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px]
-      focus:outline-none`}
+    <>
+      <Dialog.Title
+        className={` ${darkMode ? "text-white" : "text-black"} text-800 pb-4`}
       >
-        <Dialog.Title
-          className={` ${darkMode ? "text-white" : "text-black"} text-800 pb-4`}
-        >
-          Add New Task
-        </Dialog.Title>
+        Add New Task
+      </Dialog.Title>
 
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <p className={`${darkMode ? "text-white" : "text-black"} pb-2`}>
-            Title
-          </p>
-          <div className="relative">
-            <input
-              placeholder="e.g. Take coffee break"
-              className={`text-500 placeholder:text-black
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <p className={`${darkMode ? "text-white" : "text-black"} pb-2`}>
+          Title
+        </p>
+        <div className="relative">
+          <input
+            placeholder="e.g. Take coffee break"
+            className={`text-500 placeholder:text-black
             FormLabel placeholder:opacity-25 px-4 py-2 rounded border-[1px] mb-5
              ${
                errors.title || errorBoardName
@@ -272,82 +264,81 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ darkMode }) => {
                   ? "text-white bg-[#2B2C37] placeholder:text-white"
                   : "text-black placeholder:text-black"
               }`}
-              {...register("title", {
-                required: true,
-              })}
-            />
-            {errors.title && (
-              <span className="absolute text-red text-500 left-[60%] sm:left-[70%] top-[.6rem]">
-                Can`t be empty
-              </span>
-            )}
-            <p className={`${darkMode ? "text-white" : "text-black"} pb-2`}>
-              Description
-            </p>
-            <textarea
-              className={`text-500 placeholder:text-black w-full h-[112px]
+            {...register("title", {
+              required: true,
+            })}
+          />
+          {errors.title && (
+            <span className="absolute text-red text-500 left-[60%] sm:left-[70%] top-[.6rem]">
+              Can`t be empty
+            </span>
+          )}
+          <p className={`${darkMode ? "text-white" : "text-black"} pb-2`}>
+            Description
+          </p>
+          <textarea
+            className={`text-500 placeholder:text-black w-full h-[112px]
                         FormLabel placeholder:opacity-25 px-4 py-2 rounded border-[1px] 
                          border-[rgba(130,_143,_163,_0.25)] mb-5 ${
                            darkMode
                              ? "text-white bg-[#2B2C37] placeholder:text-white"
                              : "text-black placeholder:text-black"
                          }`}
-              placeholder="e.g. It`s always good to take a break. This 15 minute break will 
+            placeholder="e.g. It`s always good to take a break. This 15 minute break will 
             recharge the batteries a little."
-              {...register("description", {
-                required: false,
-              })}
-            />
-            <p className={`${darkMode ? "text-white" : "text-black"} pb-2`}>
-              Subtasks
-            </p>
-          </div>
-
-          <DndContext
-            collisionDetection={closestCenter}
-            onDragEnd={handleDragDrop}
-            sensors={sensors}
-          >
-            <SortableContext
-              items={tasksList}
-              strategy={verticalListSortingStrategy}
-            >
-              <div className="overflow-auto scrollbar overflow-x-clip pr-1 max-h-[200px] mb-4">
-                {subTasks}
-              </div>
-            </SortableContext>
-          </DndContext>
-          <ButtonSecondary
-            darkMode={darkMode}
-            buttonLabel="+ Add New Subtask"
-            cssClasses="mb-6"
-            buttonAction={addSubTask}
+            {...register("description", {
+              required: false,
+            })}
           />
           <p className={`${darkMode ? "text-white" : "text-black"} pb-2`}>
-            Status
+            Subtasks
           </p>
+        </div>
 
-          <Controller
-            control={control}
-            name="status"
-            defaultValue={columnsName[0]}
-            render={({ field: { onChange, value, ref } }) => (
-              <DropMenu
-                darkMode={darkMode}
-                onChange={onChange}
-                value={value}
-                columnsName={columnsName}
-                ref={ref}
-              />
-            )}
-          />
-          <ButtonPrimarySmall
-            buttonLabel="Create Task"
-            buttonAction={() => handleSubmit(onSubmit)}
-          />
-        </form>
-      </Dialog.Content>
-    </Dialog.Portal>
+        <DndContext
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragDrop}
+          sensors={sensors}
+        >
+          <SortableContext
+            items={tasksList}
+            strategy={verticalListSortingStrategy}
+          >
+            <div className="overflow-auto scrollbar overflow-x-clip pr-1 max-h-[200px] mb-4">
+              {subTasks}
+            </div>
+          </SortableContext>
+        </DndContext>
+        <ButtonSecondary
+          darkMode={darkMode}
+          buttonLabel="+ Add New Subtask"
+          cssClasses="mb-6"
+          buttonAction={addSubTask}
+        />
+        <p className={`${darkMode ? "text-white" : "text-black"} pb-2`}>
+          Status
+        </p>
+
+        <Controller
+          control={control}
+          name="status"
+          defaultValue={columnsName[0]}
+          render={({ field: { onChange, value, ref } }) => (
+            <DropMenu
+              darkMode={darkMode}
+              onChange={onChange}
+              value={value}
+              columnsName={columnsName}
+              ref={ref}
+            />
+          )}
+        />
+        <ButtonPrimarySmall
+          buttonLabel="Create Task"
+          buttonAction={() => handleSubmit(onSubmit)}
+        />
+      </form>
+    </>
   );
 };
 export default AddTaskModal;

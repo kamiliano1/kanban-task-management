@@ -19,7 +19,7 @@ const TaskDropDownMenu: React.FC<TaskDropDownMenuProps> = () => {
       </DropdownMenu.Trigger>
       <DropdownMenu.Portal>
         <DropdownMenu.Content
-          className={` flex text-mediumGrey  z-[300] mx-6 mt-[2rem]
+          className={` flex text-mediumGrey z-[300] mx-6 mt-[2rem]
       flex-col w-[192px] p-4 gap-4 space-y-2 rounded-lg ${
         darkMode ? "bg-veryDarkGrey " : "bg-white "
       } `}
