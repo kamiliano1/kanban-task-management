@@ -46,11 +46,10 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ darkMode }) => {
   const [isUpdatedTask, setIsUpdatedTask] = useState<boolean>(false);
   const [boardState, setBoardState] = useRecoilState(boardsState);
   const [settingState, setSettingState] = useRecoilState(settingsModalState);
-  const [errorBoardName, setErrorBoardName] = useState<string>("");
   const [columnsName, setColumnsName] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [newBoard, setNewBoard] = useState<BoardType[]>([]);
-  const [activateColumn, setActivatedColumn] = useState<string | undefined>("");
+  const [activateColumn, setActivateColumn] = useState<string | undefined>("");
   const [currentTask, setCurrentTask] = useState<TaskType>();
   const [tasksList, setTasksList] = useState<number[]>([]);
   const loaded = useRef(false);
@@ -63,15 +62,31 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ darkMode }) => {
     control,
     formState: { errors },
   } = useForm<BoardInputs>();
+  // useEffect(() => {
+  //   console.log("Jeden");
+  //   // setActivateColumn(
+  //   //   boardState
+  //   //     .find((board) => board.name === settingState.activeBoard)
+  //   //     ?.columns.find((task) => task.id === settingState.activateColumn)?.name
+  //   // );
+  //   // setValue("status", activateColumn as string);
+  // }, [
+  //   activateColumn,
+  //   boardState,
+  //   settingState.activateColumn,
+  //   settingState.activeBoard,
+  // ]);
   useEffect(() => {
-    setActivatedColumn(
-      boardState
-        .find((board) => board.name === settingState.activeBoard)
-        ?.columns.find((task) => task.id === settingState.activateColumn)?.name
-    );
-  }, [boardState, settingState.activateColumn, settingState.activeBoard]);
-  useEffect(() => {
+    console.log("Dwa");
+
     if (loading) {
+      console.log("Dwa w ifise");
+      setActivateColumn(
+        boardState
+          .find((board) => board.name === settingState.activeBoard)
+          ?.columns.find((task) => task.id === settingState.activateColumn)
+          ?.name
+      );
       const currentBoard = boardState.find(
         (item) => item.name === settingState.activeBoard
       );
@@ -85,6 +100,11 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ darkMode }) => {
             (item) => item.id === settingState.activateTask
           )
         );
+        setCurrentTask((prev) => ({
+          ...(prev as TaskType),
+          status: activatedColumn?.name as string,
+        }));
+
         setNewBoard(boardState);
         setValue("title", currentTask?.title as string);
         setValue("description", currentTask?.description as string);
@@ -96,13 +116,8 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ darkMode }) => {
       if (currentTask) setLoading(false);
     }
   }, [
-    activateColumn,
     boardState,
     currentTask,
-    currentTask?.description,
-    currentTask?.status,
-    currentTask?.subtasks,
-    currentTask?.title,
     loading,
     setValue,
     settingState.activateColumn,
@@ -110,11 +125,13 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ darkMode }) => {
     settingState.activeBoard,
   ]);
   useEffect(() => {
+    console.log("Trzy");
     if (currentTask?.subtasks.length)
       setTasksList(currentTask?.subtasks?.map((sub) => sub.id));
   }, [currentTask?.subtasks]);
 
   useEffect(() => {
+    console.log("Cztery");
     if (isUpdatedTask) {
       setSettingState((prev) => ({
         ...prev,
@@ -141,7 +158,7 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ darkMode }) => {
       ],
     }));
   };
-
+  console.log(boardState);
   const deleteSubTask = (subTaskId: number) => {
     const updatedColumns = currentTask?.subtasks.filter(
       (item) => item.id !== subTaskId
@@ -184,7 +201,6 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ darkMode }) => {
       }
       return board;
     });
-    // setNewBoard(updatedBoard);
     updateStatus(updatedBoard, editedTask);
     setTimeout(() => {
       setModalsState((prev) => ({ ...prev, view: "viewTask" }));
@@ -193,11 +209,9 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ darkMode }) => {
   };
 
   useEffect(() => {
+    console.log("Pięć");
     loaded.current && setBoardState(newBoard);
   }, [newBoard, setBoardState]);
-  // useEffect(() => {
-  //   loaded.current && console.log("zmianaaaa");
-  // }, [newBoard, setBoardState]);
 
   const updateStatus = async (
     updatedBoard: BoardType[],
@@ -241,9 +255,7 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ darkMode }) => {
       }
       return board;
     });
-    // console.log(updatedBoardd);
     setBoardState(updatedBoardd);
-    // setNewBoard(updatedBoardd);
     if (user) {
       const boardRef = doc(firestore, `users/${user?.uid}`);
       await updateDoc(boardRef, {
@@ -252,9 +264,10 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ darkMode }) => {
     }
   };
 
-  useEffect(() => {
-    setBoardState(newBoard);
-  }, [loading, newBoard, setBoardState]);
+  // useEffect(() => {
+  //   console.log("Szesc");
+  //   setBoardState(newBoard);
+  // }, [loading, newBoard, setBoardState]);
   const handleDragDrop = async (e: DragEndEvent) => {
     if (e.active.id === e.over?.id) return;
     const updatedBoard = boardState.map((board) => {
@@ -321,14 +334,12 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ darkMode }) => {
   return (
     <>
       <Dialog.Title
-        className={` ${darkMode ? "text-white" : "text-black"} text-800 pb-4`}
-      >
+        className={` ${darkMode ? "text-white" : "text-black"} text-800 pb-4`}>
         Edit Task
       </Dialog.Title>
       <form onSubmit={handleSubmit(onSubmit)}>
         <p
-          className={`text-400 pb-2 ${darkMode ? "text-white" : "text-black"}`}
-        >
+          className={`text-400 pb-2 ${darkMode ? "text-white" : "text-black"}`}>
           Title
         </p>
         <div className="relative">
@@ -337,7 +348,7 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ darkMode }) => {
             className={`text-500 placeholder:text-black
             FormLabel placeholder:opacity-25 px-4 py-2 rounded border-[1px] mb-5
              ${
-               errors.title || errorBoardName
+               errors.title
                  ? "border-red"
                  : "border-[rgba(130,_143,_163,_0.25)]"
              }
@@ -358,8 +369,7 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ darkMode }) => {
           <p
             className={`text-400 pb-2 ${
               darkMode ? "text-white" : "text-black"
-            }`}
-          >
+            }`}>
             Description
           </p>
           <textarea
@@ -379,20 +389,17 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ darkMode }) => {
           <p
             className={`text-400 pb-2 ${
               darkMode ? "text-white" : "text-black"
-            }`}
-          >
+            }`}>
             Subtasks
           </p>
         </div>
         <DndContext
           collisionDetection={closestCenter}
           onDragEnd={handleDragDrop}
-          sensors={sensors}
-        >
+          sensors={sensors}>
           <SortableContext
             items={tasksList}
-            strategy={verticalListSortingStrategy}
-          >
+            strategy={verticalListSortingStrategy}>
             <div className="overflow-auto scrollbar overflow-x-clip pr-1 max-h-[200px] mb-4">
               {subTasks}
             </div>
@@ -406,8 +413,7 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ darkMode }) => {
           buttonAction={addSubTask}
         />
         <p
-          className={`text-400 pb-2 ${darkMode ? "text-white" : "text-black"}`}
-        >
+          className={`text-400 pb-2 ${darkMode ? "text-white" : "text-black"}`}>
           Status
         </p>
         <Controller
