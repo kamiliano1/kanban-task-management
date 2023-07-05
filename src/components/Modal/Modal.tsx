@@ -36,13 +36,6 @@ const Modal: React.FC<ModalProps> = () => {
         bg-black opacity-50 fixed inset-0 z-[15]
         "
         />
-
-        {/* <Dialog.Content
-          className="data-[state=open] fixed top-[50%]
-         left-[50%] max-h-[85vh] w-[90vw] max-w-[450px] translate-x-[-50%] translate-y-[-50%] rounded-[6px]
-           p-[25px] 
-          focus:outline-none"
-        > */}
         <Dialog.Content
           className={`data-[state=open]:animate-overlayShow fixed top-[50%] left-[50%] max-w-[450px] max-h-[85vh] w-[90vw]
      translate-x-[-50%] translate-y-[-50%] rounded-[6px] z-[30] ${

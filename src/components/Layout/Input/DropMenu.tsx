@@ -12,10 +12,10 @@ type DropMenuProps = {
 
 const DropMenu = forwardRef<HTMLButtonElement, DropMenuProps>(
   ({ value, onChange, darkMode, columnsName }, ref) => {
-    const selectElements = columnsName.map((item) => (
+    const selectElements = columnsName.map((item, id) => (
       <Select.Item
         value={item}
-        key={item}
+        key={id}
         className={`text-500
       rounded-[8px] py-2
       select-none data-[disabled]:pointer-events-none

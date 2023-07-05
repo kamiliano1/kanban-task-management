@@ -35,6 +35,7 @@ const DeleteBoardModal: React.FC<DeleteBoardModalProps> = ({ darkMode }) => {
       const boardRef = doc(firestore, `users/${user?.uid}`);
       await updateDoc(boardRef, {
         board: updatedBoard,
+        activeBoard: remainingBoards.length ? remainingBoards[0].name : "",
       });
     }
   };

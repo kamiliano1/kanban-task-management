@@ -1,15 +1,13 @@
-import { customAlphabet } from "nanoid";
 import React, { useEffect, useRef, useState } from "react";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState } from "recoil";
 import { boardsState } from "../../atoms/boardsAtom";
 import { settingsModalState } from "../../atoms/settingsModalAtom";
 import BoardColumn from "./BoardColumn";
-import { BoardType, ColumnType, SubtasksType, TaskType } from "./BoardType";
+import { BoardType, TaskType } from "./BoardType";
 
-import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 
-import { modalState } from "@/src/atoms/modalAtom";
+import { auth, firestore } from "@/src/firebase/clientApp";
 import {
   DndContext,
   DragEndEvent,
@@ -20,23 +18,15 @@ import {
   closestCenter,
   useSensor,
   useSensors,
-  useDroppable,
 } from "@dnd-kit/core";
-import {
-  SortableContext,
-  arrayMove,
-  horizontalListSortingStrategy,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
-import AddColumn from "./AddColumn";
-import ColumnElement from "./ColumnElement";
-import NoBoardSection from "./NoBoardSection";
-import NoColumnSection from "./NoColumnSection";
-import { auth, firestore } from "@/src/firebase/clientApp";
+import { arrayMove } from "@dnd-kit/sortable";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { useAuthState } from "react-firebase-hooks/auth";
+import AddColumn from "./AddColumn";
+import ColumnElement from "./ColumnElement";
 import ColumnsSkeleton from "./ColumnsSkeleton";
-import DropMenu from "../Layout/Input/DropMenu";
+import NoBoardSection from "./NoBoardSection";
+import NoColumnSection from "./NoColumnSection";
 type BoardProps = {};
 
 const Board: React.FC<BoardProps> = () => {
@@ -47,7 +37,6 @@ const Board: React.FC<BoardProps> = () => {
   const [activatedBoard, setActivatedBoard] = useState<BoardType>(
     boardState[0]
   );
-  const loadingRef = useRef(true);
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
@@ -99,7 +88,6 @@ const Board: React.FC<BoardProps> = () => {
   ]);
 
   useEffect(() => {
-    console.log("Board 1");
     if (!settingState.isLoaded)
       setTimeout(() => {
         setSettingsState((prev) => ({ ...prev, isLoaded: true }));
@@ -107,19 +95,12 @@ const Board: React.FC<BoardProps> = () => {
   }, [setBoardState, setSettingsState, settingState.isLoaded]);
   const darkMode = settingState.darkMode;
   const activeBoard = settingState.activeBoard;
+  const currentBoard = boardState.filter(
+    (board) => board.name === activeBoard
+  )[0];
   useEffect(() => {
-    console.log("Board 2");
-    setActivatedBoard(
-      boardState.filter((board) => board.name === activeBoard)[0]
-    );
-  }, [activeBoard, boardState, settingState]);
-  // useEffect(() => {
-  //   if (activatedBoard) {
-  //     setColumnsListId(activatedBoard.columns.map((column) => column.name));
-
-  //     setColumnsListId((prev) => [...prev, "addColumn"]);
-  //   }
-  // }, [activatedBoard]);
+    setActivatedBoard(currentBoard);
+  }, [currentBoard, settingState]);
   const activatedColumns = activatedBoard
     ? activatedBoard.columns.map((item, number) => (
         <BoardColumn
@@ -268,23 +249,31 @@ const Board: React.FC<BoardProps> = () => {
     });
 
     setActiveDragTask(null);
-    setBoardState(updatedBoard);
   };
-  const updatedBoard = boardState.map((board) =>
-    board.name === settingState.activeBoard ? activatedBoard : board
-  );
+
   useEffect(() => {
     const updateBoardState = setTimeout(async () => {
-      if (user) {
-        const boardRef = doc(firestore, `users/${user?.uid}`);
-        await updateDoc(boardRef, {
-          board: updatedBoard,
-        });
-      }
+      setBoardState((prev) =>
+        prev.map((board) =>
+          board.name === settingState.activeBoard ? activatedBoard : board
+        )
+      );
     }, 400);
     updateBoardState;
     return () => clearTimeout(updateBoardState);
-  }, [boardState, updatedBoard, user]);
+  }, [activatedBoard, setBoardState, settingState.activeBoard]);
+
+  useEffect(() => {
+    const updateFirebase = async () => {
+      if (user) {
+        const boardRef = doc(firestore, `users/${user?.uid}`);
+        await updateDoc(boardRef, {
+          board: boardState,
+        });
+      }
+    };
+    if (activeDragTask) updateFirebase();
+  }, [activeDragTask, boardState, user]);
   return (
     <div
       className={`${
@@ -292,7 +281,8 @@ const Board: React.FC<BoardProps> = () => {
       } w-full flex overflow-x-auto min-h-[calc(100vh_-_clamp(64.75px,_10vw,_97px))]
       pt-6 pr-6 pb-2 ${
         settingState.isSidebarOpen && "pl-[clamp(285px,_23vw,_300px)]"
-      }`}>
+      }`}
+    >
       {settingState.isLoaded ? (
         <>
           {boardState.length ? (
@@ -304,7 +294,8 @@ const Board: React.FC<BoardProps> = () => {
                     onDragStart={handleDragStart}
                     onDragOver={handleDragOver}
                     onDragEnd={handleDragDrop}
-                    sensors={sensors}>
+                    sensors={sensors}
+                  >
                     {activatedColumns}
                     <AddColumn />
                     {

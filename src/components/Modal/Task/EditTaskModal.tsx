@@ -62,25 +62,8 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ darkMode }) => {
     control,
     formState: { errors },
   } = useForm<BoardInputs>();
-  // useEffect(() => {
-  //   console.log("Jeden");
-  //   // setActivateColumn(
-  //   //   boardState
-  //   //     .find((board) => board.name === settingState.activeBoard)
-  //   //     ?.columns.find((task) => task.id === settingState.activateColumn)?.name
-  //   // );
-  //   // setValue("status", activateColumn as string);
-  // }, [
-  //   activateColumn,
-  //   boardState,
-  //   settingState.activateColumn,
-  //   settingState.activeBoard,
-  // ]);
   useEffect(() => {
-    console.log("Dwa");
-
     if (loading) {
-      console.log("Dwa w ifise");
       setActivateColumn(
         boardState
           .find((board) => board.name === settingState.activeBoard)
@@ -125,13 +108,11 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ darkMode }) => {
     settingState.activeBoard,
   ]);
   useEffect(() => {
-    console.log("Trzy");
     if (currentTask?.subtasks.length)
       setTasksList(currentTask?.subtasks?.map((sub) => sub.id));
   }, [currentTask?.subtasks]);
 
   useEffect(() => {
-    console.log("Cztery");
     if (isUpdatedTask) {
       setSettingState((prev) => ({
         ...prev,
@@ -158,7 +139,6 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ darkMode }) => {
       ],
     }));
   };
-  console.log(boardState);
   const deleteSubTask = (subTaskId: number) => {
     const updatedColumns = currentTask?.subtasks.filter(
       (item) => item.id !== subTaskId
@@ -209,7 +189,6 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ darkMode }) => {
   };
 
   useEffect(() => {
-    console.log("Pięć");
     loaded.current && setBoardState(newBoard);
   }, [newBoard, setBoardState]);
 
@@ -263,11 +242,6 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ darkMode }) => {
       });
     }
   };
-
-  // useEffect(() => {
-  //   console.log("Szesc");
-  //   setBoardState(newBoard);
-  // }, [loading, newBoard, setBoardState]);
   const handleDragDrop = async (e: DragEndEvent) => {
     if (e.active.id === e.over?.id) return;
     const updatedBoard = boardState.map((board) => {
@@ -334,12 +308,14 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ darkMode }) => {
   return (
     <>
       <Dialog.Title
-        className={` ${darkMode ? "text-white" : "text-black"} text-800 pb-4`}>
+        className={` ${darkMode ? "text-white" : "text-black"} text-800 pb-4`}
+      >
         Edit Task
       </Dialog.Title>
       <form onSubmit={handleSubmit(onSubmit)}>
         <p
-          className={`text-400 pb-2 ${darkMode ? "text-white" : "text-black"}`}>
+          className={`text-400 pb-2 ${darkMode ? "text-white" : "text-black"}`}
+        >
           Title
         </p>
         <div className="relative">
@@ -369,7 +345,8 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ darkMode }) => {
           <p
             className={`text-400 pb-2 ${
               darkMode ? "text-white" : "text-black"
-            }`}>
+            }`}
+          >
             Description
           </p>
           <textarea
@@ -389,17 +366,20 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ darkMode }) => {
           <p
             className={`text-400 pb-2 ${
               darkMode ? "text-white" : "text-black"
-            }`}>
+            }`}
+          >
             Subtasks
           </p>
         </div>
         <DndContext
           collisionDetection={closestCenter}
           onDragEnd={handleDragDrop}
-          sensors={sensors}>
+          sensors={sensors}
+        >
           <SortableContext
             items={tasksList}
-            strategy={verticalListSortingStrategy}>
+            strategy={verticalListSortingStrategy}
+          >
             <div className="overflow-auto scrollbar overflow-x-clip pr-1 max-h-[200px] mb-4">
               {subTasks}
             </div>
@@ -413,7 +393,8 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ darkMode }) => {
           buttonAction={addSubTask}
         />
         <p
-          className={`text-400 pb-2 ${darkMode ? "text-white" : "text-black"}`}>
+          className={`text-400 pb-2 ${darkMode ? "text-white" : "text-black"}`}
+        >
           Status
         </p>
         <Controller

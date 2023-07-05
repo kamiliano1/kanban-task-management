@@ -83,6 +83,7 @@ const AddBoardModal: React.FC<AddBoardModalProps> = ({ darkMode }) => {
       const boardRef = doc(firestore, `users/${user?.uid}`);
       await updateDoc(boardRef, {
         board: [...boardState, updatedBoard],
+        activeBoard: data.name,
       });
     }
   };

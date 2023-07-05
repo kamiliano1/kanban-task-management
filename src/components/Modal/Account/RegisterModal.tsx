@@ -61,6 +61,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ darkMode }) => {
             board: [],
             isSidebarOpen: settingState.isSidebarOpen,
             isDarkMode: settingState.darkMode,
+            activeBoard: settingState.activeBoard,
           })
         )
       );
@@ -73,6 +74,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ darkMode }) => {
   }, [
     setBoardState,
     setModalsState,
+    settingState.activeBoard,
     settingState.darkMode,
     settingState.isSidebarOpen,
     userCredentials,
