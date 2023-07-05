@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FieldErrors, UseFormRegister } from "react-hook-form";
 import { ImCross } from "react-icons/im";
 import { ColumnType } from "../../Board/BoardType";
@@ -10,6 +10,7 @@ interface IFormInputs {
   columns: ColumnType[];
 }
 type AddElementInputProps = {
+  number: number;
   darkMode: boolean;
   column: ColumnType;
   deleteColumn: (columnId: number) => void;
@@ -17,6 +18,7 @@ type AddElementInputProps = {
   register: UseFormRegister<IFormInputs>;
 };
 const AddElementInput: React.FC<AddElementInputProps> = ({
+  number,
   darkMode,
   column,
   deleteColumn,
@@ -30,6 +32,26 @@ const AddElementInput: React.FC<AddElementInputProps> = ({
     transition,
   };
   const [currentValue, setCurrentValue] = useState<string>("");
+  const [placeholder, setPlaceholder] = useState<string>("");
+  useEffect(() => {
+    if (number % 5 === 4) {
+      setPlaceholder("e.g. Done");
+      return;
+    }
+    if (number % 5 === 3) {
+      setPlaceholder("e.g. Testing");
+      return;
+    }
+    if (number % 5 === 2) {
+      setPlaceholder("e.g. Doing");
+      return;
+    }
+    if (number % 5 === 1) {
+      setPlaceholder("e.g. Todo");
+      return;
+    }
+    setPlaceholder("e.g. Stories");
+  }, [number]);
   return (
     <div
       className="flex items-center mb-3 relative"
@@ -57,6 +79,7 @@ const AddElementInput: React.FC<AddElementInputProps> = ({
          ? "text-white bg-[#2B2C37] placeholder:text-white"
          : "text-black placeholder:text-black"
      }`}
+        placeholder={placeholder}
         {...register(`columns.${column.id}.name`, {
           required: true,
           onChange: (e) => {

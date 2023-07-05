@@ -76,7 +76,6 @@ const AddBoardModal: React.FC<AddBoardModalProps> = ({ darkMode }) => {
       columns: columns,
     };
     setBoardState((prev) => [...prev, updatedBoard]);
-
     setModalsState((prev) => ({ ...prev, open: false }));
     setSettingState((prev) => ({ ...prev, activeBoard: data.name }));
     if (user) {
@@ -107,9 +106,10 @@ const AddBoardModal: React.FC<AddBoardModalProps> = ({ darkMode }) => {
     setErrorBoardName("");
   }, [modalsState, reset]);
 
-  const columns = newBoard.columns.map((item) => (
+  const columns = newBoard.columns.map((item, number) => (
     <AddElementInput
       key={item.id}
+      number={number}
       darkMode={darkMode}
       column={item}
       deleteColumn={deleteColumn}

@@ -139,8 +139,9 @@ const EditBoardModal: React.FC<EditBoardModalProps> = ({ darkMode }) => {
   useEffect(() => {
     setLoading(true);
   }, [modalsState]);
-  const columns = newBoard.columns.map((item) => (
+  const columns = newBoard.columns.map((item, number) => (
     <AddElementInput
+      number={number}
       key={item.id}
       darkMode={darkMode}
       column={item}

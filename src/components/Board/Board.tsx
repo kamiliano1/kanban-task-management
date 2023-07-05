@@ -46,7 +46,6 @@ const Board: React.FC<BoardProps> = () => {
   );
   const [activeDragTask, setActiveDragTask] = useState<TaskType | null>();
   useEffect(() => {
-    const activeBoard = settingState.activeBoard;
     const getUserData = async () => {
       try {
         const userDataRef = doc(firestore, "users", user!.uid);
@@ -55,9 +54,12 @@ const Board: React.FC<BoardProps> = () => {
 
         if (bookmarkData) {
           setBoardState(bookmarkData.board || []);
-          setActivatedBoard(
-            boardState.filter((board) => board.name === activeBoard)[0]
-          );
+          setSettingsState((prev) => ({
+            ...prev,
+            darkMode: bookmarkData.isDarkMode,
+            isSidebarOpen: bookmarkData.isSidebarOpen,
+            activeBoard: bookmarkData.activeBoard,
+          }));
         }
       } catch (error: any) {
         console.log("getBookmarkError", error.message);
@@ -83,6 +85,7 @@ const Board: React.FC<BoardProps> = () => {
     firebaseLoading,
     loading,
     setBoardState,
+    setSettingsState,
     settingState.activeBoard,
     user,
   ]);

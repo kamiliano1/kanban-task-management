@@ -19,7 +19,7 @@ import {
   SortableContext,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { doc, updateDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { boardsState } from "../../atoms/boardsAtom";
 import BoardsSkeleton from "./BoardsSkeleton";
@@ -42,14 +42,27 @@ const Sidebar: React.FC<SidebarProps> = () => {
     })
   );
   useEffect(() => {
+    const getUserData = async () => {
+      const userDataRef = doc(firestore, "users", user!.uid);
+      const userData = await getDoc(userDataRef);
+      const bookmarkData = userData.data();
+      setSettingState((prev) => ({
+        ...prev,
+        activeBoard: bookmarkData?.activeBoard,
+      }));
+    };
     if (loading && boardState.length) {
+      if (user) {
+        getUserData();
+        return;
+      }
       setSettingState((prev) => ({
         ...prev,
         activeBoard: boardState[0].name,
       }));
       setLoading(false);
     }
-  }, [boardState, loading, setSettingState]);
+  }, [boardState, loading, setSettingState, user]);
 
   const boardList = boardState?.map((item) => (
     <ButtonPrimaryBoards key={item.id} buttonLabel={item.name} />
