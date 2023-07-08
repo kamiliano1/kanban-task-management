@@ -13,7 +13,6 @@ type AddElementInputProps = {
   number: number;
   darkMode: boolean;
   column: ColumnType;
-  isUniqueName: boolean;
   deleteColumn: (columnId: number) => void;
   errors: FieldErrors<IFormInputs>;
   register: UseFormRegister<IFormInputs>;
@@ -26,7 +25,6 @@ const AddElementInput: React.FC<AddElementInputProps> = ({
   deleteColumn,
   errors,
   register,
-  isUniqueName,
   setError,
 }) => {
   const { attributes, listeners, setNodeRef, transform, transition } =
@@ -61,7 +59,8 @@ const AddElementInput: React.FC<AddElementInputProps> = ({
       className="flex items-center mb-3 relative"
       ref={setNodeRef}
       style={style}
-      {...attributes}>
+      {...attributes}
+    >
       <RxDragHandleHorizontal
         {...listeners}
         className={` text-[2rem] mr-2 ${
@@ -87,7 +86,7 @@ const AddElementInput: React.FC<AddElementInputProps> = ({
           required: true,
           validate: {
             unique: (v) => {
-              console.log(v);
+              // console.log(v);
               return true;
             },
           },

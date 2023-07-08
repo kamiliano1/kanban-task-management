@@ -41,15 +41,15 @@ const EditBoardModal: React.FC<EditBoardModalProps> = ({ darkMode }) => {
   const [errorBoardName, setErrorBoardName] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
   const [columnsListId, setColumnsListId] = useState<number[]>([]);
-
+  const [isNameisUnique, setIsNameisUnique] = useState<boolean>(true);
   const {
     register,
     handleSubmit,
     watch,
-
+    setError,
     reset,
-
     setValue,
+    clearErrors,
     formState: { errors },
   } = useForm<BoardInputs>();
 
@@ -59,6 +59,7 @@ const EditBoardModal: React.FC<EditBoardModalProps> = ({ darkMode }) => {
     columns: [],
   });
   const onSubmit: SubmitHandler<BoardInputs> = async (data) => {
+    setIsNameisUnique(true);
     const otherBoards = boardState.filter((item) => item.name != newBoard.name);
     if (
       otherBoards.find(
@@ -72,28 +73,39 @@ const EditBoardModal: React.FC<EditBoardModalProps> = ({ darkMode }) => {
     const columns = newBoard.columns.map((items) => {
       return { ...items, name: data.columns[items.id].name };
     });
-
+    columns.forEach((item) => {
+      if (columns.filter((cols) => item.name === cols.name).length === 1) {
+        return;
+      } else {
+        setError(`columns.${item.id}`, {
+          type: "uniqueName",
+        });
+        setIsNameisUnique(false);
+      }
+    });
+    // if (!isNameisUnique) return;
     const readyBoard: BoardType = {
       name: data.name,
       id: newBoard.id,
       columns: columns,
     };
-
-    setBoardState((prev) =>
-      prev.map((item) => (item.id === readyBoard.id ? readyBoard : item))
-    );
-
-    setModalsState((prev) => ({ ...prev, open: false }));
-    setSettingState((prev) => ({ ...prev, activeBoard: data.name }));
-    if (user) {
-      const updatedBoard = boardState.map((board) =>
-        board.id === newBoard.id ? readyBoard : board
-      );
-      const boardRef = doc(firestore, `users/${user?.uid}`);
-      await updateDoc(boardRef, {
-        board: updatedBoard,
-      });
+    if (isNameisUnique) {
+      console.log("zmiana");
     }
+    // setBoardState((prev) =>
+    //   prev.map((item) => (item.id === readyBoard.id ? readyBoard : item))
+    // );
+    // setModalsState((prev) => ({ ...prev, open: false }));
+    // setSettingState((prev) => ({ ...prev, activeBoard: data.name }));
+    // if (user) {
+    //   const updatedBoard = boardState.map((board) =>
+    //     board.id === newBoard.id ? readyBoard : board
+    //   );
+    //   const boardRef = doc(firestore, `users/${user?.uid}`);
+    //   await updateDoc(boardRef, {
+    //     board: updatedBoard,
+    //   });
+    // }
   };
 
   useEffect(() => {
@@ -139,6 +151,10 @@ const EditBoardModal: React.FC<EditBoardModalProps> = ({ darkMode }) => {
   useEffect(() => {
     setLoading(true);
   }, [modalsState]);
+
+  const clearInputErrors = () => {
+    clearErrors("columns");
+  };
   const columns = newBoard.columns.map((item, number) => (
     <AddElementInput
       number={number}
@@ -148,6 +164,7 @@ const EditBoardModal: React.FC<EditBoardModalProps> = ({ darkMode }) => {
       deleteColumn={deleteColumn}
       errors={errors}
       register={register}
+      setError={clearInputErrors}
     />
   ));
   const handleDragDrop = async (e: DragEndEvent) => {
@@ -172,13 +189,15 @@ const EditBoardModal: React.FC<EditBoardModalProps> = ({ darkMode }) => {
   return (
     <>
       <Dialog.Title
-        className={` ${darkMode ? "text-white" : "text-black"} text-800 pb-4`}>
+        className={` ${darkMode ? "text-white" : "text-black"} text-800 pb-4`}
+      >
         Edit Board
       </Dialog.Title>
       <form onSubmit={handleSubmit(onSubmit)}>
         <h3
-          className={`text-400 pb-2 ${darkMode ? "text-white" : "text-black"}`}>
-          Board Name
+          className={`text-400 pb-2 ${darkMode ? "text-white" : "text-black"}`}
+        >
+          Board Name {isNameisUnique ? "jest" : "nie"}
         </h3>
         <div className="relative ">
           <input
@@ -213,16 +232,19 @@ const EditBoardModal: React.FC<EditBoardModalProps> = ({ darkMode }) => {
         <h3
           className={`text-400 pb-2 mt-6 ${
             darkMode ? "text-white" : "text-black"
-          }`}>
+          }`}
+        >
           Boards Columns
         </h3>
         <DndContext
           collisionDetection={closestCenter}
           onDragEnd={handleDragDrop}
-          sensors={sensors}>
+          sensors={sensors}
+        >
           <SortableContext
             items={columnsListId}
-            strategy={verticalListSortingStrategy}>
+            strategy={verticalListSortingStrategy}
+          >
             <div className="overflow-auto scrollbar overflow-x-clip pr-1 max-h-[200px] mb-4">
               {columns}
             </div>

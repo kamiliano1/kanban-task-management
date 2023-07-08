@@ -42,7 +42,7 @@ const AddBoardModal: React.FC<AddBoardModalProps> = ({ darkMode }) => {
   const [errorBoardName, setErrorBoardName] = useState<string>("");
   const firstNameRef = useRef<HTMLInputElement | null>(null);
   const [columnsListId, setColumnsListId] = useState<number[]>([]);
-  const [isNameisUnique, setIsNameisUnique] = useState<boolean[]>([]);
+  const [isNameisUnique, setIsNameisUnique] = useState<boolean>(false);
   const {
     register,
     handleSubmit,
@@ -58,6 +58,7 @@ const AddBoardModal: React.FC<AddBoardModalProps> = ({ darkMode }) => {
     columns: [],
   });
   const onSubmit: SubmitHandler<BoardInputs> = async (data) => {
+    setIsNameisUnique(true);
     if (
       boardState.find(
         (item) =>
@@ -70,15 +71,17 @@ const AddBoardModal: React.FC<AddBoardModalProps> = ({ darkMode }) => {
     const columns = newBoard.columns.map((items) => {
       return { ...items, name: data.columns[items.id].name };
     });
-    setIsNameisUnique([]);
     columns.forEach((item) => {
-      if (
-        columns.filter((cols, number) => item.name === cols.name).length !== 1
-      )
+      if (columns.filter((cols) => item.name === cols.name).length === 1) {
+        return;
+      } else {
         setError(`columns.${item.id}`, {
           type: "uniqueName",
         });
+        setIsNameisUnique(false);
+      }
     });
+    if (!isNameisUnique) return;
     const updatedBoard: BoardType = {
       name: data.name,
       id: newBoard.id,
@@ -95,7 +98,6 @@ const AddBoardModal: React.FC<AddBoardModalProps> = ({ darkMode }) => {
       });
     }
   };
-
   const addColumn = () => {
     const columnId = parseInt(nanoid());
     setNewBoard((prev) => ({
@@ -108,6 +110,7 @@ const AddBoardModal: React.FC<AddBoardModalProps> = ({ darkMode }) => {
       (item) => item.id !== columnId
     );
     setNewBoard((prev) => ({ ...prev, columns: updatedColumns }));
+    reset({ columns: [] });
   };
   useEffect(() => {
     setNewBoard({ name: "", id: parseInt(nanoid()), columns: [] }); // reset to default after close
@@ -115,14 +118,12 @@ const AddBoardModal: React.FC<AddBoardModalProps> = ({ darkMode }) => {
     setErrorBoardName("");
   }, [modalsState, reset]);
 
-  const clearInputErrors = (id: number) => {
+  const clearInputErrors = () => {
     clearErrors("columns");
-    // console.log(watch());
   };
 
   const columns = newBoard.columns.map((item, number) => (
     <AddElementInput
-      isUniqueName={isNameisUnique[number]}
       key={item.id}
       number={number}
       darkMode={darkMode}
@@ -160,13 +161,15 @@ const AddBoardModal: React.FC<AddBoardModalProps> = ({ darkMode }) => {
   return (
     <>
       <Dialog.Title
-        className={` ${darkMode ? "text-white" : "text-black"} text-800 pb-4`}>
+        className={` ${darkMode ? "text-white" : "text-black"} text-800 pb-4`}
+      >
         Add New Board
       </Dialog.Title>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="flex items-baseline justify-between "></div>
         <h3
-          className={`text-400 pb-2 ${darkMode ? "text-white" : "text-black"}`}>
+          className={`text-400 pb-2 ${darkMode ? "text-white" : "text-black"}`}
+        >
           Board Name
         </h3>
         <div className="relative">
@@ -191,7 +194,6 @@ const AddBoardModal: React.FC<AddBoardModalProps> = ({ darkMode }) => {
               },
             })}
           />
-
           {errors.name && (
             <span className="absolute text-red text-500 left-[60%] sm:left-[70%] top-[.6rem]">
               Can`t be empty
@@ -206,22 +208,24 @@ const AddBoardModal: React.FC<AddBoardModalProps> = ({ darkMode }) => {
         <h3
           className={`text-400 pb-2 mt-6 ${
             darkMode ? "text-white" : "text-black"
-          }`}>
+          }`}
+        >
           Boards Columns
         </h3>
         <DndContext
           collisionDetection={closestCenter}
           onDragEnd={handleDragDrop}
-          sensors={sensors}>
+          sensors={sensors}
+        >
           <SortableContext
             items={columnsListId}
-            strategy={verticalListSortingStrategy}>
+            strategy={verticalListSortingStrategy}
+          >
             <div className="overflow-auto scrollbar overflow-x-clip pr-1 max-h-[200px] mb-4">
               {columns}
             </div>
           </SortableContext>
         </DndContext>
-
         <ButtonSecondary
           darkMode={darkMode}
           buttonLabel="+ Add New Column"

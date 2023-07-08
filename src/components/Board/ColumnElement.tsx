@@ -22,6 +22,7 @@ const ColumnElement: React.FC<ColumnElementProps> = ({
   const [completedTasks, setCompletedTasks] = useState<number>(0);
   const [settingState, setSettingState] = useRecoilState(settingsModalState);
   const [modalsState, setModalsState] = useRecoilState(modalState);
+  const [isHover, setIsHover] = useState<boolean>(false);
   const darkMode = settingState.darkMode;
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: taskId });
@@ -41,9 +42,18 @@ const ColumnElement: React.FC<ColumnElementProps> = ({
     transform: CSS.Transform.toString(transform),
     transition,
   };
+
+  const textColor = isHover
+    ? "text-purple"
+    : !darkMode
+    ? "text-black"
+    : "text-white";
+
   return (
     <div
       onClick={viewTask}
+      onMouseEnter={() => setIsHover(true)}
+      onMouseLeave={() => setIsHover(false)}
       ref={setNodeRef}
       style={style}
       {...attributes}
@@ -51,14 +61,10 @@ const ColumnElement: React.FC<ColumnElementProps> = ({
       className={`w-[280px] cursor-pointer touch-none
       shadow-[0px_4px_6px_rgba(54,_78,_126,_0.101545)]
        z-[-30] mb-5 rounded-lg px-4 py-[1.4375rem]  ${
-         darkMode
-           ? "bg-darkGrey hover:bg-opacity-80"
-           : "bg-white hover:bg-mediumGrey hover:bg-opacity-20"
+         darkMode ? "bg-darkGrey" : "bg-white"
        }`}
     >
-      <h3 className={`text-700 ${!darkMode ? "text-black" : "text-white"}`}>
-        {taskName}
-      </h3>
+      <h3 className={`text-700 ${textColor} `}>{taskName}</h3>
       <p className="text-400 text-mediumGrey pt-2">
         {completedTasks} of {subTasks?.length} substasks
       </p>

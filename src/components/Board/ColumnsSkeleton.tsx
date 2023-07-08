@@ -12,20 +12,20 @@ const ColumnsSkeleton: React.FC<ColumnsSkeletonProps> = ({ darkMode }) => {
         highlightColor={darkMode ? "#444" : "white"}
         borderRadius="8px"
       >
-        <div className="flex flex-col mr-3">
+        <div className="flex flex-col mr-3 ml-6">
           <div>
             <Skeleton
               height={20}
               width={20}
               circle={true}
-              className="mx-3"
+              className="mr-3"
               inline={true}
             />
             <Skeleton height={10} width={90} />
           </div>
-          <div className=" p-1">
+          <div className="p-1">
             <Skeleton
-              height={80}
+              height={87.98}
               width={280}
               count={item * 2 + 3}
               className="mt-5 pt-5"
