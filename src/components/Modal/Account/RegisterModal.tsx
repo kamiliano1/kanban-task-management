@@ -10,7 +10,7 @@ import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useRecoilState } from "recoil";
 import { auth, firestore } from "../../../firebase/clientApp";
-import ButtonPrimarySmall from "../../Layout/Input/Button/ButtonPrimarySmall";
+import ButtonPrimarySmall from "../../Layout/Button/ButtonPrimarySmall";
 type RegisterModalProps = { darkMode: boolean };
 type createUserInputs = {
   email: string;
@@ -83,8 +83,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ darkMode }) => {
   return (
     <>
       <Dialog.Title
-        className={` ${darkMode ? "text-white" : "text-black"} text-800 pb-4`}
-      >
+        className={` ${darkMode ? "text-white" : "text-black"} text-800 pb-4`}>
         Register
       </Dialog.Title>
 
@@ -178,8 +177,9 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ darkMode }) => {
         Already have an account?
         <span
           className="ml-3 text-lightPurple hover:text-purple cursor-pointer"
-          onClick={() => setModalsState((prev) => ({ ...prev, view: "login" }))}
-        >
+          onClick={() =>
+            setModalsState((prev) => ({ ...prev, view: "login" }))
+          }>
           Login
         </span>
       </p>

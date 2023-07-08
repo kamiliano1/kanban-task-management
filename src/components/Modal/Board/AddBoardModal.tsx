@@ -24,8 +24,8 @@ import { useRecoilState } from "recoil";
 import { boardsState } from "../../../atoms/boardsAtom";
 import { BoardType, ColumnType } from "../../Board/BoardType";
 import AddElementInput from "../../Layout/Input/AddElementInput";
-import ButtonPrimarySmall from "../../Layout/Input/Button/ButtonPrimarySmall";
-import ButtonSecondary from "../../Layout/Input/Button/ButtonSecondary";
+import ButtonPrimarySmall from "../../Layout/Button/ButtonPrimarySmall";
+import ButtonSecondary from "../../Layout/Button/ButtonSecondary";
 const nanoid = customAlphabet("1234567890", 15);
 type AddBoardModalProps = {
   darkMode: boolean;
@@ -42,14 +42,14 @@ const AddBoardModal: React.FC<AddBoardModalProps> = ({ darkMode }) => {
   const [errorBoardName, setErrorBoardName] = useState<string>("");
   const firstNameRef = useRef<HTMLInputElement | null>(null);
   const [columnsListId, setColumnsListId] = useState<number[]>([]);
-
+  const [isNameisUnique, setIsNameisUnique] = useState<boolean[]>([]);
   const {
     register,
     handleSubmit,
     watch,
-
     reset,
-
+    setError,
+    clearErrors,
     formState: { errors },
   } = useForm<BoardInputs>();
   const [newBoard, setNewBoard] = useState<BoardType>({
@@ -69,6 +69,15 @@ const AddBoardModal: React.FC<AddBoardModalProps> = ({ darkMode }) => {
     }
     const columns = newBoard.columns.map((items) => {
       return { ...items, name: data.columns[items.id].name };
+    });
+    setIsNameisUnique([]);
+    columns.forEach((item) => {
+      if (
+        columns.filter((cols, number) => item.name === cols.name).length !== 1
+      )
+        setError(`columns.${item.id}`, {
+          type: "uniqueName",
+        });
     });
     const updatedBoard: BoardType = {
       name: data.name,
@@ -106,8 +115,14 @@ const AddBoardModal: React.FC<AddBoardModalProps> = ({ darkMode }) => {
     setErrorBoardName("");
   }, [modalsState, reset]);
 
+  const clearInputErrors = (id: number) => {
+    clearErrors("columns");
+    // console.log(watch());
+  };
+
   const columns = newBoard.columns.map((item, number) => (
     <AddElementInput
+      isUniqueName={isNameisUnique[number]}
       key={item.id}
       number={number}
       darkMode={darkMode}
@@ -115,6 +130,7 @@ const AddBoardModal: React.FC<AddBoardModalProps> = ({ darkMode }) => {
       deleteColumn={deleteColumn}
       errors={errors}
       register={register}
+      setError={clearInputErrors}
     />
   ));
 
@@ -144,15 +160,13 @@ const AddBoardModal: React.FC<AddBoardModalProps> = ({ darkMode }) => {
   return (
     <>
       <Dialog.Title
-        className={` ${darkMode ? "text-white" : "text-black"} text-800 pb-4`}
-      >
+        className={` ${darkMode ? "text-white" : "text-black"} text-800 pb-4`}>
         Add New Board
       </Dialog.Title>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="flex items-baseline justify-between "></div>
         <h3
-          className={`text-400 pb-2 ${darkMode ? "text-white" : "text-black"}`}
-        >
+          className={`text-400 pb-2 ${darkMode ? "text-white" : "text-black"}`}>
           Board Name
         </h3>
         <div className="relative">
@@ -192,19 +206,16 @@ const AddBoardModal: React.FC<AddBoardModalProps> = ({ darkMode }) => {
         <h3
           className={`text-400 pb-2 mt-6 ${
             darkMode ? "text-white" : "text-black"
-          }`}
-        >
+          }`}>
           Boards Columns
         </h3>
         <DndContext
           collisionDetection={closestCenter}
           onDragEnd={handleDragDrop}
-          sensors={sensors}
-        >
+          sensors={sensors}>
           <SortableContext
             items={columnsListId}
-            strategy={verticalListSortingStrategy}
-          >
+            strategy={verticalListSortingStrategy}>
             <div className="overflow-auto scrollbar overflow-x-clip pr-1 max-h-[200px] mb-4">
               {columns}
             </div>

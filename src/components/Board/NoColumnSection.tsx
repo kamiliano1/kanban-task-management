@@ -1,5 +1,5 @@
 import React from "react";
-import ButtonPrimaryLarge from "../Layout/Input/Button/ButtonPrimaryLarge";
+import ButtonPrimaryLarge from "../Layout/Button/ButtonPrimaryLarge";
 import { useRecoilState } from "recoil";
 import { modalState } from "@/src/atoms/modalAtom";
 type NoColumnSectionProps = {};

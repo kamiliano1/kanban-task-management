@@ -284,8 +284,7 @@ const Board: React.FC<BoardProps> = () => {
       } w-full flex overflow-x-auto min-h-[calc(100vh_-_clamp(64.75px,_10vw,_97px))]
       pt-6 pr-6 pb-2 ${
         settingState.isSidebarOpen && "pl-[clamp(285px,_23vw,_300px)]"
-      }`}
-    >
+      }`}>
       {settingState.isLoaded ? (
         <>
           {boardState.length ? (
@@ -297,8 +296,7 @@ const Board: React.FC<BoardProps> = () => {
                     onDragStart={handleDragStart}
                     onDragOver={handleDragOver}
                     onDragEnd={handleDragDrop}
-                    sensors={sensors}
-                  >
+                    sensors={sensors}>
                     {activatedColumns}
                     <AddColumn />
                     {

@@ -10,7 +10,7 @@ import { boardMobileModalState } from "../../atoms/boardsMobileModalAtom";
 import { modalState } from "../../atoms/modalAtom";
 import { boardsState } from "../../atoms/boardsAtom";
 import { settingsModalState } from "../../atoms/settingsModalAtom";
-import ButtonPrimarySmall from "../Layout/Input/Button/ButtonPrimarySmall";
+import ButtonPrimarySmall from "../Layout/Button/ButtonPrimarySmall";
 import AllBoardsMobileModal from "../Modal/AllBoardsMobileModal";
 import Sidebar from "../Sidebar/Sidebar";
 import BoardDropDownMenu from "./BoardDropDownMenu";
@@ -68,26 +68,22 @@ const Navbar: React.FC<NavbarProps> = () => {
     <div
       className={`flex items-center relative p-4 sm:p-0 sm:py-0   ${
         settingState.darkMode ? "bg-darkGrey" : "bg-white"
-      }`}
-    >
+      }`}>
       <div className="sm:w-[clamp(261px,_23vw,_300px)]">
         <Image
           src={activeLogo}
           alt="KanbanLogo"
-          className="mr-4 sm:ml-6 lg:ml-8"
-        ></Image>
+          className="mr-4 sm:ml-6 lg:ml-8"></Image>
         <Sidebar />
       </div>
       <span
         className={`hidden sm:inline-block w-[1px] h-[clamp(64.75px,_10vw,_97px)] mr-4  ${
           settingState.darkMode ? "bg-linesDark" : "bg-linesLight"
-        }`}
-      ></span>
+        }`}></span>
       <h1
         className={` mr-2 text-900-mobile sm:mr-auto ${
           !settingState.darkMode ? "text-black" : "text-white"
-        }`}
-      >
+        }`}>
         Platform Launch
       </h1>
       <MdKeyboardArrowDown

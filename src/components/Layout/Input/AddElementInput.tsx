@@ -13,9 +13,11 @@ type AddElementInputProps = {
   number: number;
   darkMode: boolean;
   column: ColumnType;
+  isUniqueName: boolean;
   deleteColumn: (columnId: number) => void;
   errors: FieldErrors<IFormInputs>;
   register: UseFormRegister<IFormInputs>;
+  setError: (id: number) => void;
 };
 const AddElementInput: React.FC<AddElementInputProps> = ({
   number,
@@ -24,6 +26,8 @@ const AddElementInput: React.FC<AddElementInputProps> = ({
   deleteColumn,
   errors,
   register,
+  isUniqueName,
+  setError,
 }) => {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: column.id });
@@ -57,8 +61,7 @@ const AddElementInput: React.FC<AddElementInputProps> = ({
       className="flex items-center mb-3 relative"
       ref={setNodeRef}
       style={style}
-      {...attributes}
-    >
+      {...attributes}>
       <RxDragHandleHorizontal
         {...listeners}
         className={` text-[2rem] mr-2 ${
@@ -82,16 +85,38 @@ const AddElementInput: React.FC<AddElementInputProps> = ({
         placeholder={placeholder}
         {...register(`columns.${column.id}.name`, {
           required: true,
+          validate: {
+            unique: (v) => {
+              console.log(v);
+              return true;
+            },
+          },
           onChange: (e) => {
             setCurrentValue(e.target.value);
+            setError(column.id);
           },
         })}
       />
-      {errors.columns?.[column.id] && (
+      {/* {errors.columns?.[column.id] && (
+        <span className="absolute text-red text-500 left-[50%] sm:left-[65%] top-[.6rem]">
+          Can`t be empty
+        </span>
+      )} */}
+      {errors.columns?.[column.id]?.name && (
         <span className="absolute text-red text-500 left-[50%] sm:left-[65%] top-[.6rem]">
           Can`t be empty
         </span>
       )}
+      {errors.columns?.[column.id]?.type && (
+        <span className="absolute text-red text-500 left-[50%] sm:left-[65%] top-[.6rem]">
+          Unique name
+        </span>
+      )}
+      {/* {!isUniqueName && (
+        <span className="absolute text-red text-500 left-[50%] sm:left-[65%] top-[.6rem]">
+          Unique columns name
+        </span>
+      )} */}
       <ImCross
         onClick={() => {
           deleteColumn(column.id);

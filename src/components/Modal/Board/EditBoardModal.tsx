@@ -1,8 +1,8 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import React, { useEffect, useRef, useState } from "react";
 import AddElementInput from "../../Layout/Input/AddElementInput";
-import ButtonPrimarySmall from "../../Layout/Input/Button/ButtonPrimarySmall";
-import ButtonSecondary from "../../Layout/Input/Button/ButtonSecondary";
+import ButtonPrimarySmall from "../../Layout/Button/ButtonPrimarySmall";
+import ButtonSecondary from "../../Layout/Button/ButtonSecondary";
 import { modalState } from "@/src/atoms/modalAtom";
 import { settingsModalState } from "@/src/atoms/settingsModalAtom";
 import { customAlphabet } from "nanoid";
@@ -172,14 +172,12 @@ const EditBoardModal: React.FC<EditBoardModalProps> = ({ darkMode }) => {
   return (
     <>
       <Dialog.Title
-        className={` ${darkMode ? "text-white" : "text-black"} text-800 pb-4`}
-      >
+        className={` ${darkMode ? "text-white" : "text-black"} text-800 pb-4`}>
         Edit Board
       </Dialog.Title>
       <form onSubmit={handleSubmit(onSubmit)}>
         <h3
-          className={`text-400 pb-2 ${darkMode ? "text-white" : "text-black"}`}
-        >
+          className={`text-400 pb-2 ${darkMode ? "text-white" : "text-black"}`}>
           Board Name
         </h3>
         <div className="relative ">
@@ -215,19 +213,16 @@ const EditBoardModal: React.FC<EditBoardModalProps> = ({ darkMode }) => {
         <h3
           className={`text-400 pb-2 mt-6 ${
             darkMode ? "text-white" : "text-black"
-          }`}
-        >
+          }`}>
           Boards Columns
         </h3>
         <DndContext
           collisionDetection={closestCenter}
           onDragEnd={handleDragDrop}
-          sensors={sensors}
-        >
+          sensors={sensors}>
           <SortableContext
             items={columnsListId}
-            strategy={verticalListSortingStrategy}
-          >
+            strategy={verticalListSortingStrategy}>
             <div className="overflow-auto scrollbar overflow-x-clip pr-1 max-h-[200px] mb-4">
               {columns}
             </div>

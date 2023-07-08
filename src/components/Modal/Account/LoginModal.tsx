@@ -11,7 +11,7 @@ import {
 } from "react-firebase-hooks/auth";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useRecoilState } from "recoil";
-import ButtonPrimarySmall from "../../Layout/Input/Button/ButtonPrimarySmall";
+import ButtonPrimarySmall from "../../Layout/Button/ButtonPrimarySmall";
 type LoginModalProps = { darkMode: boolean };
 
 const LoginModal: React.FC<LoginModalProps> = ({ darkMode }) => {
@@ -63,8 +63,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ darkMode }) => {
   return (
     <>
       <Dialog.Title
-        className={` ${darkMode ? "text-white" : "text-black"} text-800 pb-4`}
-      >
+        className={` ${darkMode ? "text-white" : "text-black"} text-800 pb-4`}>
         Login
       </Dialog.Title>
 
@@ -137,8 +136,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ darkMode }) => {
           className="ml-3 text-lightPurple hover:text-purple cursor-pointer"
           onClick={() =>
             setModalsState((prev) => ({ ...prev, view: "register" }))
-          }
-        >
+          }>
           Sign Up
         </span>
       </p>

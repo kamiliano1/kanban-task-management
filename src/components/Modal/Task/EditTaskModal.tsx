@@ -7,8 +7,8 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useRecoilState } from "recoil";
 import { boardsState } from "../../../atoms/boardsAtom";
 import { BoardType, SubtasksType, TaskType } from "../../Board/BoardType";
-import ButtonPrimarySmall from "../../Layout/Input/Button/ButtonPrimarySmall";
-import ButtonSecondary from "../../Layout/Input/Button/ButtonSecondary";
+import ButtonPrimarySmall from "../../Layout/Button/ButtonPrimarySmall";
+import ButtonSecondary from "../../Layout/Button/ButtonSecondary";
 import DropMenu from "../../Layout/Input/DropMenu";
 import AddSubTaskInput from "./AddSubTaskInput";
 import { useAuthState } from "react-firebase-hooks/auth";
@@ -308,14 +308,12 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ darkMode }) => {
   return (
     <>
       <Dialog.Title
-        className={` ${darkMode ? "text-white" : "text-black"} text-800 pb-4`}
-      >
+        className={` ${darkMode ? "text-white" : "text-black"} text-800 pb-4`}>
         Edit Task
       </Dialog.Title>
       <form onSubmit={handleSubmit(onSubmit)}>
         <p
-          className={`text-400 pb-2 ${darkMode ? "text-white" : "text-black"}`}
-        >
+          className={`text-400 pb-2 ${darkMode ? "text-white" : "text-black"}`}>
           Title
         </p>
         <div className="relative">
@@ -345,8 +343,7 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ darkMode }) => {
           <p
             className={`text-400 pb-2 ${
               darkMode ? "text-white" : "text-black"
-            }`}
-          >
+            }`}>
             Description
           </p>
           <textarea
@@ -366,20 +363,17 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ darkMode }) => {
           <p
             className={`text-400 pb-2 ${
               darkMode ? "text-white" : "text-black"
-            }`}
-          >
+            }`}>
             Subtasks
           </p>
         </div>
         <DndContext
           collisionDetection={closestCenter}
           onDragEnd={handleDragDrop}
-          sensors={sensors}
-        >
+          sensors={sensors}>
           <SortableContext
             items={tasksList}
-            strategy={verticalListSortingStrategy}
-          >
+            strategy={verticalListSortingStrategy}>
             <div className="overflow-auto scrollbar overflow-x-clip pr-1 max-h-[200px] mb-4">
               {subTasks}
             </div>
@@ -393,8 +387,7 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ darkMode }) => {
           buttonAction={addSubTask}
         />
         <p
-          className={`text-400 pb-2 ${darkMode ? "text-white" : "text-black"}`}
-        >
+          className={`text-400 pb-2 ${darkMode ? "text-white" : "text-black"}`}>
           Status
         </p>
         <Controller

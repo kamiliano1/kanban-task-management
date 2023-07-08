@@ -9,8 +9,8 @@ import {
 import React, { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import { settingsModalState } from "../../atoms/settingsModalAtom";
-import ButtonAddBoard from "../Layout/Input/Button/ButtonAddBoard";
-import ButtonPrimaryBoards from "../Layout/Input/Button/ButtonPrimaryBoards";
+import ButtonAddBoard from "../Layout/Button/ButtonAddBoard";
+import ButtonPrimaryBoards from "../Layout/Button/ButtonPrimaryBoards";
 import ThemeSwitcher from "../Layout/Input/ThemeSwitcher";
 import HideSidebarButton from "./HideSidebarButton";
 import { auth, firestore } from "@/src/firebase/clientApp";
@@ -102,27 +102,23 @@ ${
         settingState.darkMode
           ? "bg-darkGrey border-linesDark"
           : "bg-white border-linesLight"
-      }`}
-    >
+      }`}>
       <div className="flex flex-col z-[5] pr-6 h-[calc(100vh_-_120px)]">
         {settingState.isLoaded ? (
           <>
             {" "}
             <h2
               className="text-mediumGrey text-400 tracking-[2.4px] 
-      sm:px-6 py-4 lg:pl-8"
-            >
+      sm:px-6 py-4 lg:pl-8">
               ALL BOARDS ({boardState?.length})
             </h2>
             <DndContext
               collisionDetection={closestCenter}
               onDragEnd={handleDragDrop}
-              sensors={sensors}
-            >
+              sensors={sensors}>
               <SortableContext
                 items={boardsList}
-                strategy={verticalListSortingStrategy}
-              >
+                strategy={verticalListSortingStrategy}>
                 {boardList}
               </SortableContext>
             </DndContext>

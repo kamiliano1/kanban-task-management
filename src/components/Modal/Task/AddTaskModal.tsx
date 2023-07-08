@@ -7,8 +7,8 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useRecoilState } from "recoil";
 import { boardsState } from "../../../atoms/boardsAtom";
 import { SubtasksType, TaskType } from "../../Board/BoardType";
-import ButtonPrimarySmall from "../../Layout/Input/Button/ButtonPrimarySmall";
-import ButtonSecondary from "../../Layout/Input/Button/ButtonSecondary";
+import ButtonPrimarySmall from "../../Layout/Button/ButtonPrimarySmall";
+import ButtonSecondary from "../../Layout/Button/ButtonSecondary";
 import DropMenu from "../../Layout/Input/DropMenu";
 import AddSubTaskInput from "./AddSubTaskInput";
 import { useAuthState } from "react-firebase-hooks/auth";
@@ -240,8 +240,7 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ darkMode }) => {
   return (
     <>
       <Dialog.Title
-        className={` ${darkMode ? "text-white" : "text-black"} text-800 pb-4`}
-      >
+        className={` ${darkMode ? "text-white" : "text-black"} text-800 pb-4`}>
         Add New Task
       </Dialog.Title>
 
@@ -298,12 +297,10 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ darkMode }) => {
         <DndContext
           collisionDetection={closestCenter}
           onDragEnd={handleDragDrop}
-          sensors={sensors}
-        >
+          sensors={sensors}>
           <SortableContext
             items={tasksList}
-            strategy={verticalListSortingStrategy}
-          >
+            strategy={verticalListSortingStrategy}>
             <div className="overflow-auto scrollbar overflow-x-clip pr-1 max-h-[200px] mb-4">
               {subTasks}
             </div>
