@@ -30,11 +30,15 @@ const ThemeSwitcher: React.FC<ThemeSwitcherProps> = () => {
     }`}
     >
       {" "}
+      <label className="sr-only" htmlFor="theme-switcher">
+        Theme Switcher
+      </label>{" "}
       <BsFillSunFill className="text-mediumGrey" />
       <Switch.Root
         checked={settingState.darkMode}
         className={`w-[40px] h-[20px] bg-purple rounded-xl`}
         onCheckedChange={(checked) => toggleDarkMode(checked)}
+        id="theme-switcher"
       >
         <Switch.Thumb
           className="block w-[14px] h-[14px] bg-white rounded-full 

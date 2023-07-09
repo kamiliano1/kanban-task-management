@@ -38,18 +38,19 @@ const ButtonPrimaryBoards: React.FC<ButtonPrimaryBoardsProps> = ({
   };
   return (
     <button
-      ref={setNodeRef}
-      style={style}
-      {...attributes}
-      {...listeners}
+      // ref={setNodeRef}
+      // style={style}
+      // {...attributes}
+      // {...listeners}
       onClick={switchBoard}
       className={`${
         activeBoard === buttonLabel ? "bg-purple text-white" : "text-mediumGrey"
       } touch-none flex items-center py-3 px-5 lg:pl-8 rounded-[0px_100px_100px_0px] text-700
        ${
          darkMode ? "hover:bg-white" : "hover:bg-purple hover:bg-opacity-10"
-       } hover:text-purple disabled:opacity-25`}>
-      <MdOutlineSpaceDashboard className="mr-3" /> {buttonLabel}{" "}
+       } hover:text-purple disabled:opacity-25`}
+    >
+      <MdOutlineSpaceDashboard className="mr-3" /> {buttonLabel}
     </button>
   );
 };
