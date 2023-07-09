@@ -10,6 +10,7 @@ export const metadata = {
   title: "Frontend Mentor | Kanban task management web app",
   content: "Kanban Task Management",
   property: "og:title",
+  description: "Kanban Task Management",
 };
 
 export default function RootLayout({
