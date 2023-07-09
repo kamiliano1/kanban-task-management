@@ -46,7 +46,8 @@ const ThemeSwitcher: React.FC<ThemeSwitcherProps> = () => {
         translate-x-0.5 will-change-transform data-[state=checked]:translate-x-[23px]"
         />
       </Switch.Root>
-      <BsMoonStarsFill className="text-mediumGrey" />
+      <BsMoonStarsFill className="text-mediumGrey" />{" "}
+      <p className="sr-only">Theme Switcher</p>
     </div>
   );
 };
