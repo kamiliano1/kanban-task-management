@@ -93,7 +93,6 @@ const Board: React.FC<BoardProps> = () => {
     settingState.activeBoard,
     user,
   ]);
-
   useEffect(() => {
     if (!settingState.isLoaded)
       setTimeout(() => {
@@ -203,23 +202,6 @@ const Board: React.FC<BoardProps> = () => {
     const { active, over } = e;
     const activeId = active.id;
     const overId = over?.id;
-    // if (activatedBoard.columns.find((col) => col.name === active.id)) {
-    //   setActivatedBoard((prev) => {
-    //     const activeColumn = activatedBoard.columns.findIndex(
-    //       (col) => col.name === activeId
-    //     );
-    //     const targetColumn = activatedBoard.columns.findIndex(
-    //       (col) => col.name === overId
-    //     );
-
-    //     return {
-    //       ...prev,
-    //       columns: arrayMove(prev.columns, activeColumn, targetColumn),
-    //     };
-    //   });
-
-    //   return;
-    // }
     const activeColumnId: number = Number(
       active.data?.current?.sortable?.containerId
     );
@@ -232,9 +214,7 @@ const Board: React.FC<BoardProps> = () => {
     let targetColumn = activatedBoard.columns.find(
       (cols) => cols.id === targetColumnId
     );
-
     if (!activeColumn || !targetColumn || activeColumn !== targetColumn) return;
-
     const activeIndex = activeColumn?.tasks.findIndex(
       (task) => task.id === activeId
     );
@@ -242,7 +222,6 @@ const Board: React.FC<BoardProps> = () => {
       (task) => task.id === overId
     );
     if (activeIndex === overIndex) return;
-
     setActivatedBoard((prev) => {
       let boardColumns = prev.columns;
       boardColumns = prev.columns.map((cols) => {
@@ -256,7 +235,6 @@ const Board: React.FC<BoardProps> = () => {
       });
       return { ...prev, columns: boardColumns };
     });
-
     setActiveDragTask(null);
   };
   useEffect(() => {

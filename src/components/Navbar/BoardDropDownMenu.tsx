@@ -22,13 +22,13 @@ const BoardDropDownMenu: React.FC<BoardDropDownMenuProps> = () => {
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild disabled={isDisabled}>
-        <div className={`${!isDisabled && "cursor-pointer"}`}>
+        <button className={`${!isDisabled && "cursor-pointer"}`}>
           <BiDotsVerticalRounded
             className={`text-mediumGrey sm:text-[1.7rem] ${
               isDisabled && "opacity-70"
             }`}
           />
-        </div>
+        </button>
       </DropdownMenu.Trigger>
       <DropdownMenu.Portal>
         <DropdownMenu.Content
