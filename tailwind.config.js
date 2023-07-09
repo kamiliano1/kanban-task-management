@@ -13,7 +13,7 @@ module.exports = {
       black: "hsl(237, 100%, 4%)",
       veryDarkGrey: "hsl(235, 16%, 15%)",
       darkGrey: "hsl(235, 12%, 19%)",
-      mediumGrey: "hsl(216, 15%, 57%)",
+      mediumGrey: "hsl(216, 15%, 60%)",
       lightGrey: "hsl(220, 69%, 97%)",
       white: "hsl(0, 0%, 100%)",
       linesDark: "hsl(236, 11%, 27%)",
