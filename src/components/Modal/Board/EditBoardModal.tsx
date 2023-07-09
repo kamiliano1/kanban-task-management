@@ -42,6 +42,7 @@ const EditBoardModal: React.FC<EditBoardModalProps> = ({ darkMode }) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [columnsListId, setColumnsListId] = useState<number[]>([]);
   const [isNameisUnique, setIsNameisUnique] = useState<boolean>(true);
+  const isUniqueRef = useRef<boolean>(false);
   const {
     register,
     handleSubmit,
@@ -59,7 +60,7 @@ const EditBoardModal: React.FC<EditBoardModalProps> = ({ darkMode }) => {
     columns: [],
   });
   const onSubmit: SubmitHandler<BoardInputs> = async (data) => {
-    setIsNameisUnique(true);
+    isUniqueRef.current = true;
     const otherBoards = boardState.filter((item) => item.name != newBoard.name);
     if (
       otherBoards.find(
@@ -74,49 +75,43 @@ const EditBoardModal: React.FC<EditBoardModalProps> = ({ darkMode }) => {
       return { ...items, name: data.columns[items.id].name };
     });
     columns.forEach((item) => {
-      if (columns.filter((cols) => item.name === cols.name).length === 1) {
-        return;
-      } else {
+      if (columns.filter((cols) => item.name === cols.name).length > 1) {
         setError(`columns.${item.id}`, {
           type: "uniqueName",
         });
-        setIsNameisUnique(false);
+        isUniqueRef.current = false;
       }
     });
-    // if (!isNameisUnique) return;
+    if (!isUniqueRef.current) return;
     const readyBoard: BoardType = {
       name: data.name,
       id: newBoard.id,
       columns: columns,
     };
-    if (isNameisUnique) {
-      console.log("zmiana");
+    setBoardState((prev) =>
+      prev.map((item) => (item.id === readyBoard.id ? readyBoard : item))
+    );
+    setModalsState((prev) => ({ ...prev, open: false }));
+    setSettingState((prev) => ({ ...prev, activeBoard: data.name }));
+    if (user) {
+      const updatedBoard = boardState.map((board) =>
+        board.id === newBoard.id ? readyBoard : board
+      );
+      const boardRef = doc(firestore, `users/${user?.uid}`);
+      await updateDoc(boardRef, {
+        board: updatedBoard,
+      });
     }
-    // setBoardState((prev) =>
-    //   prev.map((item) => (item.id === readyBoard.id ? readyBoard : item))
-    // );
-    // setModalsState((prev) => ({ ...prev, open: false }));
-    // setSettingState((prev) => ({ ...prev, activeBoard: data.name }));
-    // if (user) {
-    //   const updatedBoard = boardState.map((board) =>
-    //     board.id === newBoard.id ? readyBoard : board
-    //   );
-    //   const boardRef = doc(firestore, `users/${user?.uid}`);
-    //   await updateDoc(boardRef, {
-    //     board: updatedBoard,
-    //   });
-    // }
   };
-
   useEffect(() => {
     if (loading) {
       setNewBoard(
         boardState.filter((item) => item.name === settingState.activeBoard)[0]
       );
-
+      setValue("name", newBoard.name);
       setLoading(false);
     }
-  }, [boardState, loading, settingState.activeBoard]);
+  }, [boardState, loading, newBoard.name, setValue, settingState.activeBoard]);
 
   const addColumn = () => {
     const columnId = parseInt(nanoid());
@@ -136,7 +131,6 @@ const EditBoardModal: React.FC<EditBoardModalProps> = ({ darkMode }) => {
   }, [newBoard]);
   useEffect(() => {
     if (modalsState.open) {
-      setValue("name", newBoard.name);
       newBoard.columns.map((item) => {
         if (item.name) setValue(`columns.${item.id}.name`, item.name);
       });

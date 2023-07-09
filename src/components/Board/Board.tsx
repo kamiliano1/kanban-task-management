@@ -4,9 +4,7 @@ import { boardsState } from "../../atoms/boardsAtom";
 import { settingsModalState } from "../../atoms/settingsModalAtom";
 import BoardColumn from "./BoardColumn";
 import { BoardType, TaskType } from "./BoardType";
-
 import "react-loading-skeleton/dist/skeleton.css";
-
 import { auth, firestore } from "@/src/firebase/clientApp";
 import {
   DndContext,
@@ -34,6 +32,10 @@ const Board: React.FC<BoardProps> = () => {
   const [boardState, setBoardState] = useRecoilState(boardsState);
   const [loading, setLoading] = useState<boolean>(true);
   const [user, firebaseLoading, error] = useAuthState(auth);
+  const [isChanged, setIsChanged] = useState<boolean>(false);
+  const loadingRef = useRef<boolean>(false);
+  const boardRef = useRef<BoardType[]>([]);
+  const [boardCopy, setBoardCopy] = useState<BoardType[]>([]);
   const [activatedBoard, setActivatedBoard] = useState<BoardType>(
     boardState[0]
   );
@@ -70,6 +72,7 @@ const Board: React.FC<BoardProps> = () => {
         if (user) {
           getUserData();
           setLoading(false);
+          loadingRef.current = true;
           return;
         }
         fetch("data/data.json")
@@ -78,6 +81,7 @@ const Board: React.FC<BoardProps> = () => {
             setBoardState(data);
           });
         setLoading(false);
+        loadingRef.current = true;
       }
     }
   }, [
@@ -195,26 +199,27 @@ const Board: React.FC<BoardProps> = () => {
     });
   };
 
-  const handleDragDrop = (e: DragEndEvent) => {
+  const handleDragDrop = async (e: DragEndEvent) => {
     const { active, over } = e;
     const activeId = active.id;
     const overId = over?.id;
-    if (activatedBoard.columns.find((col) => col.name === active.id)) {
-      setActivatedBoard((prev) => {
-        const activeColumn = activatedBoard.columns.findIndex(
-          (col) => col.name === activeId
-        );
-        const targetColumn = activatedBoard.columns.findIndex(
-          (col) => col.name === overId
-        );
+    // if (activatedBoard.columns.find((col) => col.name === active.id)) {
+    //   setActivatedBoard((prev) => {
+    //     const activeColumn = activatedBoard.columns.findIndex(
+    //       (col) => col.name === activeId
+    //     );
+    //     const targetColumn = activatedBoard.columns.findIndex(
+    //       (col) => col.name === overId
+    //     );
 
-        return {
-          ...prev,
-          columns: arrayMove(prev.columns, activeColumn, targetColumn),
-        };
-      });
-      return;
-    }
+    //     return {
+    //       ...prev,
+    //       columns: arrayMove(prev.columns, activeColumn, targetColumn),
+    //     };
+    //   });
+
+    //   return;
+    // }
     const activeColumnId: number = Number(
       active.data?.current?.sortable?.containerId
     );
@@ -229,6 +234,7 @@ const Board: React.FC<BoardProps> = () => {
     );
 
     if (!activeColumn || !targetColumn || activeColumn !== targetColumn) return;
+
     const activeIndex = activeColumn?.tasks.findIndex(
       (task) => task.id === activeId
     );
@@ -253,30 +259,31 @@ const Board: React.FC<BoardProps> = () => {
 
     setActiveDragTask(null);
   };
-
   useEffect(() => {
     const updateBoardState = setTimeout(async () => {
+      let newBoard: BoardType[] = [];
       setBoardState((prev) =>
-        prev.map((board) =>
-          board.name === settingState.activeBoard ? activatedBoard : board
-        )
+        prev.map((board) => {
+          if (board.name === settingState.activeBoard) {
+            newBoard = [...newBoard, activatedBoard];
+          } else {
+            newBoard = [...newBoard, board];
+          }
+          return board.name === settingState.activeBoard
+            ? activatedBoard
+            : board;
+        })
       );
-    }, 400);
-    updateBoardState;
-    return () => clearTimeout(updateBoardState);
-  }, [activatedBoard, setBoardState, settingState.activeBoard]);
-
-  useEffect(() => {
-    const updateFirebase = async () => {
       if (user) {
         const boardRef = doc(firestore, `users/${user?.uid}`);
         await updateDoc(boardRef, {
-          board: boardState,
+          board: newBoard,
         });
       }
-    };
-    if (activeDragTask) updateFirebase();
-  }, [activeDragTask, boardState, user]);
+    }, 400);
+    updateBoardState;
+    return () => clearTimeout(updateBoardState);
+  }, [activatedBoard, setBoardState, settingState.activeBoard, user]);
   return (
     <div
       className={`${
@@ -330,3 +337,6 @@ const Board: React.FC<BoardProps> = () => {
   );
 };
 export default Board;
+function useCallBack(arg0: () => Promise<void>) {
+  throw new Error("Function not implemented.");
+}

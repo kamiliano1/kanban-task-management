@@ -43,6 +43,7 @@ const AddBoardModal: React.FC<AddBoardModalProps> = ({ darkMode }) => {
   const firstNameRef = useRef<HTMLInputElement | null>(null);
   const [columnsListId, setColumnsListId] = useState<number[]>([]);
   const [isNameisUnique, setIsNameisUnique] = useState<boolean>(false);
+  const isUniqueRef = useRef<boolean>(false);
   const {
     register,
     handleSubmit,
@@ -58,7 +59,7 @@ const AddBoardModal: React.FC<AddBoardModalProps> = ({ darkMode }) => {
     columns: [],
   });
   const onSubmit: SubmitHandler<BoardInputs> = async (data) => {
-    setIsNameisUnique(true);
+    isUniqueRef.current = true;
     if (
       boardState.find(
         (item) =>
@@ -72,16 +73,14 @@ const AddBoardModal: React.FC<AddBoardModalProps> = ({ darkMode }) => {
       return { ...items, name: data.columns[items.id].name };
     });
     columns.forEach((item) => {
-      if (columns.filter((cols) => item.name === cols.name).length === 1) {
-        return;
-      } else {
+      if (columns.filter((cols) => item.name === cols.name).length > 1) {
         setError(`columns.${item.id}`, {
           type: "uniqueName",
         });
-        setIsNameisUnique(false);
+        isUniqueRef.current = false;
       }
     });
-    if (!isNameisUnique) return;
+    if (!isUniqueRef.current) return;
     const updatedBoard: BoardType = {
       name: data.name,
       id: newBoard.id,
@@ -169,9 +168,7 @@ const AddBoardModal: React.FC<AddBoardModalProps> = ({ darkMode }) => {
         <div className="flex items-baseline justify-between "></div>
         <h3
           className={`text-400 pb-2 ${darkMode ? "text-white" : "text-black"}`}
-        >
-          Board Name
-        </h3>
+        ></h3>
         <div className="relative">
           <input
             placeholder="e.g. Web Design"
