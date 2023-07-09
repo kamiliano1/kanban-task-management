@@ -38,10 +38,10 @@ const ButtonPrimaryBoards: React.FC<ButtonPrimaryBoardsProps> = ({
   };
   return (
     <button
-      // ref={setNodeRef}
-      // style={style}
-      // {...attributes}
-      // {...listeners}
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
       onClick={switchBoard}
       className={`${
         activeBoard === buttonLabel ? "bg-purple text-white" : "text-mediumGrey"
