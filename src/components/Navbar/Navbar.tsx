@@ -75,6 +75,7 @@ const Navbar: React.FC<NavbarProps> = () => {
           src={activeLogo}
           alt="KanbanLogo"
           className="mr-4 sm:ml-6 lg:ml-8"
+          loading="eager"
         ></Image>
         <Sidebar />
       </div>

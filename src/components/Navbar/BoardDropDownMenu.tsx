@@ -22,7 +22,10 @@ const BoardDropDownMenu: React.FC<BoardDropDownMenuProps> = () => {
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild disabled={isDisabled}>
-        <button className={`${!isDisabled && "cursor-pointer"}`}>
+        <button
+          className={`${!isDisabled && "cursor-pointer"}`}
+          aria-label="Edit or Delete Board"
+        >
           <BiDotsVerticalRounded
             className={`text-mediumGrey sm:text-[1.7rem] ${
               isDisabled && "opacity-70"

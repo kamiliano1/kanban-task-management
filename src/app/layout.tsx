@@ -8,6 +8,8 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 
 export const metadata = {
   title: "Frontend Mentor | Kanban task management web app",
+  content: "Kanban Task Management",
+  property: "og:title",
 };
 
 export default function RootLayout({
