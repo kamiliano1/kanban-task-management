@@ -32,10 +32,7 @@ const Board: React.FC<BoardProps> = () => {
   const [boardState, setBoardState] = useRecoilState(boardsState);
   const [loading, setLoading] = useState<boolean>(true);
   const [user, firebaseLoading, error] = useAuthState(auth);
-  const [isChanged, setIsChanged] = useState<boolean>(false);
   const loadingRef = useRef<boolean>(false);
-  const boardRef = useRef<BoardType[]>([]);
-  const [boardCopy, setBoardCopy] = useState<BoardType[]>([]);
   const [activatedBoard, setActivatedBoard] = useState<BoardType>(
     boardState[0]
   );
@@ -59,7 +56,6 @@ const Board: React.FC<BoardProps> = () => {
           setSettingsState((prev) => ({
             ...prev,
             darkMode: bookmarkData.isDarkMode,
-            isSidebarOpen: bookmarkData.isSidebarOpen,
             activeBoard: bookmarkData.activeBoard,
           }));
         }

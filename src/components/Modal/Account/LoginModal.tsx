@@ -46,7 +46,6 @@ const LoginModal: React.FC<LoginModalProps> = ({ darkMode }) => {
           setSettingsState((prev) => ({
             ...prev,
             darkMode: bookmarkData.isDarkMode,
-            isSidebarOpen: bookmarkData.isSidebarOpen,
             activeBoard: bookmarkData.activeBoard,
           }));
         }
@@ -56,6 +55,10 @@ const LoginModal: React.FC<LoginModalProps> = ({ darkMode }) => {
     };
     if (userName) {
       setModalsState((prev) => ({ ...prev, open: false }));
+      setSettingsState((prev) => ({
+        ...prev,
+        isBoardModalListOpen: false,
+      }));
       reset({ email: "", password: "" });
       getUserData();
     }
@@ -63,7 +66,8 @@ const LoginModal: React.FC<LoginModalProps> = ({ darkMode }) => {
   return (
     <>
       <Dialog.Title
-        className={` ${darkMode ? "text-white" : "text-black"} text-800 pb-4`}>
+        className={` ${darkMode ? "text-white" : "text-black"} text-800 pb-4`}
+      >
         Login
       </Dialog.Title>
 
@@ -136,7 +140,8 @@ const LoginModal: React.FC<LoginModalProps> = ({ darkMode }) => {
           className="ml-3 text-lightPurple hover:text-purple cursor-pointer"
           onClick={() =>
             setModalsState((prev) => ({ ...prev, view: "register" }))
-          }>
+          }
+        >
           Sign Up
         </span>
       </p>

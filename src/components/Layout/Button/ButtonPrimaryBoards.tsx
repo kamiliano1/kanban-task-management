@@ -1,4 +1,3 @@
-import { boardMobileModalState } from "@/src/atoms/boardsMobileModalAtom";
 import { auth, firestore } from "@/src/firebase/clientApp";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
@@ -14,9 +13,6 @@ const ButtonPrimaryBoards: React.FC<ButtonPrimaryBoardsProps> = ({
   buttonLabel,
 }) => {
   const [settingState, setSettingState] = useRecoilState(settingsModalState);
-  const [boardMobileModalStates, setBoardMobileModalStates] = useRecoilState(
-    boardMobileModalState
-  );
   const [user] = useAuthState(auth);
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: buttonLabel });
@@ -30,7 +26,8 @@ const ButtonPrimaryBoards: React.FC<ButtonPrimaryBoardsProps> = ({
         activeBoard: buttonLabel,
       });
     }
-    if (boardMobileModalStates.open) setBoardMobileModalStates({ open: false });
+    if (settingState.isBoardModalListOpen)
+      setSettingState((prev) => ({ ...prev, isBoardModalListOpen: false }));
   };
   const style = {
     transform: CSS.Transform.toString(transform),

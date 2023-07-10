@@ -59,7 +59,6 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ darkMode }) => {
           JSON.stringify({
             ...user,
             board: [],
-            isSidebarOpen: settingState.isSidebarOpen,
             isDarkMode: settingState.darkMode,
             activeBoard: settingState.activeBoard,
           })
@@ -70,10 +69,15 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ darkMode }) => {
       createUserDocument(userCredentials.user);
       setModalsState((prev) => ({ ...prev, open: false }));
       setBoardState([]);
+      setSettingsState((prev) => ({
+        ...prev,
+        isBoardModalListOpen: false,
+      }));
     }
   }, [
     setBoardState,
     setModalsState,
+    setSettingsState,
     settingState.activeBoard,
     settingState.darkMode,
     settingState.isSidebarOpen,
@@ -83,7 +87,8 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ darkMode }) => {
   return (
     <>
       <Dialog.Title
-        className={` ${darkMode ? "text-white" : "text-black"} text-800 pb-4`}>
+        className={` ${darkMode ? "text-white" : "text-black"} text-800 pb-4`}
+      >
         Register
       </Dialog.Title>
 
@@ -177,9 +182,8 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ darkMode }) => {
         Already have an account?
         <span
           className="ml-3 text-lightPurple hover:text-purple cursor-pointer"
-          onClick={() =>
-            setModalsState((prev) => ({ ...prev, view: "login" }))
-          }>
+          onClick={() => setModalsState((prev) => ({ ...prev, view: "login" }))}
+        >
           Login
         </span>
       </p>

@@ -5,6 +5,7 @@ export interface SettingsState {
   isSidebarOpen: boolean;
   isLoaded: boolean;
   activeBoard: string;
+  isBoardModalListOpen: boolean;
   activateColumn: number;
   activateTask: number;
   activateTaskName: string;
@@ -12,9 +13,10 @@ export interface SettingsState {
 
 const defaultSettingsModalState: SettingsState = {
   darkMode: true,
-  isSidebarOpen: true,
+  isSidebarOpen: false,
   isLoaded: false,
   activeBoard: "",
+  isBoardModalListOpen: false,
   activateColumn: 0,
   activateTask: 0,
   activateTaskName: "",
