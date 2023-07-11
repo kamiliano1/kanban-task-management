@@ -54,7 +54,6 @@ Users should be able to:
 - Mobile-first workflow
 - [React](https://reactjs.org/) - JS library
 - [Next.js](https://nextjs.org/) - React framework
-- [Styled Components](https://styled-components.com/) - For styles
 - [TailwindCSS](https://tailwindcss.com/)
 - [React Recoil](https://recoiljs.org/)
 - [React hooks form](https://react-hook-form.com/)
@@ -63,8 +62,6 @@ Users should be able to:
 - [Firebase](https://firebase.google.com/)
 - [radix-ui](https://www.radix-ui.com/)
 - [dndkit](https://dndkit.com/)
-
-**Note: These are just examples. Delete this note and replace the list above with your own choices**
 
 ### What I learned
 

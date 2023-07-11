@@ -13,7 +13,7 @@ export interface SettingsState {
 
 const defaultSettingsModalState: SettingsState = {
   darkMode: true,
-  isSidebarOpen: false,
+  isSidebarOpen: true,
   isLoaded: false,
   activeBoard: "",
   isBoardModalListOpen: false,

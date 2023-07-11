@@ -17,7 +17,7 @@ import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 type NavbarProps = {};
 
 const Navbar: React.FC<NavbarProps> = () => {
-  const [windowWidth, setWindowWidth] = useState<number>(200);
+  const [windowWidth, setWindowWidth] = useState<number>(900);
   const [activeLogo, setActiveLogo] = useState(logoLight);
   const [isDisabled, setIsDisabled] = useState<boolean>(true);
   const [boardState, setBoardState] = useRecoilState(boardsState);
@@ -60,7 +60,7 @@ const Navbar: React.FC<NavbarProps> = () => {
   }, [boardState, settingState.activeBoard]);
 
   return (
-    <div
+    <nav
       className={`flex items-center relative p-4 sm:p-0 sm:py-0   ${
         settingState.darkMode ? "bg-darkGrey" : "bg-white"
       }`}
@@ -132,7 +132,7 @@ const Navbar: React.FC<NavbarProps> = () => {
           </div>
         </>
       )}
-    </div>
+    </nav>
   );
 };
 export default Navbar;
