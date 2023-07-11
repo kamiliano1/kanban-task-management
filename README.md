@@ -72,10 +72,10 @@ Radix-UI
 First time I've used it. I wanted to try to improve accessibility features on my project. Beginning was hard but I managed to prepare this app using Radix-UI
 
 FireBase
-You can log in by clicking the login button, LoginModal will open if you don't have an account, you have to sign up using RegisterModal and any changes you do to your task will be uploaded to the FireBase. It also tracks if you have DarkMode On and which current opened board.
+You can log in by clicking the login button, LoginModal will open if you don't have an account, you have to sign up using RegisterModal, and any changes you do to your task will be uploaded to the FireBase. It also tracks if you have DarkMode On and which current opened board.
 
 React-firebase-hooks
-Was used for login and sign in purposes
+It was used for login and sign-in purposes
 
 ```js
 useCreateUserWithEmailAndPassword(auth);
@@ -88,8 +88,8 @@ To improve the user experience when the web is loading
 
 Recoil
 For managing states through project
-boardAtom - when the page is loaded, it keep all boards, and it's update with every changes
-modalAtom - keep tracking if any of the modals are opened and if yes which one should be opened
+boardAtom - when the page is loaded, it keeps all boards, and it's updated with every change
+modalAtom - keep tracking if any of the models are opened and if yes which one should be opened
 settingsModalAtom - tracks:
 
 ```js
@@ -107,7 +107,7 @@ activateTaskName: string;
 
 On Firebase all users' boards are uploaded with one property, for performance and readability, creating a collection for each board will be better.
 In some situations, the code is not DRY. In the future refactor the code to be drier.
-Also because the database has a lot of nested levels I'm not sure mapping a couple times to update a task is a good practice but I couldn't find another solution for this
+Also because the database has a lot of nested levels I'm not sure mapping a couple of times to update a task is a good practice but I couldn't find another solution for this
 
 ```js
 const updatedBoard = boardState.map((board) => {
