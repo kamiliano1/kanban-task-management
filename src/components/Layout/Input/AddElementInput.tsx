@@ -84,38 +84,22 @@ const AddElementInput: React.FC<AddElementInputProps> = ({
         placeholder={placeholder}
         {...register(`columns.${column.id}.name`, {
           required: true,
-          validate: {
-            unique: (v) => {
-              // console.log(v);
-              return true;
-            },
-          },
           onChange: (e) => {
             setCurrentValue(e.target.value);
             setError(column.id);
           },
         })}
       />
-      {/* {errors.columns?.[column.id] && (
-        <span className="absolute text-red text-500 left-[50%] sm:left-[65%] top-[.6rem]">
-          Can`t be empty
-        </span>
-      )} */}
       {errors.columns?.[column.id]?.name && (
         <span className="absolute text-red text-500 left-[50%] sm:left-[65%] top-[.6rem]">
           Can`t be empty
         </span>
       )}
       {errors.columns?.[column.id]?.type && (
-        <span className="absolute text-red text-500 left-[50%] sm:left-[65%] top-[.6rem]">
-          Unique name
+        <span className="absolute text-red text-500 left-[35%] sm:left-[55%] top-[.6rem]">
+          Name must be unique
         </span>
       )}
-      {/* {!isUniqueName && (
-        <span className="absolute text-red text-500 left-[50%] sm:left-[65%] top-[.6rem]">
-          Unique columns name
-        </span>
-      )} */}
       <ImCross
         onClick={() => {
           deleteColumn(column.id);

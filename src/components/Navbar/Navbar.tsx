@@ -2,25 +2,25 @@
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { MdKeyboardArrowDown } from "react-icons/md";
-import { useRecoilState } from "recoil";
+import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
+import { useRecoilState, useRecoilValue } from "recoil";
 import logoDark from "../../../public/logo-dark.svg";
 import logoLight from "../../../public/logo-light.svg";
 import logoMobile from "../../../public/logo-mobile.svg";
-import { modalState } from "../../atoms/modalAtom";
 import { boardsState } from "../../atoms/boardsAtom";
+import { modalState } from "../../atoms/modalAtom";
 import { settingsModalState } from "../../atoms/settingsModalAtom";
-import ButtonPrimarySmall from "../Layout/Button/ButtonPrimarySmall";
+import ButtonPrimaryLarge from "../Layout/Button/ButtonPrimaryLarge";
 import AllBoardsMobileModal from "../Modal/AllBoardsMobileModal";
 import Sidebar from "../Sidebar/Sidebar";
 import BoardDropDownMenu from "./BoardDropDownMenu";
-import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 type NavbarProps = {};
 
 const Navbar: React.FC<NavbarProps> = () => {
   const [windowWidth, setWindowWidth] = useState<number>(900);
   const [activeLogo, setActiveLogo] = useState(logoLight);
   const [isDisabled, setIsDisabled] = useState<boolean>(true);
-  const [boardState, setBoardState] = useRecoilState(boardsState);
+  const boardState = useRecoilValue(boardsState);
 
   useEffect(() => {
     function handleWindowResize() {
@@ -115,18 +115,17 @@ const Navbar: React.FC<NavbarProps> = () => {
             }
           />
           <AllBoardsMobileModal darkMode={settingState.darkMode} />
-          <div className="w-[48px] sm:w-[193px]">
-            <ButtonPrimarySmall
-              buttonLabel={windowWidth >= 768 ? "+ Add New Task" : "+"}
-              buttonAction={() =>
-                setModalsState({
-                  view: "addTask",
-                  open: true,
-                })
-              }
-              isDisabled={isDisabled}
-            />
-          </div>
+
+          <ButtonPrimaryLarge
+            buttonLabel={windowWidth >= 768 ? "+ Add New Task" : "+"}
+            buttonAction={() =>
+              setModalsState({
+                view: "addTask",
+                open: true,
+              })
+            }
+            isDisabled={isDisabled}
+          />
           <div className="ml-4 sm:mr-6 lg:mr-8 relative">
             <BoardDropDownMenu />
           </div>

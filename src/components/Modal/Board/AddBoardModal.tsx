@@ -40,9 +40,7 @@ const AddBoardModal: React.FC<AddBoardModalProps> = ({ darkMode }) => {
   const [boardState, setBoardState] = useRecoilState(boardsState);
   const [settingState, setSettingState] = useRecoilState(settingsModalState);
   const [errorBoardName, setErrorBoardName] = useState<string>("");
-  const firstNameRef = useRef<HTMLInputElement | null>(null);
   const [columnsListId, setColumnsListId] = useState<number[]>([]);
-  const [isNameisUnique, setIsNameisUnique] = useState<boolean>(false);
   const isUniqueRef = useRef<boolean>(false);
   const {
     register,
