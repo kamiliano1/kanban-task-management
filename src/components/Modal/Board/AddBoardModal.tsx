@@ -164,9 +164,6 @@ const AddBoardModal: React.FC<AddBoardModalProps> = ({ darkMode }) => {
       </Dialog.Title>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="flex items-baseline justify-between "></div>
-        {/* <h3
-          className={`text-400 pb-2 ${darkMode ? "text-white" : "text-black"}`}
-        ></h3> */}
         <div className="relative">
           <input
             placeholder="e.g. Web Design"

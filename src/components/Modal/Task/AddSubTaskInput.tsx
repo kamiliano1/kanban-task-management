@@ -27,7 +27,6 @@ const AddSubTaskInput: React.FC<AddSubTaskInputProps> = ({
   register,
   number,
 }) => {
-  const [currentValue, setCurrentValue] = useState<string>("");
   const [placeholder, setPlaceholder] = useState<string>("");
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: subtasks.id });
@@ -69,9 +68,6 @@ const AddSubTaskInput: React.FC<AddSubTaskInputProps> = ({
          }`}
         {...register(`subtasks.${subtasks.id}.title`, {
           required: true,
-          onChange: (e) => {
-            setCurrentValue(e.target.value);
-          },
         })}
         placeholder={placeholder}
       />

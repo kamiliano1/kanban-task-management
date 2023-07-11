@@ -2,7 +2,6 @@
 import * as Select from "@radix-ui/react-select";
 import { forwardRef } from "react";
 import { MdKeyboardArrowDown } from "react-icons/md";
-import { nanoid } from "nanoid";
 type DropMenuProps = {
   darkMode: boolean;
   onChange: () => void;
@@ -23,7 +22,8 @@ const DropMenu = forwardRef<HTMLButtonElement, DropMenuProps>(
         darkMode
           ? "data-[highlighted]:text-white"
           : "data-[highlighted]:text-darkGrey"
-      }`}>
+      }`}
+      >
         <Select.ItemText>{item}</Select.ItemText>
       </Select.Item>
     ));
@@ -34,11 +34,13 @@ const DropMenu = forwardRef<HTMLButtonElement, DropMenuProps>(
           aria-label="Task Column"
           className={`text-500 flex items-center cursor-pointer px-4 py-2 w-full mb-6
         rounded-[4px] border-[1px] border-[rgba(130,_143,_163,_0.25)] hover:border-purple
-        justify-between ${darkMode ? "text-white" : "text-black"} `}>
+        justify-between ${darkMode ? "text-white" : "text-black"} `}
+        >
           <Select.Value
             className="w-full"
             aria-label={value}
-            onChange={onChange}>
+            onChange={onChange}
+          >
             {value ? value : columnsName[0]}
           </Select.Value>
           <MdKeyboardArrowDown className="text-purple text-800" />
@@ -49,7 +51,8 @@ const DropMenu = forwardRef<HTMLButtonElement, DropMenuProps>(
             className={`mt-2 flex text-mediumGrey z-[300]
       flex-col w-[100cqi] p-4 space-y-2 rounded-lg SelectContent ${
         darkMode ? "bg-veryDarkGrey" : "bg-white"
-      } `}>
+      } `}
+          >
             <Select.Group className="flex flex-col justify-between">
               {selectElements}
             </Select.Group>

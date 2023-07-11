@@ -1,8 +1,8 @@
+import { modalState } from "@/src/atoms/modalAtom";
 import React from "react";
 import { MdOutlineSpaceDashboard } from "react-icons/md";
+import { useRecoilState } from "recoil";
 import { settingsModalState } from "../../../atoms/settingsModalAtom";
-import { useRecoilState, useRecoilValue } from "recoil";
-import { modalState } from "@/src/atoms/modalAtom";
 type ButtonAddBoardProps = {};
 
 const ButtonAddBoard: React.FC<ButtonAddBoardProps> = () => {

@@ -1,30 +1,30 @@
 import { modalState } from "@/src/atoms/modalAtom";
+import { auth, firestore } from "@/src/firebase/clientApp";
+import {
+  DndContext,
+  DragEndEvent,
+  PointerSensor,
+  closestCenter,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  arrayMove,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
 import * as Dialog from "@radix-ui/react-dialog";
+import { doc, updateDoc } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
+import { useAuthState } from "react-firebase-hooks/auth";
 import { Controller, useForm } from "react-hook-form";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { boardsState } from "../../../atoms/boardsAtom";
 import { settingsModalState } from "../../../atoms/settingsModalAtom";
-import { BoardType, SubtasksType, TaskType } from "../../Board/BoardType";
+import { SubtasksType, TaskType } from "../../Board/BoardType";
 import Checkbox from "../../Layout/Input/Checkbox";
 import DropMenu from "../../Layout/Input/DropMenu";
 import TaskDropDownMenu from "./TaskDropDownMenu";
-import { useAuthState } from "react-firebase-hooks/auth";
-import { auth, firestore } from "@/src/firebase/clientApp";
-import { doc, updateDoc } from "firebase/firestore";
-import {
-  arrayMove,
-  SortableContext,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
-import {
-  closestCenter,
-  DndContext,
-  DragEndEvent,
-  PointerSensor,
-  useSensor,
-  useSensors,
-} from "@dnd-kit/core";
 type ViewTaskModalProps = { darkMode: boolean };
 interface BoardInputs {
   title: string;

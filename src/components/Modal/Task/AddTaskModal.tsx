@@ -1,19 +1,6 @@
 import { modalState } from "@/src/atoms/modalAtom";
 import { settingsModalState } from "@/src/atoms/settingsModalAtom";
-import * as Dialog from "@radix-ui/react-dialog";
-import { customAlphabet } from "nanoid";
-import React, { useEffect, useRef, useState } from "react";
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { useRecoilState } from "recoil";
-import { boardsState } from "../../../atoms/boardsAtom";
-import { SubtasksType, TaskType } from "../../Board/BoardType";
-import ButtonPrimarySmall from "../../Layout/Button/ButtonPrimarySmall";
-import ButtonSecondary from "../../Layout/Button/ButtonSecondary";
-import DropMenu from "../../Layout/Input/DropMenu";
-import AddSubTaskInput from "./AddSubTaskInput";
-import { useAuthState } from "react-firebase-hooks/auth";
 import { auth, firestore } from "@/src/firebase/clientApp";
-import { doc, updateDoc } from "firebase/firestore";
 import {
   DndContext,
   DragEndEvent,
@@ -27,6 +14,19 @@ import {
   arrayMove,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
+import * as Dialog from "@radix-ui/react-dialog";
+import { doc, updateDoc } from "firebase/firestore";
+import { customAlphabet } from "nanoid";
+import React, { useEffect, useState } from "react";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { boardsState } from "../../../atoms/boardsAtom";
+import { SubtasksType, TaskType } from "../../Board/BoardType";
+import ButtonPrimarySmall from "../../Layout/Button/ButtonPrimarySmall";
+import ButtonSecondary from "../../Layout/Button/ButtonSecondary";
+import DropMenu from "../../Layout/Input/DropMenu";
+import AddSubTaskInput from "./AddSubTaskInput";
 const nanoid = customAlphabet("1234567890", 15);
 type AddTaskModalProps = { darkMode: boolean };
 interface BoardInputs {
@@ -39,7 +39,7 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ darkMode }) => {
   const [user] = useAuthState(auth);
   const [modalsState, setModalsState] = useRecoilState(modalState);
   const [boardState, setBoardState] = useRecoilState(boardsState);
-  const [settingState, setSettingState] = useRecoilState(settingsModalState);
+  const settingState = useRecoilValue(settingsModalState);
   const [errorBoardName, setErrorBoardName] = useState<string>("");
   const [columnsName, setColumnsName] = useState<string[]>([]);
   const [tasksList, setTasksList] = useState<number[]>([]);
@@ -240,7 +240,8 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ darkMode }) => {
   return (
     <>
       <Dialog.Title
-        className={` ${darkMode ? "text-white" : "text-black"} text-800 pb-4`}>
+        className={` ${darkMode ? "text-white" : "text-black"} text-800 pb-4`}
+      >
         Add New Task
       </Dialog.Title>
 
@@ -297,10 +298,12 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ darkMode }) => {
         <DndContext
           collisionDetection={closestCenter}
           onDragEnd={handleDragDrop}
-          sensors={sensors}>
+          sensors={sensors}
+        >
           <SortableContext
             items={tasksList}
-            strategy={verticalListSortingStrategy}>
+            strategy={verticalListSortingStrategy}
+          >
             <div className="overflow-auto scrollbar overflow-x-clip pr-1 max-h-[200px] mb-4">
               {subTasks}
             </div>
