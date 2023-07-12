@@ -54,7 +54,7 @@ const DeleteTaskModal: React.FC<DeleteTaskModalProps> = ({ darkMode }) => {
       <Dialog.Title className="text-red text-800  pb-6">
         Delete this task?
       </Dialog.Title>
-      <Dialog.Description className={` pb-4 text-500 text-mediumGrey`}>
+      <Dialog.Description className={`pb-4 text-500 text-mediumGrey`}>
         Are you sure you want to delete the `{settingState.activateTaskName}`
         task and its subtasks? This action cannot be reversed.
       </Dialog.Description>
