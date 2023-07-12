@@ -19,15 +19,6 @@ const AllBoardsMobileModal: React.FC<AllBoardsMobileModalProps> = ({
   const [settingState, setSettingState] = useRecoilState(settingsModalState);
   const [user] = useAuthState(auth);
   const [loading, setLoading] = useState<boolean>(true);
-  // useEffect(() => {
-  //   if (loading && boardState.length) {
-  //     setSettingState((prev) => ({
-  //       ...prev,
-  //       activeBoard: boardState[0].name,
-  //     }));
-  //     setLoading(false);
-  //   }
-  // }, [boardState, loading, setSettingState]);
   useEffect(() => {
     const getUserData = async () => {
       const userDataRef = doc(firestore, "users", user!.uid);
